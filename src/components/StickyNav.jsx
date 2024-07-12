@@ -19,23 +19,8 @@ function StickyNav({ mode, toggleColorMode }) {
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
     };
-
     
     const navigate = useNavigate();
-
-    const scrollToSection = (sectionId) => {
-        const sectionElement = document.getElementById(sectionId);
-        const offset = 128;
-        if (sectionElement) {
-          const targetScroll = sectionElement.offsetTop - offset;
-          sectionElement.scrollIntoView({ behavior: 'smooth' });
-          window.scrollTo({
-            top: targetScroll,
-            behavior: 'smooth',
-          });
-          setOpen(false);
-        }
-      };
   return (
     <Box>
         <AppBar
@@ -198,21 +183,33 @@ function StickyNav({ mode, toggleColorMode }) {
 }
 
 function NavItem(props) {
+
+    const scrollToSection = (sectionId) => {
+        const sectionElement = document.getElementById(sectionId);
+        const offset = 128;
+        if (sectionElement) {
+          const targetScroll = sectionElement.offsetTop - offset;
+          sectionElement.scrollIntoView({ behavior: 'smooth' });
+          window.scrollTo({
+            top: targetScroll,
+            behavior: 'smooth',
+          });
+          setOpen(false);
+        }
+      };
+
     return(
         <Box sx={{
             display: props.display
         }}>
-            <MenuItem onClick={() => console.log('Test')}>
-                <Typography color="text.primary">F</Typography>
+            <MenuItem onClick={() => scrollToSection('attendance')}>
+                <Typography color="text.primary">Attendace</Typography>
             </MenuItem>
-            <MenuItem onClick={() => console.log('Test')}>
-                <Typography color="text.primary">TEST</Typography>
+            <MenuItem onClick={() => scrollToSection('payment')}>
+                <Typography color="text.primary">Payment</Typography>
             </MenuItem>
-            <MenuItem onClick={() => console.log('Test')}>
-                <Typography color="text.primary">TEST</Typography>
-            </MenuItem>
-            <MenuItem onClick={() => console.log('Test')}>
-                <Typography color="text.primary">TEST</Typography>
+            <MenuItem onClick={() => scrollToSection('clearance')}>
+                <Typography color="text.primary">Clearance</Typography>
             </MenuItem>
         </Box>
     )

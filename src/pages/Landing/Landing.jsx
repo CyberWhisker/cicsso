@@ -3,20 +3,54 @@ import Master from '../../layouts/Master';
 import Hero from './Section/Hero/Hero';
 import { Box, Divider } from '@mui/material';
 import Footer from './Section/Footer/Footer';
+import Procedure from './Section/Procedure/Procedure';
+import Attendance from './Section/Attendance/Attendance';
+import Payment from './Section/Payment/Payment';
+import Clearance from './Section/Clearance/Clearance';
 
 function Landing() {
   return (
     <>
       <Master>
-        <Box
+          <Box 
           sx={{
-            pt: { xs: 14, sm: 20 },
+            pt: { xs: 10, sm: 20 },
           }}
-        >
-          <Box sx={{ flex: '1 0 auto' }}> {/* This box will push footer to bottom */}
+          >
             <Hero />
           </Box>
-        </Box>
+          <Box 
+          sx={{
+            pt: { xs: 5, sm: 11 },
+          }}
+          >
+            <Procedure/>
+          </Box>
+          <Box 
+          id="attendance"
+          sx={{
+            pt: { xs: 5, sm: 11 },
+          }}
+          >
+            <Attendance/>
+          </Box>
+          <Box 
+          id="payment"
+          sx={{
+            pt: { xs: 5, sm: 11 },
+          }}
+          >
+            <Payment/>
+          </Box>
+          <Box 
+          id="clearance"
+          sx={{
+            pt: { xs: 5, sm: 11 },
+          }}
+          >
+            <Clearance/>
+          </Box>
+          <Footer/>
       </Master>
     </>
   );

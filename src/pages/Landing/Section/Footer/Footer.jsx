@@ -1,12 +1,29 @@
-import { Box } from '@mui/material'
+import { Facebook, Instagram, Twitter } from '@mui/icons-material'
+import { Box, Divider, Stack, Typography } from '@mui/material'
 import React from 'react'
 
 function Footer() {
   return (
-    <Box sx={{
-        p: '5px'
-    }}>
-        
+    <Box>
+        <Divider/>
+        <Stack sx={{p: 1}} direction='row' justifyContent='space-between' spacing={30}>
+          <Box>
+            <Typography>Follow us on:</Typography>
+            <Stack gap={1} direction='row'>
+              <Facebook/>
+              <Twitter/>
+              <Instagram/>
+            </Stack>
+          </Box>
+          <Box>
+            <Typography variant='h5' fontWeight='bold'>Vision:</Typography>
+            <Typography>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus, distinctio labore qui nesciunt rem veritatis unde odit impedit itaque! Blanditiis, rerum obcaecati aperiam saepe ab doloremque tenetur corrupti quis repellat.</Typography>
+          </Box>
+          <Box>
+            <Typography variant='h5' fontWeight='bold'>Mission:</Typography>
+            <Typography>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus, distinctio labore qui nesciunt rem veritatis unde odit impedit itaque! Blanditiis, rerum obcaecati aperiam saepe ab doloremque tenetur corrupti quis repellat.</Typography>
+          </Box>
+        </Stack>
     </Box>
   )
 }
