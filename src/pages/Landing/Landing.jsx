@@ -1,5 +1,5 @@
 import React from 'react';
-import Master from '../../layouts/Master';
+import MasterLanding from '../../layouts/MasterLanding';
 import Hero from './Section/Hero/Hero';
 import { Box, Divider } from '@mui/material';
 import Footer from './Section/Footer/Footer';
@@ -11,7 +11,7 @@ import Clearance from './Section/Clearance/Clearance';
 function Landing() {
   return (
     <>
-      <Master>
+      <MasterLanding>
           <Box 
           sx={{
             pt: { xs: 10, sm: 20 },
@@ -51,7 +51,7 @@ function Landing() {
             <Clearance/>
           </Box>
           <Footer/>
-      </Master>
+      </MasterLanding>
     </>
   );
 }

@@ -17,7 +17,7 @@ const darkTheme = createTheme({
   },
 });
 
-const LandingLayout = ({ children }) => {
+const MasterLanding = ({ children }) => {
   const [themeMode, setThemeMode] = useState(localStorage.getItem('mode') ? localStorage.getItem('mode') : "dark"); // Default to dark mode
 
   const toggleColorMode = () => {
@@ -36,18 +36,11 @@ const LandingLayout = ({ children }) => {
             theme.palette.mode === 'light'
               ? 'linear-gradient(180deg, #CEE5FD, #FFF)'
               : `linear-gradient(#02294F, ${alpha('#090E10', 0.0)})`,
-          backgroundSize: '100% 100%',
+          backgroundSize: '100% 20%',
           backgroundRepeat: 'no-repeat',
         })}
       >
-        <Container
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          pt: { xs: 14, sm: 20 },
-        }}
-        >
+        <Container>
             <StickyNav mode={themeMode} toggleColorMode={toggleColorMode} />
             {children}
         </Container>
@@ -56,4 +49,4 @@ const LandingLayout = ({ children }) => {
   );
 };
 
-export default LandingLayout;
+export default MasterLanding;

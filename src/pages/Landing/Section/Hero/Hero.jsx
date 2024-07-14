@@ -47,6 +47,7 @@ function Hero() {
             fontWeight: 'bold',
             fontSize: 20,
           }}
+          href='/user'
         >
           Get Started
         </Button>

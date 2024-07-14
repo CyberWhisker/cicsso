@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { StickyNav } from '../components';
+import { Navigation } from '../components';
 import { Box, Container, alpha } from '@mui/material';
 
 const lightTheme = createTheme({
@@ -17,7 +17,7 @@ const darkTheme = createTheme({
   },
 });
 
-const Master = ({ children }) => {
+const MasterUser = ({ children }) => {
   const [themeMode, setThemeMode] = useState(localStorage.getItem('mode') ? localStorage.getItem('mode') : "dark"); // Default to dark mode
 
   const toggleColorMode = () => {
@@ -40,13 +40,15 @@ const Master = ({ children }) => {
           backgroundRepeat: 'no-repeat',
         })}
       >
-        <Container>
-            <StickyNav mode={themeMode} toggleColorMode={toggleColorMode} />
-            {children}
-        </Container>
+        <Navigation mode={themeMode} toggleColorMode={toggleColorMode} >
+            
+            <Container maxWidth="lg" sx={{ mt: 10, mb: 4 }}>
+                {children}
+            </Container>
+        </Navigation>
       </Box>
     </ThemeProvider>
   );
 };
 
-export default Master;
+export default MasterUser;
