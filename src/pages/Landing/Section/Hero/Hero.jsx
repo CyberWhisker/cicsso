@@ -1,6 +1,7 @@
 import { Box, Stack, Typography, Button } from '@mui/material';
 import React from 'react';
 import Logo from '/appImg/Logo.png';
+import { Link } from 'react-router-dom';
 
 function Hero() {
   return (
@@ -47,7 +48,8 @@ function Hero() {
             fontWeight: 'bold',
             fontSize: 20,
           }}
-          href='/user'
+          component={Link}
+          to='/user'
         >
           Get Started
         </Button>

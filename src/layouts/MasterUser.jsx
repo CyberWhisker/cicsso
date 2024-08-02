@@ -4,6 +4,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Navigation } from '../components';
 import { Box, Container, alpha } from '@mui/material';
+import TopBar from '../components/TopBar';
+import SideBar from '../components/SideBar';
 
 const lightTheme = createTheme({
   palette: {
@@ -40,12 +42,13 @@ const MasterUser = ({ children }) => {
           backgroundRepeat: 'no-repeat',
         })}
       >
-        <Navigation mode={themeMode} toggleColorMode={toggleColorMode} >
+        <SideBar mode={themeMode} toggleColorMode={toggleColorMode} >
+        <TopBar toggleColorMode={toggleColorMode} themeMode={themeMode}/>
             
             <Container maxWidth="lg" sx={{ mt: 10, mb: 4 }}>
                 {children}
             </Container>
-        </Navigation>
+        </SideBar>
       </Box>
     </ThemeProvider>
   );

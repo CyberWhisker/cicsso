@@ -1,0 +1,46 @@
+import { AppBar, Box, Container, Stack, Typography } from '@mui/material'
+import React from 'react'
+import ToggleColorMode from './ToggleColorMode'
+import ToggleAuth from './ToggleAuth'
+import Logo from '/appImg/Logo.png'
+import Navlist from './Navlist'
+import { useLocation } from 'react-router-dom'
+
+function TopBar({toggleColorMode, themeMode}) {
+  const location = useLocation();
+  return (
+    <AppBar
+    sx={{
+      padding: 2,
+      backgroundColor: themeMode == 'light' ? 'white' : '#111936ff',
+      position: 'relative'
+    }}
+    >
+      <Container
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+      }}
+      >
+        <Box sx={{display: "flex", alignItems: 'center', gap: 1}}>
+          <img src={Logo} alt="Logo" 
+          style={{height: 40, borderRadius: '100%'}}
+          />
+          <Typography variant='h5' color="primary" fontWeight="bold">CICSSO</Typography>
+          {location.pathname == '/' && (
+            <Stack direction="row">
+              <Navlist/>
+            </Stack>
+          )}
+        </Box>
+        <Box sx={{display: 'flex', gap: 2, alignItems: 'center'}}>
+            <ToggleAuth/>
+            <ToggleColorMode themeMode={themeMode} toggleColorMode={toggleColorMode} />
+        </Box>
+      </Container>
+    </AppBar>
+  )
+}
+
+export default TopBar
