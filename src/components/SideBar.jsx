@@ -46,31 +46,31 @@ function SideBar({children}) {
     };
     const rotate = !open ? 'rotate(180deg)' : 'rotate(0deg)';
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh'}}>
             <CssBaseline />
             <Drawer variant="permanent" open={open}>
-                <Toolbar
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                    px: [1],
-                }}
-                >
-                <IconButton onClick={toggleDrawer}>
-                    <ChevronLeftIcon sx={{ transition: 'transform 0.3s', transform: rotate }} />
-                </IconButton>
-                </Toolbar>
-                <Divider />
-                <List component="nav">
-                {mainListItems}
-                <Divider sx={{ my: 1 }} />
-                {secondaryListItems}
-                </List>
-            </Drawer>
-            <Box sx={{width: "100%"}}>
-                {children}
-            </Box>
+              <Toolbar
+              sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  px: [1],
+              }}
+              >
+              <IconButton onClick={toggleDrawer}>
+                  <ChevronLeftIcon sx={{ transition: 'transform 0.3s', transform: rotate, height: 55 }} />
+              </IconButton>
+              </Toolbar>
+              <Divider />
+              <List component="nav">
+              {mainListItems}
+              <Divider sx={{ my: 1 }} />
+              {secondaryListItems}
+              </List>
+          </Drawer>
+          <Box sx={{width: "100%"}}>
+              {children}
+          </Box>
         </Box>
     )
 }

@@ -44,10 +44,9 @@ const MasterUser = ({ children }) => {
       >
         <SideBar mode={themeMode} toggleColorMode={toggleColorMode} >
         <TopBar toggleColorMode={toggleColorMode} themeMode={themeMode}/>
-            
-            <Container maxWidth="lg" sx={{ mt: 10, mb: 4 }}>
-                {children}
-            </Container>
+          <Container maxWidth="lg" sx={{ mt: 10, mb: 4 }}>
+              {children}
+          </Container>
         </SideBar>
       </Box>
     </ThemeProvider>

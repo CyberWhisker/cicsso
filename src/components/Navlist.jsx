@@ -5,8 +5,6 @@ import { useLocation } from 'react-router-dom';
 
 function Navlist({ setopen }) {
   let location = useLocation();
-  console.log(location.pathname);
-
   return (
     <React.Fragment>
       <NavLanding setopen={setopen} />

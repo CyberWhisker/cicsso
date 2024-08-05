@@ -13,7 +13,7 @@ function TopBar({toggleColorMode, themeMode}) {
     sx={{
       padding: 2,
       backgroundColor: themeMode == 'light' ? 'white' : '#111936ff',
-      position: 'relative'
+      position: location.pathname == '/' ? 'fixed' : 'relative'
     }}
     >
       <Container
