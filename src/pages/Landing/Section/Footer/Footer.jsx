@@ -6,7 +6,7 @@ function Footer() {
   return (
     <Box>
         <Divider/>
-        <Stack sx={{p: 1}} direction='row' justifyContent='space-between' spacing={30}>
+        <Stack sx={{p: 1}} direction={{sm: 'column', md: 'row'}} justifyContent='space-between' gap={{xs: 2, md: 30}}>
           <Box>
             <Typography>Follow us on:</Typography>
             <Stack gap={1} direction='row'>

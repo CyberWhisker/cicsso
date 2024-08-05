@@ -1,0 +1,6 @@
+export {default as HeroSection} from './Section/Hero/Hero'
+export {default as ProcedureSection} from './Section/Procedure/Procedure'
+export {default as ClearanceSection} from './Section/Clearance/Clearance'
+export {default as FooterSection} from './Section/Footer/Footer'
+export {default as PaymentSection} from './Section/Payment/Payment'
+export {default as AttendanceSection} from './Section/Attendance/Attendance'

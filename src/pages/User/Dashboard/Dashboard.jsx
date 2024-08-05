@@ -2,11 +2,11 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { Chart } from '../../../components';
-import MasterUser from '../../../layouts/MasterUser';
+import Master from '../../../layouts/Master';
 
 function Dashboard() {
   return (
-    <MasterUser>
+    <Master>
         <Grid container spacing={3}>
             {/* Chart */}
             <Grid item xs={12} md={8} lg={9}>
@@ -37,7 +37,7 @@ function Dashboard() {
             </Paper>
             </Grid>
         </Grid>
-    </MasterUser>
+    </Master>
   )
 }
 

@@ -1,12 +1,13 @@
-import { AppBar, Box, Container, Stack, Typography } from '@mui/material'
+import { AppBar, Box, Container, MenuItem, Stack, Typography } from '@mui/material'
 import React from 'react'
 import ToggleColorMode from './ToggleColorMode'
 import ToggleAuth from './ToggleAuth'
 import Logo from '/appImg/Logo.png'
 import Navlist from './Navlist'
 import { useLocation } from 'react-router-dom'
+import AppDrawer from './AppDrawer'
 
-function TopBar({toggleColorMode, themeMode}) {
+function NavTopBar({toggleColorMode, themeMode}) {
   const location = useLocation();
   return (
     <AppBar
@@ -24,23 +25,24 @@ function TopBar({toggleColorMode, themeMode}) {
       }}
       >
         <Box sx={{display: "flex", alignItems: 'center', gap: 1}}>
-          <img src={Logo} alt="Logo" 
-          style={{height: 40, borderRadius: '100%'}}
-          />
+          <img src={Logo} alt="Logo" style={{height: '6vh', borderRadius: '100%'}}/>
           <Typography variant='h5' color="primary" fontWeight="bold">CICSSO</Typography>
           {location.pathname == '/' && (
-            <Stack direction="row">
+            <Stack direction="row" sx={{display: {xs: 'none', md: 'flex'}}}>
               <Navlist/>
             </Stack>
           )}
         </Box>
-        <Box sx={{display: 'flex', gap: 2, alignItems: 'center'}}>
+        <Box sx={{display: {xs: 'none', md: 'flex'}, gap: 2, alignItems: 'center'}}>
             <ToggleAuth/>
             <ToggleColorMode themeMode={themeMode} toggleColorMode={toggleColorMode} />
+        </Box>
+        <Box sx={{display: {xs: 'block', md: 'none'}, gap: 2, alignItems: 'center'}}>
+          <AppDrawer themeMode={themeMode} toggleColorMode={toggleColorMode} />
         </Box>
       </Container>
     </AppBar>
   )
 }
 
-export default TopBar
+export default NavTopBar
