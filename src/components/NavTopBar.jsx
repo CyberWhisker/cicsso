@@ -25,10 +25,10 @@ function NavTopBar({toggleColorMode, themeMode}) {
       }}
       >
         <Box sx={{display: "flex", alignItems: 'center', gap: 1}}>
-          <img src={Logo} alt="Logo" style={{height: '6vh', borderRadius: '100%'}}/>
-          <Typography variant='h5' color="primary" fontWeight="bold">CICSSO</Typography>
           {location.pathname == '/' && (
-            <Stack direction="row" sx={{display: {xs: 'none', md: 'flex'}}}>
+            <Stack direction="row" sx={{display: {xs: 'none', md: 'flex'}, alignItems: 'center', gap: 1}}>
+              <img src={Logo} alt="Logo" style={{height: '6vh', borderRadius: '100%'}}/>
+              <Typography variant='h5' color="primary" fontWeight="bold">CICSSO</Typography>
               <Navlist/>
             </Stack>
           )}

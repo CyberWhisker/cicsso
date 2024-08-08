@@ -1,14 +1,14 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { styled} from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import Navlist from './Navlist';
+import Logo from '/appImg/Logo.png'
+import { ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { ChevronLeft } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
@@ -48,20 +48,15 @@ function NavSideBar({children}) {
         <Box sx={{ display: 'flex', minHeight: '100vh'}}>
           <CssBaseline />
           <Drawer variant="permanent" open={open} sx={{display: {xs: 'none', md: 'block'}}}>
-            <Toolbar
-            sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-                px: [1],
-            }}
-            >
-            <IconButton onClick={toggleDrawer}>
-                <ChevronLeftIcon sx={{ transition: 'transform 0.3s', transform: rotate, height: 55 }} />
-            </IconButton>
-            </Toolbar>
-            <Divider />
             <List component="nav">
+              <ListItemButton onClick={toggleDrawer}>
+                <ListItemIcon>
+                  <img src={Logo} alt="Logo" style={{height: '6vh', borderRadius: '100%'}}/>
+                </ListItemIcon>
+                <ListItemText primary="CICSSO" />
+                <ChevronLeft/>
+              </ListItemButton>
+              <Divider />
               <Navlist/>
             </List>
           </Drawer>
