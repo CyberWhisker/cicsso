@@ -39,32 +39,34 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 function NavSideBar({children}) {
-    const [open, setOpen] = React.useState(true);
-    const toggleDrawer = () => {
-        setOpen(!open);
-    };
-    const rotate = !open ? 'rotate(180deg)' : 'rotate(0deg)';
-    return (
-        <Box sx={{ display: 'flex', minHeight: '100vh'}}>
-          <CssBaseline />
-          <Drawer variant="permanent" open={open} sx={{display: {xs: 'none', md: 'block'}}}>
-            <List component="nav">
-              <ListItemButton onClick={toggleDrawer}>
-                <ListItemIcon>
-                  <img src={Logo} alt="Logo" style={{height: '6vh', borderRadius: '100%'}}/>
-                </ListItemIcon>
-                <ListItemText primary="CICSSO" />
-                <ChevronLeft/>
-              </ListItemButton>
-              <Divider />
-              <Navlist/>
-            </List>
-          </Drawer>
-          <Box sx={{width: "100%"}}>
-              {children}
-          </Box>
-        </Box>
-    )
+  const [open, setOpen] = React.useState(localStorage.getItem('sideMode') === 'true' ? true : false);
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+    localStorage.setItem('sideMode', !open);
+  };
+  const rotate = !open ? 'rotate(180deg)' : 'rotate(0deg)';
+  return (
+    <Box sx={{ display: 'flex', minHeight: '100vh'}}>
+      <CssBaseline />
+      <Drawer variant="permanent" open={open} sx={{display: {xs: 'none', md: 'block'}}}>
+        <List component="nav">
+          <ListItemButton onClick={toggleDrawer}>
+            <ListItemIcon>
+              <img src={Logo} alt="Logo" style={{height: '5.6vh', borderRadius: '100%'}}/>
+            </ListItemIcon>
+            <ListItemText primary="CICSSO" />
+            <ChevronLeft/>
+          </ListItemButton>
+          <Divider />
+          <Navlist/>
+        </List>
+      </Drawer>
+      <Box sx={{width: "100%"}}>
+          {children}
+      </Box>
+    </Box>
+  )
 }
 
 export default NavSideBar

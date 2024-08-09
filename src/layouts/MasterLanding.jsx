@@ -2,7 +2,7 @@ import { Box, Container, alpha } from '@mui/material'
 import React, { useState } from 'react'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { NavTopBar } from '../components';
+import { CustomToast, NavTopBar } from '../components';
 
 const lightTheme = createTheme({
   palette: {
@@ -17,10 +17,10 @@ const darkTheme = createTheme({
 });
 
 function MasterLanding({children}) {
-  const [themeMode, setThemeMode] = useState(localStorage.getItem('mode') ? localStorage.getItem('mode') : "dark"); // Default to dark mode
+  const [themeMode, setThemeMode] = useState(localStorage.getItem('theme') ? localStorage.getItem('theme') : "dark"); // Default to dark mode
   const toggleColorMode = () => {
     const newThemeMode = themeMode === 'dark' ? 'light' : 'dark';
-    localStorage.setItem("mode", newThemeMode)
+    localStorage.setItem("theme", newThemeMode)
     setThemeMode(newThemeMode);
   };
   return (
@@ -41,6 +41,7 @@ function MasterLanding({children}) {
             {children}
           </Container>
         </Box>
+        <CustomToast/>
     </ThemeProvider>
   )
 }

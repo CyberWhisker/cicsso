@@ -3,6 +3,7 @@ import MasterLanding from './layouts/MasterLanding';
 import { AttendanceSection, ClearanceSection, FooterSection, HeroSection, PaymentSection, ProcedureSection } from './pages/Landing';
 import { Box } from '@mui/material';
 
+
 function App() {
   return (
     <MasterLanding>
@@ -45,6 +46,7 @@ function App() {
           <ClearanceSection/>
         </Box>
         <FooterSection/>
+        
     </MasterLanding>
   );
 }

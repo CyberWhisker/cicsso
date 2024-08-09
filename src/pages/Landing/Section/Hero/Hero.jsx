@@ -50,7 +50,7 @@ function Hero() {
               fontSize: 20,
             }}
             component={Link}
-            to='/user'
+            to='/dashboard'
           >
             Get Started
           </Button>

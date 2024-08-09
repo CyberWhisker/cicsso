@@ -6,7 +6,11 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import { UserDashboard } from './pages/User/index.jsx';
+import 'react-toastify/dist/ReactToastify.css';
+import { Attendance, Dashboard, EventDetails, Events } from './pages/index.jsx';
+
+// if user is login
+const user = true;
 
 const router = createBrowserRouter([
   {
@@ -22,8 +26,20 @@ const router = createBrowserRouter([
     element: <Register/>
   },
   {
-    path: "/user",
-    element: <UserDashboard/>
+    path: "/dashboard",
+    element: <Dashboard/>
+  },
+  {
+    path: "/events",
+    element: <Events/>
+  },
+  {
+    path: "/events/:eventId/",
+    element: <EventDetails/>
+  },
+  {
+    path: "/attendance/:eventId/",
+    element: <Attendance/>
   },
 ]);
 

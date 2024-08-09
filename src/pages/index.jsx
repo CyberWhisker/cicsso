@@ -1,0 +1,5 @@
+export { default as Dashboard } from './Dashboard/Dashboard'
+export { default as Events } from './Events/Events'
+export { default as EventDetails } from './Events/Details/Details'
+export { default as Attendance } from './Attendance/Attendance'
+export { default as Reports } from './Reports/Reports'

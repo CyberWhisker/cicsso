@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { NavSideBar, NavTopBar } from '../components';
+import { CustomToast, NavSideBar, NavTopBar } from '../components';
 import { Box, Container, alpha } from '@mui/material';
 
 const lightTheme = createTheme({
@@ -18,11 +18,11 @@ const darkTheme = createTheme({
 });
 
 const Master = ({ children }) => {
-  const [themeMode, setThemeMode] = useState(localStorage.getItem('mode') ? localStorage.getItem('mode') : "dark"); // Default to dark mode
+  const [themeMode, setThemeMode] = useState(localStorage.getItem('theme') ? localStorage.getItem('theme') : "dark"); // Default to dark mode
 
   const toggleColorMode = () => {
     const newThemeMode = themeMode === 'dark' ? 'light' : 'dark';
-    localStorage.setItem("mode", newThemeMode)
+    localStorage.setItem("theme", newThemeMode)
     setThemeMode(newThemeMode);
   };
 
@@ -42,11 +42,12 @@ const Master = ({ children }) => {
       >
         <NavSideBar mode={themeMode} toggleColorMode={toggleColorMode} >
           <NavTopBar toggleColorMode={toggleColorMode} themeMode={themeMode}/>
-          <Container maxWidth="lg" sx={{ mt: 10, mb: 4 }}>
+          <Container sx={{ mt: 2 }}>
               {children}
           </Container>
         </NavSideBar>
       </Box>
+      <CustomToast/>
     </ThemeProvider>
   );
 };

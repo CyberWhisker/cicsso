@@ -1,7 +1,7 @@
 // Example of correct usage
 import { MenuItem, Typography } from '@mui/material';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -13,13 +13,14 @@ import { PanTool } from '@mui/icons-material';
 
 function Navlist({ setopen }) {
   let location = useLocation();
+  const userRole = ('admin');
   return (
     <React.Fragment>
       {location.pathname == '/' && (
         <NavLanding setopen={setopen} />
       )}
-      {location.pathname == '/user' && (
-        <NavUser/>
+      {userRole == 'admin' && (
+        <NavAdmin/>
       )}
     </React.Fragment>
   );
@@ -55,20 +56,21 @@ function NavLanding({ setopen }) {
   );
 }
 
-function NavUser() {
+function NavAdmin() {
+  const location = useLocation();
   return (
     <React.Fragment>
-      <ListItemButton>
+      <ListItemButton component={Link} to={'/dashboard'} selected={location.pathname == '/dashboard'}>
         <ListItemIcon>
           <DashboardIcon />
         </ListItemIcon>
         <ListItemText primary="Dashboard" />
       </ListItemButton>
-      <ListItemButton>
+      <ListItemButton component={Link} to={'/events'} selected={location.pathname.startsWith('/events')}>
         <ListItemIcon>
           <PeopleIcon />
         </ListItemIcon>
-        <ListItemText primary="Users" />
+        <ListItemText primary="Events" />
       </ListItemButton>
       <ListItemButton>
         <ListItemIcon>

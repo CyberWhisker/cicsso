@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { Chart } from '../../../components';
-import Master from '../../../layouts/Master';
+import { Chart } from '../../components';
+import Master from '../../layouts/Master';
 
 function Dashboard() {
   return (

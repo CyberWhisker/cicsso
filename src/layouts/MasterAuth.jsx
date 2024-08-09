@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box, Grid, Paper } from '@mui/material';
+import { CustomToast } from '../components';
 
 const lightTheme = createTheme({
   palette: {
@@ -17,7 +18,7 @@ const darkTheme = createTheme({
 });
 
 const MasterAuth = ({ children }) => {
-  const [themeMode, setThemeMode] = useState(localStorage.getItem('mode') ? localStorage.getItem('mode') : "dark");
+  const [themeMode, setThemeMode] = useState(localStorage.getItem('theme') ? localStorage.getItem('theme') : "dark");
 
   return (
     <ThemeProvider theme={themeMode === "dark" ? darkTheme : lightTheme}>
@@ -52,6 +53,7 @@ const MasterAuth = ({ children }) => {
           </Box>
         </Grid>
       </Grid>
+      <CustomToast/>
     </ThemeProvider>
   );
 };
