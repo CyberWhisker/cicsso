@@ -32,61 +32,63 @@ function Store() {
     };
 
     return (
-        <Box sx={{ width: '60vh', p: 2 }}>
-            <Typography variant='h4' fontWeight='bold'>Add Event</Typography>
-            <Box mt={2}>
-                <Form onSubmit={handleSubmit}>
-                    <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
-                        <Typography>Enter Event</Typography>
-                        <TextField
-                            name='event'
-                            variant="outlined"
-                            sx={{ width: '100%'}}
-                            value={formData.event}
-                            onChange={handleChange}
-                            error={submitted && !formData.event}
-                            helperText={submitted && !formData.event ? "Required" : ""}
-                        />
-                        <Typography>Enter Start Date</Typography>
-                        <TextField
-                            name='startDate'
-                            variant="outlined"
-                            sx={{ width: '100%'}}
-                            value={formData.startDate}
-                            onChange={handleChange}
-                            type='date'
-                            error={submitted && !formData.startDate}
-                            helperText={submitted && !formData.startDate ? "Required" : ""}
-                        />
-                        <Typography>Enter End Date</Typography>
-                        <TextField
-                            name='endDate'
-                            variant="outlined"
-                            sx={{ width: '100%'}}
-                            value={formData.endDate}
-                            onChange={handleChange}
-                            type='date'
-                            error={submitted && !formData.endDate}
-                            helperText={submitted && !formData.endDate ? "Required" : ""}
-                        />
-                        <Typography>Insert Banner</Typography>
-                        <TextField
-                            name='image'
-                            variant="outlined"
-                            sx={{ width: '100%'}}
-                            value={formData.image}
-                            onChange={handleChange}
-                            type='file'
-                            error={submitted && !formData.image}
-                            helperText={submitted && !formData.image ? "Required" : ""}
-                        />
-                        <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
-                            Submit
-                        </Button>
-                    </Box>
-                </Form>
+        <React.Fragment>
+            <Box sx={{ width: '60vh', p: 2 }}>
+                <Typography variant='h4' fontWeight='bold'>Add Event</Typography>
+                <Box mt={2}>
+                    <Form onSubmit={handleSubmit}>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
+                            <Typography>Enter Event</Typography>
+                            <TextField
+                                name='event'
+                                variant="outlined"
+                                sx={{ width: '100%'}}
+                                value={formData.event}
+                                onChange={handleChange}
+                                error={submitted && !formData.event}
+                                helperText={submitted && !formData.event ? "Required" : ""}
+                            />
+                            <Typography>Enter Start Date</Typography>
+                            <TextField
+                                name='startDate'
+                                variant="outlined"
+                                sx={{ width: '100%'}}
+                                value={formData.startDate}
+                                onChange={handleChange}
+                                type='date'
+                                error={submitted && !formData.startDate}
+                                helperText={submitted && !formData.startDate ? "Required" : ""}
+                            />
+                            <Typography>Enter End Date</Typography>
+                            <TextField
+                                name='endDate'
+                                variant="outlined"
+                                sx={{ width: '100%'}}
+                                value={formData.endDate}
+                                onChange={handleChange}
+                                type='date'
+                                error={submitted && !formData.endDate}
+                                helperText={submitted && !formData.endDate ? "Required" : ""}
+                            />
+                            <Typography>Insert Banner</Typography>
+                            <TextField
+                                name='image'
+                                variant="outlined"
+                                sx={{ width: '100%'}}
+                                value={formData.image}
+                                onChange={handleChange}
+                                type='file'
+                                error={submitted && !formData.image}
+                                helperText={submitted && !formData.image ? "Required" : ""}
+                            />
+                            <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
+                                Submit
+                            </Button>
+                        </Box>
+                    </Form>
+                </Box>
             </Box>
-        </Box>
+        </React.Fragment>
     );
 }
 

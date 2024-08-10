@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Menu from '@mui/material/Menu';
-import { Box } from '@mui/material';
+import { Box, Popper, Paper, ClickAwayListener, useTheme } from '@mui/material';
+import { blueGrey } from '@mui/material/colors';
 
 function DropDown({ children }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+    const theme = useTheme();
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -17,20 +18,45 @@ function DropDown({ children }) {
 
     return (
         <div>
-            <MoreVertIcon onClick={handleClick} />
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
+            <MoreVertIcon onClick={handleClick} sx={{ cursor: 'pointer' }} />
+            <Popper
                 open={open}
+                anchorEl={anchorEl}
+                placement="bottom"
                 onClose={handleClose}
-                MenuListProps={{ 'aria-labelledby': 'basic-button' }}
+                modifiers={[
+                    {
+                        name: 'offset',
+                        options: {
+                            offset: [0, 8],
+                        },
+                    },
+                ]}
             >
-                <Box sx={{ minWidth: 100 }}>
-                    {React.Children.map(children, (child) =>
-                        React.cloneElement(child, { onClick: () => { child.props.onClick(); handleClose(); } })
-                    )}
-                </Box>
-            </Menu>
+                <ClickAwayListener onClickAway={handleClose}>
+                    <Paper
+                        sx={{
+                            backgroundColor: theme.palette.mode === 'dark' ? blueGrey[900] : '#fff',
+                            color: theme.palette.mode === 'dark' ? '#fff' : blueGrey[900],
+                            boxShadow: theme.shadows[3],  // Elevation effect for better visibility
+                            borderRadius: 1,  // Slightly round the corners
+                        }}
+                    >
+                        <Box sx={{ minWidth: 120 }}>
+                            {React.Children.map(children, (child) =>
+                                React.cloneElement(child, {
+                                    onClick: () => {
+                                        if (child.props.onClick) {
+                                            child.props.onClick();
+                                        }
+                                        handleClose();
+                                    },
+                                })
+                            )}
+                        </Box>
+                    </Paper>
+                </ClickAwayListener>
+            </Popper>
         </div>
     );
 }

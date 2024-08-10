@@ -7,7 +7,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import Navlist from './Navlist';
 import Logo from '/appImg/Logo.png'
-import { ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { ChevronLeft } from '@mui/icons-material';
 
 const drawerWidth = 240;
@@ -51,7 +51,7 @@ function NavSideBar({children}) {
       <CssBaseline />
       <Drawer variant="permanent" open={open} sx={{display: {xs: 'none', md: 'block'}}}>
         <List component="nav">
-          <ListItemButton onClick={toggleDrawer}>
+          <ListItemButton onClick={toggleDrawer} sx={{height: '8vh'}}>
             <ListItemIcon>
               <img src={Logo} alt="Logo" style={{height: '5.6vh', borderRadius: '100%'}}/>
             </ListItemIcon>

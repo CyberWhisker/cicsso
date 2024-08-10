@@ -7,7 +7,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
-import { Attendance, Dashboard, EventDetails, Events } from './pages/index.jsx';
+import { Attendance, Dashboard, EventDetails, Events, ProjectDetails, ProjectPage, Transaction, Users } from './pages/index.jsx';
 
 // if user is login
 const user = true;
@@ -30,6 +30,10 @@ const router = createBrowserRouter([
     element: <Dashboard/>
   },
   {
+    path: "/users",
+    element: <Users/>
+  },
+  {
     path: "/events",
     element: <Events/>
   },
@@ -40,6 +44,18 @@ const router = createBrowserRouter([
   {
     path: "/attendance/:eventId/",
     element: <Attendance/>
+  },
+  {
+    path: "/Transaction",
+    element: <Transaction/>
+  },
+  {
+    path: "/projects",
+    element: <ProjectPage/>
+  },
+  {
+    path: "/projects/:projectId",
+    element: <ProjectDetails/>
   },
 ]);
 

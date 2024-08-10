@@ -9,7 +9,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
-import { PanTool } from '@mui/icons-material';
+import { Folder, List, PanTool } from '@mui/icons-material';
 
 function Navlist({ setopen }) {
   let location = useLocation();
@@ -19,7 +19,7 @@ function Navlist({ setopen }) {
       {location.pathname == '/' && (
         <NavLanding setopen={setopen} />
       )}
-      {userRole == 'admin' && (
+      {(userRole == 'admin' && location.pathname != '/') && (
         <NavAdmin/>
       )}
     </React.Fragment>
@@ -66,29 +66,40 @@ function NavAdmin() {
         </ListItemIcon>
         <ListItemText primary="Dashboard" />
       </ListItemButton>
-      <ListItemButton component={Link} to={'/events'} selected={location.pathname.startsWith('/events')}>
+
+      <ListItemButton component={Link} to={'/users'} selected={location.pathname.startsWith('/users')}>
         <ListItemIcon>
           <PeopleIcon />
         </ListItemIcon>
+        <ListItemText primary="Users" />
+      </ListItemButton>
+
+      <ListItemButton component={Link} to={'/events'} selected={location.pathname.startsWith('/events')}>
+        <ListItemIcon>
+          <List />
+        </ListItemIcon>
         <ListItemText primary="Events" />
       </ListItemButton>
-      <ListItemButton>
+      
+      <ListItemButton component={Link} to={'/projects'} selected={location.pathname.startsWith('/projects')}>
         <ListItemIcon>
-          <PanTool />
+          <Folder />
         </ListItemIcon>
-        <ListItemText primary="Attendance" />
+        <ListItemText primary="Projects" />
       </ListItemButton>
+
       <ListItemButton>
         <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
         <ListItemText primary="Reports" />
       </ListItemButton>
-      <ListItemButton>
+
+      <ListItemButton component={Link} to={'/transaction'} selected={location.pathname.startsWith('/transaction')}>
         <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
-        <ListItemText primary="Payment" />
+        <ListItemText primary="Transaction" />
       </ListItemButton>
     </React.Fragment>
   )

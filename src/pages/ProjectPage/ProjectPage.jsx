@@ -8,10 +8,10 @@ import Store from './Form/Store'
 import Update from './Form/Update'
 import Delete from './Form/Delete'
 
-function Events() {
+function ProjectPage() {
   return (
     <Master>
-      <Typography variant="h5" fontWeight='bold'>Events :</Typography>
+      <Typography variant="h5" fontWeight='bold'>Project List:</Typography>
       <Divider/>
       <Box sx={{mt: 2}}>
         <EventList/>
@@ -25,27 +25,38 @@ function EventList() {
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const Project = [
-    {
-      _id: '1',
-      name: 'Event 1',
-      date: '05/30/2024'
-    },
-    {
-      _id: '2',
-      name: 'Event 2',
-      date: '05/30/2024'
-    },
-    {
-      _id: '3',
-      name: 'Event 3',
-      date: '05/30/2024'
-    },
-    {
-      _id: '4',
-      name: 'Event 4',
-      date: '05/30/2024'
-    },
-  ]
+        {
+        _id: '1',
+        name: 'Project Alpha',
+        cost: 1500,
+        date: '2024-05-30',
+        },
+        {
+        _id: '2',
+        name: 'Project Beta',
+        cost: 2500,
+        date: '2024-06-15',
+        },
+        {
+        _id: '3',
+        name: 'Project Gamma',
+        cost: 1200,
+        date: '2024-07-20',
+        },
+        {
+        _id: '4',
+        name: 'Project Delta',
+        cost: 1800,
+        date: '2024-08-05',
+        },
+        {
+        _id: '5',
+        name: 'Project Epsilon',
+        cost: 2200,
+        date: '2024-09-10',
+        },
+    ];
+  
   return (
     <Grid container spacing={2}>
       {Project.map((item, index) => (
@@ -58,23 +69,21 @@ function EventList() {
           <CustomCard>
             <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
               <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <Typography>{item.name}</Typography>
+                <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary">{item.name}</Typography>
                 <DropDown >
                   <MenuItem onClick={() => setUpdateModal(true)}>Edit</MenuItem>
                   <MenuItem onClick={() => setDeleteModal(true)}>Delete</MenuItem>
                 </DropDown>
               </Box>
-              <Box sx={{textAlign: 'center'}} 
+              <Box sx={{display: 'flex',flexDirection: 'column' ,justifyContent: 'center', textDecoration: 'none', height: '15vh'}} 
                 component={Link}
-                to={`/events/${item._id}`}
+                to={`/projects/${item._id}`}
               >
-                <Typography color="primary">
-                  <Folder sx={{fontSize: '15vh'}}/>
-                </Typography>
+                <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {item.cost}</Typography>
+                <Typography textAlign='center' fontWeight='bold' color='primary'>Total Cost</Typography>
               </Box>
               <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
                 <Typography>Created At: {item.date}</Typography>
-                <Typography>Status:</Typography>
               </Box>
             </Box>
           </CustomCard>
@@ -95,7 +104,7 @@ function EventList() {
             justifyContent: 'center', 
             height: '100%'
           }}>
-            <Typography fontWeight='bold'>Add Event</Typography>
+            <Typography fontWeight='bold'>Add Project</Typography>
             <Add sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>
           </Box>
         </CustomCard>
@@ -132,4 +141,4 @@ function DeleteDrawer({open, handleClose}) {
   ) 
 }
 
-export default Events
+export default ProjectPage

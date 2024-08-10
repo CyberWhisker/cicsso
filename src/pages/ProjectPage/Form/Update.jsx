@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { Form } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-function Store() {
+function Update() {
     const [formData, setFormData] = useState({
         event: '',
         startDate: '',
@@ -33,7 +33,7 @@ function Store() {
 
     return (
         <Box sx={{ width: '60vh', p: 2 }}>
-            <Typography variant='h4' fontWeight='bold'>Add Event</Typography>
+            <Typography variant='h4' fontWeight='bold'>Update Event</Typography>
             <Box mt={2}>
                 <Form onSubmit={handleSubmit}>
                     <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
@@ -80,7 +80,7 @@ function Store() {
                             error={submitted && !formData.image}
                             helperText={submitted && !formData.image ? "Required" : ""}
                         />
-                        <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
+                        <Button type='submit' variant='contained' color='warning' sx={{ mt: 2 ,width: '100%'}}>
                             Submit
                         </Button>
                     </Box>
@@ -90,4 +90,4 @@ function Store() {
     );
 }
 
-export default Store;
+export default Update;
