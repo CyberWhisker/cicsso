@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Master from '../../layouts/Master'
 import { Box, Divider, Drawer, Grid, MenuItem, Typography } from '@mui/material'
 import { CustomCard, DeleteModal, DropDown } from '../../components'
@@ -46,6 +46,28 @@ function EventList() {
       date: '05/30/2024'
     },
   ]
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/event/');
+        
+        // Check if the response is OK
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+  
+        // Attempt to parse JSON
+        const data = await response.json();
+        setData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError(error.message);
+      }
+    };
+  
+    fetchData();
+  },[]);
   return (
     <Grid container spacing={2}>
       {Project.map((item, index) => (

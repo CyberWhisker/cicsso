@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Divider, Drawer, Grid, MenuItem, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, Divider, Drawer, Grid, MenuItem, TextField, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
 import { DataTable, DeleteModal } from '../../components';
 import Store from './Form/Store';
@@ -13,8 +13,7 @@ function Users() {
         <Master>
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6} sx={{display: 'flex', gap: 2}}>
-                    <Typography variant="h5" fontWeight="bold">Users List :</Typography>
-                    <Button variant="contained" onClick={() => setOpen(true)}>Add User</Button>
+                    <Typography variant="h5" fontWeight="bold">Users List : <strong style={{color: 'red'}}>Not yet Available</strong></Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
@@ -123,14 +122,16 @@ function UsersList() {
 
     return (
         <React.Fragment>
-        <DataTable rows={rows} columns={columns}>
-            <MenuItem onClick={() => setUpdateModal(true)}>
-            <Typography color="warning.main">Edit</Typography>
-            </MenuItem>
-            <MenuItem onClick={() => setDeleteModal(true)}>
-            <Typography color="error.main">Delete</Typography>
-            </MenuItem>
-        </DataTable>
+            <Card elevation={5}>
+                <DataTable rows={rows} columns={columns}>
+                    <MenuItem onClick={() => setUpdateModal(true)}>
+                    <Typography color="warning.main">Edit</Typography>
+                    </MenuItem>
+                    <MenuItem onClick={() => setDeleteModal(true)}>
+                    <Typography color="error.main">Delete</Typography>
+                    </MenuItem>
+                </DataTable>
+            </Card>
             <UpdateDrawer open={updateModal} setOpen={setUpdateModal} />
             <DeleteDrawer open={deleteModal} handleClose={() => setDeleteModal(false)} />
         </React.Fragment>

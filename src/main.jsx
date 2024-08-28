@@ -1,13 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import { Login, Register } from './pages/Auth'
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import { Attendance, Dashboard, EventDetails, Events, ProjectDetails, ProjectPage, Transaction, Users } from './pages/index.jsx';
+import Auth0Context from './context/Auth0Context.jsx';
+import AuthRoute from './components/AuthRoute.jsx';
 
 // if user is login
 const user = true;
@@ -18,49 +19,83 @@ const router = createBrowserRouter([
     element: <App/>,
   },
   {
-    path: "login",
-    element: <Login/>
-  },
-  {
-    path: "register",
-    element: <Register/>
-  },
-  {
     path: "/dashboard",
-    element: <Dashboard/>
+    element: 
+    (
+      <AuthRoute>
+        <Dashboard/>
+      </AuthRoute>
+    )
   },
   {
     path: "/users",
-    element: <Users/>
+    element: 
+    (
+      <AuthRoute>
+        <Users/>
+      </AuthRoute>
+    )
   },
   {
     path: "/events",
-    element: <Events/>
+    element: 
+    (
+      <AuthRoute>
+        <Events/>
+      </AuthRoute>
+    )
   },
   {
     path: "/events/:eventId/",
-    element: <EventDetails/>
+    element: 
+    (
+      <AuthRoute>
+        <EventDetails/>
+      </AuthRoute>
+    )
   },
   {
     path: "/attendance/:eventId/",
-    element: <Attendance/>
+    element:
+    (
+      <AuthRoute>
+        <Attendance/>
+      </AuthRoute>
+    ) 
   },
   {
     path: "/Transaction",
-    element: <Transaction/>
+    element: 
+    (
+      <AuthRoute>
+        <Transaction/>
+      </AuthRoute>
+    )
   },
   {
     path: "/projects",
-    element: <ProjectPage/>
+    element: 
+    (
+      <AuthRoute>
+        <ProjectPage/>
+      </AuthRoute>
+    )
   },
   {
     path: "/projects/:projectId",
-    element: <ProjectDetails/>
+    element: 
+    (
+      <AuthRoute>
+        <ProjectDetails/>
+      </AuthRoute>
+    )
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Auth0Context>
+      <RouterProvider router={router} />
+    </Auth0Context>
   </React.StrictMode>,
 )

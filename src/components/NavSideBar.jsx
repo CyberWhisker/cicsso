@@ -51,9 +51,9 @@ function NavSideBar({children}) {
       <CssBaseline />
       <Drawer variant="permanent" open={open} sx={{display: {xs: 'none', md: 'block'}}}>
         <List component="nav">
-          <ListItemButton onClick={toggleDrawer} sx={{height: '8vh'}}>
+          <ListItemButton onClick={toggleDrawer} sx={{height: '7.3vh'}}>
             <ListItemIcon>
-              <img src={Logo} alt="Logo" style={{height: '5.6vh', borderRadius: '100%'}}/>
+              <img src={Logo} alt="Logo" style={{height: '5vh', borderRadius: '100%'}}/>
             </ListItemIcon>
             <ListItemText primary="CICSSO" />
             <ChevronLeft/>
