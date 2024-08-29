@@ -22,72 +22,72 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: 
     (
-      <AuthRoute>
+      <>
         <Dashboard/>
-      </AuthRoute>
+      </>
     )
   },
   {
     path: "/users",
     element: 
     (
-      <AuthRoute>
+      <>
         <Users/>
-      </AuthRoute>
+      </>
     )
   },
   {
     path: "/events",
     element: 
     (
-      <AuthRoute>
+      <>
         <Events/>
-      </AuthRoute>
+      </>
     )
   },
   {
     path: "/events/:eventId/",
     element: 
     (
-      <AuthRoute>
+      <>
         <EventDetails/>
-      </AuthRoute>
+      </>
     )
   },
   {
     path: "/attendance/:eventId/",
     element:
     (
-      <AuthRoute>
+      <>
         <Attendance/>
-      </AuthRoute>
+      </>
     ) 
   },
   {
     path: "/Transaction",
     element: 
     (
-      <AuthRoute>
+      <>
         <Transaction/>
-      </AuthRoute>
+      </>
     )
   },
   {
     path: "/projects",
     element: 
     (
-      <AuthRoute>
+      <>
         <ProjectPage/>
-      </AuthRoute>
+      </>
     )
   },
   {
     path: "/projects/:projectId",
     element: 
     (
-      <AuthRoute>
+      <>
         <ProjectDetails/>
-      </AuthRoute>
+      </>
     )
   },
 ]);

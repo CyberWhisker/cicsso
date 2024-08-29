@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import Master from '../../layouts/Master'
-import { Box, Divider, Drawer, Grid, MenuItem, Typography } from '@mui/material'
+import { Box, Chip, Divider, Drawer, Grid, MenuItem, Skeleton, Stack, Typography } from '@mui/material'
 import { CustomCard, DeleteModal, DropDown } from '../../components'
 import { Add, Folder } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import Store from './Form/Store'
 import Update from './Form/Update'
 import Delete from './Form/Delete'
+import useFetch from 'react-fetch-hook'
 
 function Events() {
   return (
     <Master>
-      <Typography variant="h5" fontWeight='bold'>Events :</Typography>
-      <Divider/>
-      <Box sx={{mt: 2}}>
-        <EventList/>
-      </Box>
+      <Stack direction={'column'} spacing={2}>
+        <Typography variant="h5" fontWeight='bold'>Events :</Typography>
+        <Divider/>
+        <Box>
+          <EventList/>
+        </Box>
+      </Stack>
     </Master>
   )
 }
@@ -46,28 +49,26 @@ function EventList() {
       date: '05/30/2024'
     },
   ]
+  const {isLoading, error, data} = useFetch(`${import.meta.env.VITE_API}/api/event`);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/event/')
-          .then((res)=> {
-            console.log(res)
-          })
-          .catch((error) => {
-            console.log(error)
-          });
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError(error.message);
-      }
-    };
+  if (isLoading) {
+    return (
+      <Grid container spacing={2}>
+        <Grid 
+          item 
+          xs={6} 
+          md={4}
+        >
+          <Skeleton variant="rectangular" width={'50vh'} height={'25vh'} sx={{borderRadius: 5}}/>
+          <Skeleton variant="rectangular" width={'50vh'} height={'5vh'} sx={{borderRadius: 5 , mt: 2}}/>
+        </Grid>
+      </Grid>
+    )
+  }
   
-    fetchData();
-  },[]);
   return (
     <Grid container spacing={2}>
-      {Project.map((item, index) => (
+      {data.map((item, index) => (
         <Grid 
           item 
           xs={6} 
@@ -77,7 +78,7 @@ function EventList() {
           <CustomCard>
             <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
               <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <Typography>{item.name}</Typography>
+                <Typography fontWeight={'bold'}>{item.name}</Typography>
                 <DropDown >
                   <MenuItem onClick={() => setUpdateModal(true)}>Edit</MenuItem>
                   <MenuItem onClick={() => setDeleteModal(true)}>Delete</MenuItem>
@@ -92,8 +93,8 @@ function EventList() {
                 </Typography>
               </Box>
               <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
-                <Typography>Created At: {item.date}</Typography>
-                <Typography>Status:</Typography>
+                <Typography><strong>Period:</strong> {item.start_date} - {item.end_date}</Typography>
+                <Chip label='Status' color='success'/>
               </Box>
             </Box>
           </CustomCard>

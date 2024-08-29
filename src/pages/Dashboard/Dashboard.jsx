@@ -106,7 +106,7 @@ function EventList() {
                 <Typography fontWeight="bold">Events List:</Typography>
                 <Divider/>
                 {Data.map((item, index) => (
-                    <MenuItem sx={{display: 'flex', justifyContent: 'space-between'}}>
+                    <MenuItem sx={{display: 'flex', justifyContent: 'space-between'}} key={index}>
                         <Typography>{item.name}</Typography>
                         <Chip label={item.status} color={item.status == 'Active' ? 'success' : 'warning'}/>
                     </MenuItem>

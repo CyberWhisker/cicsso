@@ -14,7 +14,7 @@ function CustomToast() {
       pauseOnFocusLoss
       draggable
       pauseOnHover
-      theme={localStorage.getItem('theme')}
+      theme={localStorage.getItem('theme') ?? 'dark'}
       />
     )
 }
