@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Master from '../../layouts/Master'
 import { Box, Chip, Divider, Drawer, Grid, MenuItem, Skeleton, Stack, Typography } from '@mui/material'
 import { CustomCard, DeleteModal, DropDown } from '../../components'
@@ -6,40 +6,56 @@ import { Add, Folder } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import Store from './Form/Store'
 import Update from './Form/Update'
-import Delete from './Form/Delete'
 import useFetch from 'react-fetch-hook'
 import moment from 'moment';
 
 function Events() {
+  const [events, setEvents] = useState([]);
   return (
     <Master>
       <Stack direction={'column'} spacing={2}>
         <Typography variant="h5" fontWeight='bold'>Events :</Typography>
         <Divider/>
         <Box>
-          <EventList/>
+          <EventList events={events} setEvents={setEvents}/>
         </Box>
       </Stack>
     </Master>
   )
 }
 
-function formatDate(dateString) {
-  return moment(dateString).format('MMM-DD-YY');
-}
-
-function EventList() {
-  const [open, setOpen] = useState(false);
+function EventList({events, setEvents}) {
+  const [storeModal, setStoreModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-
-  const {isLoading, error, data} = useFetch(`${import.meta.env.VITE_API}/api/event`);
   const [updateData, setUpdateData] = useState([]);
+  const [deleteApi, setDeleteApi] = useState();
+  const [selectedId, setSelectedId] = useState();
+
+  const handleCloseModal = () => {
+    setStoreModal(false);
+    setUpdateModal(false);
+    setDeleteModal(false);
+  }
 
   const handleUpdate = (data) => {
     setUpdateModal(true);
     setUpdateData(data);
   }
+  const handleDelete = (id) => {
+    setDeleteModal(true);
+    setSelectedId(id)
+    setDeleteApi(`${import.meta.env.VITE_API}/api/event/${id}`)
+  }
+
+  const {isLoading, error, data} = useFetch(`${import.meta.env.VITE_API}/api/event`);
+
+  useEffect(() => {
+    if (data && !isLoading && !error) {
+      setEvents(data);
+    }
+  }, [data, isLoading, error, setEvents]);
+  
   if (isLoading) {
     return (
       <Grid container spacing={2}>
@@ -64,7 +80,7 @@ function EventList() {
       >
         <CustomCard>
           <Box 
-          onClick={() => setOpen(true)}
+          onClick={() => setStoreModal(true)}
           sx={{
             display: 'flex', 
             flexDirection: 'column', 
@@ -77,7 +93,7 @@ function EventList() {
           </Box>
         </CustomCard>
       </Grid>
-      {data.map((item, index) => (
+      {events.map((item, index) => (
         <Grid 
           item 
           xs={6} 
@@ -90,7 +106,7 @@ function EventList() {
                 <Typography fontWeight={'bold'}>{item.event}</Typography>
                 <DropDown >
                   <MenuItem onClick={() => handleUpdate(item)}>Edit</MenuItem>
-                  <MenuItem onClick={() => setDeleteModal(true)}>Delete</MenuItem>
+                  <MenuItem onClick={() => handleDelete(item._id)}>Delete</MenuItem>
                 </DropDown>
               </Box>
               <Box sx={{textAlign: 'center'}} 
@@ -110,17 +126,19 @@ function EventList() {
         </Grid>
       ))}
 
-      <Drawer open={open} anchor='right' onClose={() => setOpen(false)}>
-        <Store/>
+      <Drawer open={storeModal} anchor='right' onClose={handleCloseModal}>
+        <Store setEvents={setEvents} onClose={handleCloseModal}/>
       </Drawer>
-      <Drawer open={updateModal} anchor='right' onClose={() => setUpdateModal(false)}>
-        <Update data={updateData}/>
+      <Drawer open={updateModal} anchor='right' onClose={handleCloseModal}>
+        <Update data={updateData} setEvents={setEvents} events={events} onClose={handleCloseModal}/>
       </Drawer>
-      <DeleteModal open={deleteModal} anchor='right' onClose={() => setDeleteModal(false)}>
-        <Delete/>
-      </DeleteModal>
+      <DeleteModal open={deleteModal} anchor='right' onClose={handleCloseModal} api={deleteApi} datas={events} setEvents={setEvents} _id={selectedId}/>
     </Grid>
   )
+}
+
+function formatDate(dateString) {
+  return moment(dateString).format('MMM-DD-YY');
 }
 
 export default Events

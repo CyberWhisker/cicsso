@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Modal, Typography, Button, Divider } from '@mui/material';
+import { toast } from 'react-toastify';
 
 const modalStyle = {
     position: 'absolute',
@@ -26,7 +27,22 @@ const footerStyle = {
     p: 2
 };
 
-function DeleteModal({ open, onClose }) {
+function DeleteModal({ open, onClose, api, datas, setEvents, _id}) {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const response = await fetch(api, {
+            method: 'DELETE',
+            header: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (response.ok) {
+            const newData = datas.filter(data => data._id !== _id)
+            setEvents([...newData])
+            toast.success("Successfully deleted")
+            onClose()
+        }
+    }
     return (
         <Modal
             open={open}
@@ -44,14 +60,16 @@ function DeleteModal({ open, onClose }) {
                     Are you sure you want to delete this item? This action cannot be undone.
                 </Typography>
                 <Divider/>
-                <Box sx={footerStyle}>
-                    <Button variant="outlined" onClick={onClose}>
-                        Cancel
-                    </Button>
-                    <Button variant="contained" color="error" onClick={onClose}>
-                        Delete
-                    </Button>
-                </Box>
+                <form onSubmit={handleSubmit}>
+                    <Box sx={footerStyle}>
+                        <Button variant="outlined" onClick={onClose}>
+                            Cancel
+                        </Button>
+                        <Button variant="contained" color="error" type='submit'>
+                            Delete
+                        </Button>
+                    </Box>
+                </form>
             </Box>
         </Modal>
     );

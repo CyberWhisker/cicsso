@@ -6,7 +6,7 @@ import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-picker
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import moment from 'moment';
 
-function Update({data}) {
+function Update({data, setEvents, events, onClose}) {
     const [formData, setFormData] = useState(data);
     const [submitted, setSubmitted] = useState(false);
 
@@ -42,16 +42,12 @@ function Update({data}) {
         })
 
         if (response.ok) {
-            setFormData({
-                event: '',
-                startDate: null,
-                endDate: null,
-                amIn: null,
-                amOut: null,
-                pmIn: null,
-                pmOut: null,
-                image: ''
-            });
+            const updatedEvent = await response.json();
+            const updatedEvents = events.map(event => 
+                event._id === updatedEvent._id ? updatedEvent : event
+            );
+            onClose()
+            setEvents(updatedEvents);
             toast.success("Event updated successfully");
         }
 
@@ -153,8 +149,6 @@ function Update({data}) {
                                 value={formData.image}
                                 onChange={handleChange}
                                 type='file'
-                                error={submitted && !formData.image}
-                                helperText={submitted && !formData.image ? "Required" : ""}
                             />
                             <Button type='submit' variant='contained' color='warning' sx={{ mt: 2 ,width: '100%'}}>
                                 Submit

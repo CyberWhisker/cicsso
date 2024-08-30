@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-function Store() {
+function Store({setEvents, onClose}) {
     const [formData, setFormData] = useState({
         event: '',
         startDate: null,
@@ -61,6 +61,10 @@ function Store() {
         })
 
         if (response.ok) {
+            const newData = await response.json()
+            setEvents(prevEvents => [newData, ...prevEvents])
+            toast.success("Event added successfully");
+            onClose()
             setFormData({
                 event: '',
                 startDate: null,
@@ -71,7 +75,6 @@ function Store() {
                 pmOut: null,
                 image: ''
             });
-            toast.success("Event added successfully");
         }
 
         setSubmitted(false);
@@ -177,8 +180,6 @@ function Store() {
                                 value={formData.image}
                                 onChange={handleChange}
                                 type='file'
-                                error={submitted && !formData.image}
-                                helperText={submitted && !formData.image ? "Required" : ""}
                             />
                             <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
                                 Submit
