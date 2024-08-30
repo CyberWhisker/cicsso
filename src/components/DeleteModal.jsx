@@ -26,11 +26,11 @@ const footerStyle = {
     p: 2
 };
 
-function DeleteModal({ open, handleClose, handleDelete }) {
+function DeleteModal({ open, onClose }) {
     return (
         <Modal
             open={open}
-            onClose={handleClose}
+            onClose={onClose}
             aria-labelledby="delete-modal-title"
             aria-describedby="delete-modal-description"
         >
@@ -45,10 +45,10 @@ function DeleteModal({ open, handleClose, handleDelete }) {
                 </Typography>
                 <Divider/>
                 <Box sx={footerStyle}>
-                    <Button variant="outlined" onClick={handleClose}>
+                    <Button variant="outlined" onClick={onClose}>
                         Cancel
                     </Button>
-                    <Button variant="contained" color="error" onClick={handleDelete}>
+                    <Button variant="contained" color="error" onClick={onClose}>
                         Delete
                     </Button>
                 </Box>

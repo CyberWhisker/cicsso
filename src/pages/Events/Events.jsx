@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Master from '../../layouts/Master'
 import { Box, Chip, Divider, Drawer, Grid, MenuItem, Skeleton, Stack, Typography } from '@mui/material'
 import { CustomCard, DeleteModal, DropDown } from '../../components'
@@ -8,6 +8,7 @@ import Store from './Form/Store'
 import Update from './Form/Update'
 import Delete from './Form/Delete'
 import useFetch from 'react-fetch-hook'
+import moment from 'moment';
 
 function Events() {
   return (
@@ -23,34 +24,22 @@ function Events() {
   )
 }
 
+function formatDate(dateString) {
+  return moment(dateString).format('MMM-DD-YY');
+}
+
 function EventList() {
   const [open, setOpen] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const Project = [
-    {
-      _id: '1',
-      name: 'Event 1',
-      date: '05/30/2024'
-    },
-    {
-      _id: '2',
-      name: 'Event 2',
-      date: '05/30/2024'
-    },
-    {
-      _id: '3',
-      name: 'Event 3',
-      date: '05/30/2024'
-    },
-    {
-      _id: '4',
-      name: 'Event 4',
-      date: '05/30/2024'
-    },
-  ]
-  const {isLoading, error, data} = useFetch(`${import.meta.env.VITE_API}/api/event`);
 
+  const {isLoading, error, data} = useFetch(`${import.meta.env.VITE_API}/api/event`);
+  const [updateData, setUpdateData] = useState([]);
+
+  const handleUpdate = (data) => {
+    setUpdateModal(true);
+    setUpdateData(data);
+  }
   if (isLoading) {
     return (
       <Grid container spacing={2}>
@@ -59,8 +48,8 @@ function EventList() {
           xs={6} 
           md={4}
         >
-          <Skeleton variant="rectangular" width={'50vh'} height={'25vh'} sx={{borderRadius: 5}}/>
-          <Skeleton variant="rectangular" width={'50vh'} height={'5vh'} sx={{borderRadius: 5 , mt: 2}}/>
+          <Skeleton variant="rectangular" width={'100%'} height={'25vh'} sx={{borderRadius: 5}}/>
+          <Skeleton variant="rectangular" width={'100%'} height={'5vh'} sx={{borderRadius: 5 , mt: 2}}/>
         </Grid>
       </Grid>
     )
@@ -68,38 +57,6 @@ function EventList() {
   
   return (
     <Grid container spacing={2}>
-      {data.map((item, index) => (
-        <Grid 
-          item 
-          xs={6} 
-          md={4}
-          key={index}
-        >
-          <CustomCard>
-            <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
-              <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <Typography fontWeight={'bold'}>{item.name}</Typography>
-                <DropDown >
-                  <MenuItem onClick={() => setUpdateModal(true)}>Edit</MenuItem>
-                  <MenuItem onClick={() => setDeleteModal(true)}>Delete</MenuItem>
-                </DropDown>
-              </Box>
-              <Box sx={{textAlign: 'center'}} 
-                component={Link}
-                to={`/events/${item._id}`}
-              >
-                <Typography color="primary">
-                  <Folder sx={{fontSize: '15vh'}}/>
-                </Typography>
-              </Box>
-              <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
-                <Typography><strong>Period:</strong> {item.start_date} - {item.end_date}</Typography>
-                <Chip label='Status' color='success'/>
-              </Box>
-            </Box>
-          </CustomCard>
-        </Grid>
-      ))}
       <Grid 
         item 
         xs={6} 
@@ -113,43 +70,57 @@ function EventList() {
             flexDirection: 'column', 
             alignItems: 'center', 
             justifyContent: 'center', 
-            height: '100%'
+            height: '23vh',
           }}>
             <Typography fontWeight='bold'>Add Event</Typography>
             <Add sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>
           </Box>
         </CustomCard>
       </Grid>
+      {data.map((item, index) => (
+        <Grid 
+          item 
+          xs={6} 
+          md={4}
+          key={index}
+        >
+          <CustomCard>
+            <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '23vh',}}>
+              <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Typography fontWeight={'bold'}>{item.event}</Typography>
+                <DropDown >
+                  <MenuItem onClick={() => handleUpdate(item)}>Edit</MenuItem>
+                  <MenuItem onClick={() => setDeleteModal(true)}>Delete</MenuItem>
+                </DropDown>
+              </Box>
+              <Box sx={{textAlign: 'center'}} 
+                component={Link}
+                to={`/events/${item._id}`}
+              >
+                <Typography color="primary">
+                  <Folder sx={{fontSize: '15vh'}}/>
+                </Typography>
+              </Box>
+              <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+                <Typography><strong>Period:</strong> {formatDate(item.startDate)} - {formatDate(item.endDate)}</Typography>
+                <Chip label='Status' color='success'/>
+              </Box>
+            </Box>
+          </CustomCard>
+        </Grid>
+      ))}
 
-      <StoreDrawer open={open} setOpen={setOpen}/>
-      <UpdateDrawer open={updateModal} setOpen={setUpdateModal}/>
-      <DeleteDrawer open={deleteModal} handleClose={() => setDeleteModal(false)}/>
+      <Drawer open={open} anchor='right' onClose={() => setOpen(false)}>
+        <Store/>
+      </Drawer>
+      <Drawer open={updateModal} anchor='right' onClose={() => setUpdateModal(false)}>
+        <Update data={updateData}/>
+      </Drawer>
+      <DeleteModal open={deleteModal} anchor='right' onClose={() => setDeleteModal(false)}>
+        <Delete/>
+      </DeleteModal>
     </Grid>
   )
-}
-
-function StoreDrawer({open, setOpen}) {
-  return (
-    <Drawer open={open} anchor='right' onClose={() => setOpen(false)}>
-      <Store/>
-    </Drawer>
-  ) 
-}
-
-function UpdateDrawer({open, setOpen}) {
-  return (
-    <Drawer open={open} anchor='right' onClose={() => setOpen(false)}>
-      <Update/>
-    </Drawer>
-  ) 
-}
-
-function DeleteDrawer({open, handleClose}) {
-  return (
-    <DeleteModal open={open} anchor='right' handleClose={handleClose}>
-      <Delete/>
-    </DeleteModal>
-  ) 
 }
 
 export default Events

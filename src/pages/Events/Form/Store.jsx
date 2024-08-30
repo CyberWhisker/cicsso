@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/material';
 import { Form } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
@@ -29,11 +29,11 @@ function Store() {
         setFormData({ ...formData, [name]: time });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
 
-        const { event, startDate, endDate, amIn, amOut, pmIn, pmOut } = formData;
+        const { event, startDate, endDate, amIn, amOut, pmIn, pmOut, image } = formData;
 
         // Check if all fields are filled
         if (!event || !startDate || !endDate || !amIn || !amOut || !pmIn || !pmOut) {
@@ -41,36 +41,39 @@ function Store() {
             return;
         }
 
-        // Extract formatted dates and times
-        const formattedStartDate = startDate.format('YYYY-MM-DD');
-        const formattedEndDate = endDate.format('YYYY-MM-DD');
-        const formattedAmIn = amIn.format('HH:mm');
-        const formattedAmOut = amOut.format('HH:mm');
-        const formattedPmIn = pmIn.format('HH:mm');
-        const formattedPmOut = pmOut.format('HH:mm');
-
-        console.log("Event submitted:", {
+        const dataToSend = {
             event,
-            startDate: formattedStartDate,
-            endDate: formattedEndDate,
-            amIn: formattedAmIn,
-            amOut: formattedAmOut,
-            pmIn: formattedPmIn,
-            pmOut: formattedPmOut,
-            image: formData.image,
-        });
+            startDate: startDate ? startDate.toDate() : null,
+            endDate: endDate ? endDate.toDate() : null,
+            amIn: amIn ? amIn.toDate() : null,
+            amOut: amOut ? amOut.toDate() : null,
+            pmIn: pmIn ? pmIn.toDate() : null,
+            pmOut: pmOut ? pmOut.toDate() : null,
+            image
+        };
 
-        toast.success("Event added successfully");
-        setFormData({
-            event: '',
-            startDate: null,
-            endDate: null,
-            amIn: null,
-            amOut: null,
-            pmIn: null,
-            pmOut: null,
-            image: ''
-        });
+        const response = await fetch(`${import.meta.env.VITE_API}/api/event`, {
+            method: 'POST',
+            body: JSON.stringify(dataToSend),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (response.ok) {
+            setFormData({
+                event: '',
+                startDate: null,
+                endDate: null,
+                amIn: null,
+                amOut: null,
+                pmIn: null,
+                pmOut: null,
+                image: ''
+            });
+            toast.success("Event added successfully");
+        }
+
         setSubmitted(false);
     };
 
@@ -91,6 +94,8 @@ function Store() {
                                 error={submitted && !formData.event}
                                 helperText={submitted && !formData.event ? "Required" : ""}
                             />
+                            <Divider/>
+                            <Typography>Date</Typography>
                             <DatePicker 
                                 label="Start Date"
                                 value={formData.startDate}
@@ -113,6 +118,8 @@ function Store() {
                                     },
                                 }}
                             />
+                            <Divider/>
+                            <Typography>Time</Typography>
                             <Stack direction={'row'} spacing={2}>
                                 <TimePicker 
                                     label="AM IN"
@@ -161,6 +168,7 @@ function Store() {
                                     }}
                                 />
                             </Stack>
+                            <Divider/>
                             <Typography>Insert Banner</Typography>
                             <TextField
                                 name='image'
