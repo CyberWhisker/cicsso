@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Avatar, Box, Button, Card, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
 import { CustomCard, DeleteModal } from '../../components';
@@ -8,9 +8,18 @@ import Delete from './Form/Delete';
 import { Person } from '@mui/icons-material';
 import useFetch from 'react-fetch-hook';
 import { toast } from 'react-toastify';
+import { getUsers } from '../../api/userApi';
 
 
 function Users() {
+    const [users, setUsers] = useState([]);
+    const fetchUsers = useCallback(() => {
+        getUsers(setUsers);
+    }, []);
+    useEffect(() => {
+        fetchUsers()
+        console.log(users)
+    }, [fetchUsers])
     const [open, setOpen] = useState(false);
     const [userData, setUserData] = useState(null);
     const [detailsLoading, setDetailsLoading] = useState(false);
