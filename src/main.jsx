@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
-import { Attendance, Dashboard, EventDetails, Events, ProjectDetails, ProjectPage, Transaction, Users } from './pages/index.jsx';
+import { Attendance, Dashboard, Events, ProjectDetails, ProjectPage, Schedule, Transaction, Users } from './pages/index.jsx';
 import Auth0Context from './context/Auth0Context.jsx';
 import AuthRoute from './components/AuthRoute.jsx';
 
@@ -46,16 +46,16 @@ const router = createBrowserRouter([
     )
   },
   {
-    path: "/events/:eventId/",
+    path: "/schedule/:id/",
     element: 
     (
       <>
-        <EventDetails/>
+        <Schedule/>
       </>
     )
   },
   {
-    path: "/attendance/:eventId/",
+    path: "/attendance/:id/",
     element:
     (
       <>

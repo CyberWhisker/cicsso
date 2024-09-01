@@ -1,21 +1,14 @@
 import React, { useState } from 'react';
-import { Box, Button, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/material';
 import { Form } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
-function Update({data, setEvents, events, onClose}) {
+function Update({data, onClose, setSchedule, schedule}) {
     const [formData, setFormData] = useState(data);
     const [submitted, setSubmitted] = useState(false);
-
-    const handleChange = (e) => 
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-
-    const handleDateChange = (name, date) => {
-        setFormData({ ...formData, [name]: date });
-    };
 
     const handleTimeChange = (name, time) => {
         setFormData({ ...formData, [name]: time });
@@ -25,15 +18,15 @@ function Update({data, setEvents, events, onClose}) {
         e.preventDefault();
         setSubmitted(true);
 
-        const { event, startDate, endDate, amIn, amOut, pmIn, pmOut } = formData;
+        const { amIn, amOut, pmIn, pmOut } = formData;
 
         // Check if all fields are filled
-        if (!event || !startDate || !endDate || !amIn || !amOut || !pmIn || !pmOut) {
+        if (!amIn || !amOut || !pmIn || !pmOut) {
             toast.error("All fields, including times, are required");
             return;
         }
 
-        const response = await fetch(`${import.meta.env.VITE_API}/api/event/${formData._id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/schedule/${formData._id}`, {
             method: 'PATCH',
             body: JSON.stringify(formData),
             headers: {
@@ -42,60 +35,33 @@ function Update({data, setEvents, events, onClose}) {
         })
 
         if (response.ok) {
-            const updatedEvent = await response.json();
-            const updatedEvents = events.map(event => 
-                event._id === updatedEvent._id ? updatedEvent : event
+            const newData = await response.json();
+            const newDatas = schedule.map(item => 
+                item._id === newData._id ? newData : item
             );
             onClose()
-            setEvents(updatedEvents);
-            toast.success("Event updated successfully");
+            setSchedule(newDatas);
+            toast.success("Updated successfully");
         }
 
         setSubmitted(false);
     };
-
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
-            <Box sx={{ width: '70vh', p: 2 }}>
+            <Box sx={{ width: '60vh', p: 2 }}>
                 <Typography variant='h4' fontWeight='bold'>Update Event</Typography>
                 <Box mt={2}>
                     <Form onSubmit={handleSubmit}>
-                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
+                        <Stack direction={'column'} spacing={2}>
                             <TextField
-                                label='Enter Event'
+                                label="Date"
                                 name='event'
                                 variant="outlined"
                                 sx={{ width: '100%'}}
-                                value={formData.event}
-                                onChange={handleChange}
-                                error={submitted && !formData.event}
-                                helperText={submitted && !formData.event ? "Required" : ""}
+                                value={moment(formData.date).format('MMMM - DD - YYYY')}
+                                disabled
                             />
-                            <DatePicker 
-                                label="Start Date"
-                                defaultValue={moment(formData.startDate)}
-                                onChange={(newValue) => handleDateChange('startDate', newValue)}
-                                minDate={moment()}
-                                maxDate={moment(formData.endDate ? formData.endDate : null )}
-                                slotProps={{
-                                    textField: {
-                                        error: submitted && !formData.startDate,
-                                        helperText: submitted && !formData.startDate ? "Required" : "",
-                                    },
-                                }}
-                            />
-                            <DatePicker 
-                                label="End Date"
-                                defaultValue={moment(formData.endDate)}
-                                onChange={(newValue) => handleDateChange('endDate', newValue)}
-                                minDate={moment(formData.startDate ? formData.startDate : null )}
-                                slotProps={{
-                                    textField: {
-                                        error: submitted && !formData.endDate,
-                                        helperText: submitted && !formData.endDate ? "Required" : "",
-                                    },
-                                }}
-                            />
+                            <Divider/>
                             <Stack direction={'row'} spacing={2}>
                                 <TimePicker 
                                     label="AM IN"
@@ -123,7 +89,7 @@ function Update({data, setEvents, events, onClose}) {
                             <Stack direction={'row'} spacing={2}>
                                 <TimePicker 
                                     label="PM IN"
-                                    defaultValue={moment(formData.pmAn)}
+                                    defaultValue={moment(formData.pmIn)}
                                     onChange={(newValue) => handleTimeChange('pmIn', newValue)}
                                     slotProps={{
                                         textField: {
@@ -144,19 +110,10 @@ function Update({data, setEvents, events, onClose}) {
                                     }}
                                 />
                             </Stack>
-                            <Typography>Insert Banner</Typography>
-                            <TextField
-                                name='image'
-                                variant="outlined"
-                                sx={{ width: '100%'}}
-                                value={formData.image}
-                                onChange={handleChange}
-                                type='file'
-                            />
                             <Button type='submit' variant='contained' color='warning' sx={{ mt: 2 ,width: '100%'}}>
                                 Submit
                             </Button>
-                        </Box>
+                        </Stack>
                     </Form>
                 </Box>
             </Box>

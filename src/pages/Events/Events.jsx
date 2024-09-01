@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Master from '../../layouts/Master'
-import { Box, Chip, Divider, Drawer, Grid, MenuItem, Skeleton, Stack, Typography } from '@mui/material'
+import { Box, Chip, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, Typography } from '@mui/material'
 import { CustomCard, DeleteModal, DropDown } from '../../components'
 import { Add, Folder } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
@@ -10,21 +10,27 @@ import useFetch from 'react-fetch-hook'
 import moment from 'moment';
 
 function Events() {
-  const [events, setEvents] = useState([]);
+  const {isLoading, error, data} = useFetch(`${import.meta.env.VITE_API}/api/event`);
   return (
     <Master>
       <Stack direction={'column'} spacing={2}>
         <Typography variant="h5" fontWeight='bold'>Events :</Typography>
-        <Divider/>
         <Box>
-          <EventList events={events} setEvents={setEvents}/>
+          <Divider/>
+          {isLoading && (
+            <LinearProgress/>
+          )}
+        </Box>
+        <Box>
+          <EventList isLoading={isLoading} data={data} error={error}/>
         </Box>
       </Stack>
     </Master>
   )
 }
 
-function EventList({events, setEvents}) {
+function EventList({isLoading, error, data}) {
+  const [events, setEvents] = useState([]);
   const [storeModal, setStoreModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
@@ -48,28 +54,12 @@ function EventList({events, setEvents}) {
     setDeleteApi(`${import.meta.env.VITE_API}/api/event/${id}`)
   }
 
-  const {isLoading, error, data} = useFetch(`${import.meta.env.VITE_API}/api/event`);
 
   useEffect(() => {
     if (data && !isLoading && !error) {
       setEvents(data);
     }
   }, [data, isLoading, error, setEvents]);
-  
-  if (isLoading) {
-    return (
-      <Grid container spacing={2}>
-        <Grid 
-          item 
-          xs={6} 
-          md={4}
-        >
-          <Skeleton variant="rectangular" width={'100%'} height={'25vh'} sx={{borderRadius: 5}}/>
-          <Skeleton variant="rectangular" width={'100%'} height={'5vh'} sx={{borderRadius: 5 , mt: 2}}/>
-        </Grid>
-      </Grid>
-    )
-  }
   
   return (
     <Grid container spacing={2}>
@@ -111,7 +101,7 @@ function EventList({events, setEvents}) {
               </Box>
               <Box sx={{textAlign: 'center'}} 
                 component={Link}
-                to={`/events/${item._id}`}
+                to={`/schedule/${item._id}`}
               >
                 <Typography color="primary">
                   <Folder sx={{fontSize: '15vh'}}/>

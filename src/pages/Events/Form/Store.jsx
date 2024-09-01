@@ -3,19 +3,26 @@ import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/materia
 import { Form } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import moment from 'moment';
 
 function Store({setEvents, onClose}) {
     const [formData, setFormData] = useState({
         event: '',
         startDate: null,
         endDate: null,
+        image: ''
+    });
+
+    const [formSchedule, setFormSchedule] = useState({
+        eventId: '',
+        date: null,
         amIn: null,
         amOut: null,
         pmIn: null,
         pmOut: null,
-        image: ''
     });
+
     const [submitted, setSubmitted] = useState(false);
 
     const handleChange = (e) => 
@@ -26,14 +33,15 @@ function Store({setEvents, onClose}) {
     };
 
     const handleTimeChange = (name, time) => {
-        setFormData({ ...formData, [name]: time });
+        setFormSchedule({ ...formSchedule, [name]: time });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
 
-        const { event, startDate, endDate, amIn, amOut, pmIn, pmOut, image } = formData;
+        const { event, startDate, endDate } = formData;
+        const { amIn, amOut, pmIn, pmOut } = formSchedule;
 
         // Check if all fields are filled
         if (!event || !startDate || !endDate || !amIn || !amOut || !pmIn || !pmOut) {
@@ -41,20 +49,30 @@ function Store({setEvents, onClose}) {
             return;
         }
 
-        const dataToSend = {
-            event,
-            startDate: startDate ? startDate.toDate() : null,
-            endDate: endDate ? endDate.toDate() : null,
-            amIn: amIn ? amIn.toDate() : null,
-            amOut: amOut ? amOut.toDate() : null,
-            pmIn: pmIn ? pmIn.toDate() : null,
-            pmOut: pmOut ? pmOut.toDate() : null,
-            image
-        };
+        handleEvent();
+
+        setFormData({
+            event: '',
+            startDate: null,
+            endDate: null,
+            image: ''
+        });
+        setFormSchedule({
+            eventId: '',
+            date: null,
+            amIn: null,
+            amOut: null,
+            pmIn: null,
+            pmOut: null,
+        });
+        setSubmitted(false);
+    };
+
+    const handleEvent = async () => {
 
         const response = await fetch(`${import.meta.env.VITE_API}/api/event`, {
             method: 'POST',
-            body: JSON.stringify(dataToSend),
+            body: JSON.stringify(formData),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -62,26 +80,50 @@ function Store({setEvents, onClose}) {
 
         if (response.ok) {
             const newData = await response.json()
+            const eventId = newData._id;
             setEvents(prevEvents => [newData, ...prevEvents])
             toast.success("Event added successfully");
             onClose()
-            setFormData({
-                event: '',
-                startDate: null,
-                endDate: null,
-                amIn: null,
-                amOut: null,
-                pmIn: null,
-                pmOut: null,
-                image: ''
-            });
+            await handleSchedule(eventId);
         }
+    }
 
-        setSubmitted(false);
+    const handleSchedule = async (eventId) => {
+        let minDate = moment(formData.startDate);
+        const endDate = moment(formData.endDate);
+    
+        while (minDate.isSameOrBefore(endDate)) {
+            const currentSchedule = {
+                eventId: eventId,
+                date: minDate, 
+                amIn: formSchedule.amIn,
+                amOut: formSchedule.amOut,
+                pmIn: formSchedule.pmIn,
+                pmOut: formSchedule.pmOut,
+            };
+    
+            // Make the API call using the current schedule data
+            const response = await fetch(`${import.meta.env.VITE_API}/api/schedule`, {
+                method: 'POST',
+                body: JSON.stringify(currentSchedule),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            // Handle the response
+            if (response.ok) {
+                toast.success("Schedule added successfully");
+            } else {
+                toast.error("Failed to add schedule");
+            }
+    
+            // Move to the next day
+            minDate.add(1, 'days');
+        }
     };
-
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
             <Box sx={{ width: '70vh', p: 2 }}>
                 <Typography variant='h4' fontWeight='bold'>Add Event</Typography>
                 <Box mt={2}>
@@ -103,6 +145,8 @@ function Store({setEvents, onClose}) {
                                 label="Start Date"
                                 value={formData.startDate}
                                 onChange={(newValue) => handleDateChange('startDate', newValue)}
+                                minDate={moment()}
+                                maxDate={moment(formData.endDate ? formData.endDate : null )}
                                 slotProps={{
                                     textField: {
                                         error: submitted && !formData.startDate,
@@ -114,6 +158,7 @@ function Store({setEvents, onClose}) {
                                 label="End Date"
                                 value={formData.endDate}
                                 onChange={(newValue) => handleDateChange('endDate', newValue)}
+                                minDate={moment(formData.startDate ? formData.startDate : null )}
                                 slotProps={{
                                     textField: {
                                         error: submitted && !formData.endDate,
@@ -126,23 +171,23 @@ function Store({setEvents, onClose}) {
                             <Stack direction={'row'} spacing={2}>
                                 <TimePicker 
                                     label="AM IN"
-                                    value={formData.amIn}
+                                    value={formSchedule.amIn}
                                     onChange={(newValue) => handleTimeChange('amIn', newValue)}
                                     slotProps={{
                                         textField: {
-                                            error: submitted && !formData.amIn,
-                                            helperText: submitted && !formData.amIn ? "Required" : "",
+                                            error: submitted && !formSchedule.amIn,
+                                            helperText: submitted && !formSchedule.amIn ? "Required" : "",
                                         },
                                     }}
                                 />
                                 <TimePicker 
                                     label="AM OUT"
-                                    value={formData.amOut}
+                                    value={formSchedule.amOut}
                                     onChange={(newValue) => handleTimeChange('amOut', newValue)}
                                     slotProps={{
                                         textField: {
-                                            error: submitted && !formData.amOut,
-                                            helperText: submitted && !formData.amOut ? "Required" : "",
+                                            error: submitted && !formSchedule.amOut,
+                                            helperText: submitted && !formSchedule.amOut ? "Required" : "",
                                         },
                                     }}
                                 />
@@ -150,23 +195,23 @@ function Store({setEvents, onClose}) {
                             <Stack direction={'row'} spacing={2}>
                                 <TimePicker 
                                     label="PM IN"
-                                    value={formData.pmIn}
+                                    value={formSchedule.pmIn}
                                     onChange={(newValue) => handleTimeChange('pmIn', newValue)}
                                     slotProps={{
                                         textField: {
-                                            error: submitted && !formData.pmIn,
-                                            helperText: submitted && !formData.pmIn ? "Required" : "",
+                                            error: submitted && !formSchedule.pmIn,
+                                            helperText: submitted && !formSchedule.pmIn ? "Required" : "",
                                         },
                                     }}
                                 />
                                 <TimePicker 
                                     label="PM OUT"
-                                    value={formData.pmOut}
+                                    value={formSchedule.pmOut}
                                     onChange={(newValue) => handleTimeChange('pmOut', newValue)}
                                     slotProps={{
                                         textField: {
-                                            error: submitted && !formData.pmOut,
-                                            helperText: submitted && !formData.pmOut ? "Required" : "",
+                                            error: submitted && !formSchedule.pmOut,
+                                            helperText: submitted && !formSchedule.pmOut ? "Required" : "",
                                         },
                                     }}
                                 />

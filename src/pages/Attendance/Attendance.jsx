@@ -5,15 +5,20 @@ import { DataTable, DeleteModal, DropDown } from '../../components';
 import Store from './Form/Store';
 import Update from './Form/Update';
 import Delete from './Form/Delete';
+import { Link, useParams } from 'react-router-dom';
+import useFetch from 'react-fetch-hook';
+import { KeyboardReturn } from '@mui/icons-material';
 
 function Attendance() {
+  const {id} = useParams();
+  const {isLoading, data, error} = useFetch(`${import.meta.env.VITE_API}/api/schedule/${id}`);
   const [open, setOpen] = useState(false);
   return (
     <Master>
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} md={6} sx={{display: 'flex', gap: 2}}>
           <Typography variant="h5" fontWeight="bold">Attendance List :</Typography>
-          <Button variant="contained" onClick={() => setOpen(true)}>Add Attendance</Button>
+          <Button variant="contained" component={Link} to={`/schedule/${!isLoading && data[0].eventId}`} startIcon={<KeyboardReturn/>}>Schedule List</Button>
         </Grid>
         <Grid item xs={12} md={6}>
           <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
