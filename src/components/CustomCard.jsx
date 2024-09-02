@@ -16,6 +16,7 @@ function CustomCard({children}) {
         },
         height: '100%',
       }}
+      elevation={5}
     >
       {children}
     </Card>

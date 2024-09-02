@@ -9,18 +9,23 @@ const lightTheme = createTheme({
   palette: {
     mode: 'light',
   },
+  MuiCard: {
+    styleOverrides: {
+      root: {
+        borderRadius: 15,
+      },
+    },
+  },
 });
 
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
   },
-  components: {
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 15, // Adjust the radius value as needed
-        },
+  MuiCard: {
+    styleOverrides: {
+      root: {
+        borderRadius: 15
       },
     },
   },
