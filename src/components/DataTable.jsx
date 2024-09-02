@@ -9,6 +9,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import DropDown from './DropDown';
 import { useTheme } from '@emotion/react';
+import { Card } from '@mui/material';
 
 export default function DataTable({columns, rows, children}) {
   const [page, setPage] = React.useState(0);
@@ -26,7 +27,7 @@ export default function DataTable({columns, rows, children}) {
   const theme = useTheme();
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+    <Card sx={{ width: '100%', overflow: 'hidden' }} elevation={5}>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -89,6 +90,6 @@ export default function DataTable({columns, rows, children}) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Paper>
+    </Card>
   );
 }

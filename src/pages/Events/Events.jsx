@@ -83,38 +83,57 @@ function EventList({isLoading, error, data}) {
           </Box>
         </CustomCard>
       </Grid>
-      {events.map((item, index) => (
-        <Grid 
-          item 
-          xs={6} 
-          md={4}
-          key={index}
-        >
-          <CustomCard>
-            <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '23vh',}}>
-              <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <Typography fontWeight={'bold'}>{item.event}</Typography>
-                <DropDown >
-                  <MenuItem onClick={() => handleUpdate(item)}>Edit</MenuItem>
-                  <MenuItem onClick={() => handleDelete(item._id)}>Delete</MenuItem>
-                </DropDown>
+      {events.map((item, index) => {
+        const startDate = moment(item.startDate);
+        const endDate = moment(item.endDate);
+        const today = moment();
+        // Determine status based on today's date
+        let status = '';
+        let color = '';
+
+        if (today < startDate) {
+          status = 'Pending';
+          color = 'warning';  // You can use 'warning' for pending status
+        } else if (today >= startDate && today <= endDate) {
+          status = 'Ongoing'; 
+          color = 'success';  // Success status if today is within the event period
+        } else if (today > endDate) {
+          status = 'Expired';
+          color = 'error';    // Expired status if today is past the end date
+        }
+        return (
+          <Grid 
+            item 
+            xs={6} 
+            md={4}
+            key={index}
+          >
+            <CustomCard>
+              <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '23vh',}}>
+                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <Typography fontWeight={'bold'}>{item.event}</Typography>
+                  <DropDown >
+                    <MenuItem onClick={() => handleUpdate(item)}>Edit</MenuItem>
+                    <MenuItem onClick={() => handleDelete(item._id)}>Delete</MenuItem>
+                  </DropDown>
+                </Box>
+                <Box sx={{textAlign: 'center'}} 
+                  component={Link}
+                  to={`/schedule/${item._id}`}
+                >
+                  <Typography color="primary">
+                    <Folder sx={{fontSize: '15vh'}}/>
+                  </Typography>
+                </Box>
+                <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+                  <Typography><strong>Period:</strong> {formatDate(item.startDate)} - {formatDate(item.endDate)}</Typography>
+                  <Chip label={status} color={color} />
+                </Box>
               </Box>
-              <Box sx={{textAlign: 'center'}} 
-                component={Link}
-                to={`/schedule/${item._id}`}
-              >
-                <Typography color="primary">
-                  <Folder sx={{fontSize: '15vh'}}/>
-                </Typography>
-              </Box>
-              <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
-                <Typography><strong>Period:</strong> {formatDate(item.startDate)} - {formatDate(item.endDate)}</Typography>
-                <Chip label='Status' color='success'/>
-              </Box>
-            </Box>
-          </CustomCard>
-        </Grid>
-      ))}
+            </CustomCard>
+          </Grid>
+        )
+      })}
 
       <Drawer open={storeModal} anchor='right' onClose={handleCloseModal}>
         <Store setEvents={setEvents} onClose={handleCloseModal}/>

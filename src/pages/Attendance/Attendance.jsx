@@ -1,26 +1,35 @@
-import React, { useState } from 'react';
-import { Box, Button, Divider, Drawer, Grid, MenuItem, TextField, Typography } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Avatar, Box, Button, Divider, Drawer, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
-import { DataTable, DeleteModal, DropDown } from '../../components';
+import { DataTable, DeleteModal } from '../../components';
 import Store from './Form/Store';
 import Update from './Form/Update';
 import Delete from './Form/Delete';
-import { Link, useParams } from 'react-router-dom';
-import useFetch from 'react-fetch-hook';
-import { KeyboardReturn } from '@mui/icons-material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Add, KeyboardReturn, Person } from '@mui/icons-material';
+import { fetchAttendanceBySchedule } from '../../api/AttendanceApi';
+import { toast } from 'react-toastify';
+import moment from 'moment';
 
 function Attendance() {
-  const {id} = useParams();
-  const {isLoading, data, error} = useFetch(`${import.meta.env.VITE_API}/api/schedule/${id}`);
-  const [open, setOpen] = useState(false);
+  const [storeModal, setStoreModal] = useState(false);
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate(-1);
+  }
+
+  const handleCloseModal = () => {
+    setStoreModal(false)
+  }
   return (
     <Master>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} md={6} sx={{display: 'flex', gap: 2}}>
-          <Typography variant="h5" fontWeight="bold">Attendance List :</Typography>
-          <Button variant="contained" component={Link} to={`/schedule/${!isLoading && data[0].eventId}`} startIcon={<KeyboardReturn/>}>Schedule List</Button>
-        </Grid>
-        <Grid item xs={12} md={6}>
+      <Stack direction={'column'} spacing={2}>
+        <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+          <Stack direction={'row'} spacing={2}>
+            <Typography variant="h5" fontWeight="bold">Attendance List :</Typography>
+            <Button variant="contained" onClick={handleGoBack} startIcon={<KeyboardReturn/>}>Schedule List</Button>
+          </Stack>
           <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%', justifyContent: 'end'}}>
               <Typography sx={{display: {xs: 'none', md: 'block'}}}>Search: </Typography>
@@ -33,48 +42,123 @@ function Attendance() {
               />
             </Box>
           </Box>
-        </Grid>
-      </Grid>
-      <Divider sx={{ my: 2 }} />
-      <Box sx={{ mt: 2 }}>
+        </Box>
+        <Divider/>
+        <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+          <Button variant="contained" color='success' endIcon={<Add/>} onClick={() => setStoreModal(true)}>Attendance</Button>
+          <ToolList/>
+        </Box>
         <AttendanceList />
-      </Box>
-      <StoreDrawer open={open} setOpen={setOpen} />
+      </Stack>
+
+      <Drawer
+        open={storeModal}
+        anchor="right"
+        onClose={handleCloseModal}
+      >
+        <Store />
+      </Drawer>
     </Master>
   );
 }
 
+function ToolList() {
+  const [activeButtons, setActiveButtons] = useState({
+    amIn: false,
+    amOut: false,
+    pmIn: false,
+    pmOut: false,
+  });
+
+  const handleToggle = (button) => {
+    setActiveButtons((prevState) => ({
+      ...prevState,
+      [button]: !prevState[button],  // Toggle the active state for the clicked button
+    }));
+  };
+
+  return (
+    <Stack direction={'row'} spacing={2}>
+      <Button
+        variant='contained'
+        color={activeButtons.amIn ? 'success' : 'error'}
+        sx={{ minWidth: 100 }}
+        onClick={() => handleToggle('amIn')}
+      >
+        Am In
+      </Button>
+      <Button
+        variant='contained'
+        color={activeButtons.amOut ? 'success' : 'error'}
+        sx={{ minWidth: 100 }}
+        onClick={() => handleToggle('amOut')}
+      >
+        Am Out
+      </Button>
+      <Button
+        variant='contained'
+        color={activeButtons.pmIn ? 'success' : 'error'}
+        sx={{ minWidth: 100 }}
+        onClick={() => handleToggle('pmIn')}
+      >
+        Pm In
+      </Button>
+      <Button
+        variant='contained'
+        color={activeButtons.pmOut ? 'success' : 'error'}
+        sx={{ minWidth: 100 }}
+        onClick={() => handleToggle('pmOut')}
+      >
+        Pm Out
+      </Button>
+    </Stack>
+  );
+}
+
 function AttendanceList() {
+  const {id} = useParams();
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [attendances, setAttendances] = useState([]);
+
+  useEffect(() => {
+    const getAttendance = async () => {
+      const {data, error} = await fetchAttendanceBySchedule(id)
+      if (error) {
+        toast.error("Opss... Something went wrong")
+      } else {
+        setAttendances(data)
+      }
+    }
+    getAttendance()
+  },[])
+
+  const handleCloseModal = () => {
+    setStoreModal(false);
+    setUpdateModal(false);
+    setDeleteModal(false);
+  }
 
   const columns = [
-    { id: '_id', label: 'ID' },
-    { id: 'name', label: 'Last Name' },
-    { id: 'pet_type', label: 'First Name' },
-    { id: 'breed', label: 'Middle Name' },
-    { id: 'am_in', label: 'AM IN' },
-    { id: 'am_out', label: 'AM OUT' },
-    { id: 'pm_in', label: 'PM IN' },
-    { id: 'pm_out', label: 'PM OUT' },
+    { id: 'picture', label: 'Avatar' },
+    { id: 'name', label: 'Name' },
+    { id: 'amIn', label: 'AM IN' },
+    { id: 'amOut', label: 'AM OUT' },
+    { id: 'pmIn', label: 'PM IN' },
+    { id: 'pmOut', label: 'PM OUT' },
   ];
 
-  const rows = [
-    {
-      "_id": 1,
-      "name": "Jorge",
-      "pet_type": "Dog",
-      "breed": "Labrador",
-      "age": 3,
-    },
-    {
-      "_id": 2,
-      "name": "Jorge",
-      "pet_type": "Dog",
-      "breed": "Labrador",
-      "age": 3,
-    },
-  ];
+  const rows = useMemo(() => 
+    attendances.map((attendance) => ({
+      picture: <Avatar src={attendance.picture} alt={attendance.picture} />,  // Use picture from the data
+      name: attendance.name,  // Assuming name is available in attendance data
+      amIn: moment(attendance.amIn).format('hh:mm A'),
+      amOut: moment(attendance.amOut).format('hh:mm A'),
+      pmIn: moment(attendance.pmIn).format('hh:mm A'),
+      pmOut: moment(attendance.pmOut).format('hh:mm A'),
+    })),
+    [attendances]
+  );
 
   return (
     <React.Fragment>
@@ -87,21 +171,8 @@ function AttendanceList() {
         </MenuItem>
       </DataTable>
       <UpdateDrawer open={updateModal} setOpen={setUpdateModal} />
-      <DeleteDrawer open={deleteModal} handleClose={() => setDeleteModal(false)} />
+      <DeleteModal open={deleteModal} anchor='right' onClose={handleCloseModal}/>
     </React.Fragment>
-  );
-}
-
-function StoreDrawer({ open, setOpen }) {
-  return (
-    <Drawer
-      open={open}
-      anchor="right"
-      onClose={() => setOpen(false)}
-      sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}
-    >
-      <Store />
-    </Drawer>
   );
 }
 

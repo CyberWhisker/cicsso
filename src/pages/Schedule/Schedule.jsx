@@ -53,46 +53,62 @@ function ScheduleList({data, isLoading}) {
     }, [data, isLoading, setSchedule])
     return (
         <Grid container spacing={2}>
-            {schedule.map((item, index) => 
-            (
-                <Grid 
-                    item 
-                    xs={6} 
-                    md={3}
-                    key={index}
-                >
-                    <CustomCard>
-                    <Stack direction={'column'} spacing={1}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography fontWeight="bold" variant='h6'>{moment(item.date).format('MMMM')}</Typography>
-                        <DropDown>
-                            <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
-                            {/* <MenuItem onClick={() => setDeleteModal(true)}>Delete</MenuItem> */}
-                        </DropDown>
-                        </Box>
-                        <Stack direction={'row'} justifyContent={'center'} spacing={2} sx={{ textDecoration: 'none' }} 
-                        component={Link}
-                        to={`/attendance/${item._id}`}
-                        >
-                        <Typography color="primary" variant='h3' fontWeight="bold" textAlign='center'>
-                            {moment(item.date).format('ddd')}
-                        </Typography>
-                        <Typography color="primary" variant='h3' fontWeight="bold" textAlign='center'>
-                            {moment(item.date).format('DD')}
-                        </Typography>
+            {schedule.map((item, index) => {
+                const today = moment().startOf('day');
+                const eventDate = moment(item.date).startOf('day');
+                let status = '';
+                let color = '';
+                if (today.isBefore(eventDate)) {
+                    status = 'Pending';
+                    color = 'warning';  // Pending status
+                } else if (today.isSame(eventDate)) {
+                    status = 'Active'; 
+                    color = 'success';  // Success status if today is the event date
+                } else if (today.isAfter(eventDate)) {
+                    status = 'Expired';
+                    color = 'error';    // Expired status if today is after the event date
+                }
+                return (
+                    <Grid 
+                        item 
+                        xs={6} 
+                        md={3}
+                        key={index}
+                    >
+                        <CustomCard>
+                        <Stack direction={'column'} spacing={1}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography fontWeight="bold" variant='h6'>{moment(item.date).format('MMMM')}</Typography>
+                            <Chip label={status} color={color}/>
+                            <DropDown>
+                                <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
+                                {/* <MenuItem onClick={() => setDeleteModal(true)}>Delete</MenuItem> */}
+                            </DropDown>
+                            </Box>
+                            <Stack direction={'row'} justifyContent={'center'} spacing={2} sx={{ textDecoration: 'none' }} 
+                            component={Link}
+                            to={`/attendance/${item._id}`}
+                            >
+                                <Typography color="primary" variant='h3' fontWeight="bold" textAlign='center'>
+                                    {moment(item.date).format('ddd')}
+                                </Typography>
+                                <Typography color="primary" variant='h3' fontWeight="bold" textAlign='center'>
+                                    {moment(item.date).format('DD')}
+                                </Typography>
+                            </Stack>
+                            <Stack direction={'row'} spacing={2}>
+                                <TextField color='error' label='AM IN' size='small' value={moment(item.amIn).format('hh : mm a')} disabled/>
+                                <TextField label='AM OUT' size='small' value={moment(item.amOut).format('hh : mm a')} disabled/>
+                            </Stack>
+                            <Stack direction={'row'} spacing={2}>
+                                <TextField label='PM IN' size='small' value={moment(item.pmIn).format('hh : mm a')} disabled/>
+                                <TextField label='PM OUT' size='small' value={moment(item.pmOut).format('hh : mm a')} disabled/>
+                            </Stack>
                         </Stack>
-                        <Stack direction={'row'} spacing={2}>
-                            <TextField color='error' label='AM IN' size='small' value={moment(item.amIn).format('hh : mm a')} disabled/>
-                            <TextField label='AM OUT' size='small' value={moment(item.amOut).format('hh : mm a')} disabled/>
-                        </Stack>
-                        <Stack direction={'row'} spacing={2}>
-                            <TextField label='PM IN' size='small' value={moment(item.pmIn).format('hh : mm a')} disabled/>
-                            <TextField label='PM OUT' size='small' value={moment(item.pmOut).format('hh : mm a')} disabled/>
-                        </Stack>
-                    </Stack>
-                    </CustomCard>
-                </Grid>
+                        </CustomCard>
+                    </Grid>
                 )
+            }
             )}
             <Drawer open={updateModal} anchor='right' onClose={handleCloseModal}>
                 <Update data={updateData} onClose={handleCloseModal} setSchedule={setSchedule} schedule={schedule}/>
