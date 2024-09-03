@@ -1,19 +1,37 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Avatar, Box, Button, Divider, Drawer, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Divider, Drawer, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
-import { DataTable, DeleteModal } from '../../components';
+import { DataTable } from '../../components';
 import Store from './Form/Store';
 import Update from './Form/Update';
 import Delete from './Form/Delete';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Add, KeyboardReturn, Person } from '@mui/icons-material';
+import { Add, KeyboardReturn } from '@mui/icons-material';
 import { fetchAttendanceBySchedule } from '../../api/AttendanceApi';
 import { toast } from 'react-toastify';
 import moment from 'moment';
+import AlertModal from '../../components/AlertModal';
 
 function Attendance() {
+  const {id} = useParams();
   const [storeModal, setStoreModal] = useState(false);
+  const [attendances, setAttendances] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getAttendance = async () => {
+      setIsLoading(true);
+      const {data, error} = await fetchAttendanceBySchedule(id)
+      if (error) {
+        toast.error("Opss... Something went wrong")
+      } else {
+        setAttendances(data)
+      }
+      setIsLoading(false);
+    }
+    getAttendance(attendances)
+  },[])
 
   const handleGoBack = () => {
     navigate(-1);
@@ -29,6 +47,7 @@ function Attendance() {
           <Stack direction={'row'} spacing={2}>
             <Typography variant="h5" fontWeight="bold">Attendance List :</Typography>
             <Button variant="contained" onClick={handleGoBack} startIcon={<KeyboardReturn/>}>Schedule List</Button>
+            <Button variant="contained" color='success' endIcon={<Add/>} onClick={() => setStoreModal(true)}>Attendance</Button>
           </Stack>
           <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%', justifyContent: 'end'}}>
@@ -43,12 +62,13 @@ function Attendance() {
             </Box>
           </Box>
         </Box>
-        <Divider/>
-        <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-          <Button variant="contained" color='success' endIcon={<Add/>} onClick={() => setStoreModal(true)}>Attendance</Button>
-          <ToolList/>
+        <Box>
+          <Divider/>
+          {isLoading && (
+            <LinearProgress/>
+          )}
         </Box>
-        <AttendanceList />
+        <AttendanceTable attendances={attendances} setAttendances={setAttendances}/>
       </Stack>
 
       <Drawer
@@ -56,143 +76,84 @@ function Attendance() {
         anchor="right"
         onClose={handleCloseModal}
       >
-        <Store />
+        <Store setAttendances={setAttendances} onClose={handleCloseModal}/>
       </Drawer>
     </Master>
   );
 }
 
-function ToolList() {
-  const [activeButtons, setActiveButtons] = useState({
-    amIn: false,
-    amOut: false,
-    pmIn: false,
-    pmOut: false,
-  });
 
-  const handleToggle = (button) => {
-    setActiveButtons((prevState) => ({
-      ...prevState,
-      [button]: !prevState[button],  // Toggle the active state for the clicked button
-    }));
-  };
-
-  return (
-    <Stack direction={'row'} spacing={2}>
-      <Button
-        variant='contained'
-        color={activeButtons.amIn ? 'success' : 'error'}
-        sx={{ minWidth: 100 }}
-        onClick={() => handleToggle('amIn')}
-      >
-        Am In
-      </Button>
-      <Button
-        variant='contained'
-        color={activeButtons.amOut ? 'success' : 'error'}
-        sx={{ minWidth: 100 }}
-        onClick={() => handleToggle('amOut')}
-      >
-        Am Out
-      </Button>
-      <Button
-        variant='contained'
-        color={activeButtons.pmIn ? 'success' : 'error'}
-        sx={{ minWidth: 100 }}
-        onClick={() => handleToggle('pmIn')}
-      >
-        Pm In
-      </Button>
-      <Button
-        variant='contained'
-        color={activeButtons.pmOut ? 'success' : 'error'}
-        sx={{ minWidth: 100 }}
-        onClick={() => handleToggle('pmOut')}
-      >
-        Pm Out
-      </Button>
-    </Stack>
-  );
-}
-
-function AttendanceList() {
-  const {id} = useParams();
+function AttendanceTable({attendances, setAttendances}) {
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [attendances, setAttendances] = useState([]);
-
-  useEffect(() => {
-    const getAttendance = async () => {
-      const {data, error} = await fetchAttendanceBySchedule(id)
-      if (error) {
-        toast.error("Opss... Something went wrong")
-      } else {
-        setAttendances(data)
-      }
-    }
-    getAttendance()
-  },[])
+  const [selected, setSelected] = useState([]);
 
   const handleCloseModal = () => {
     setUpdateModal(false);
     setDeleteModal(false);
   }
 
+  const handleUpdateModal = (row) => {
+    setSelected(row); 
+    setUpdateModal(true); 
+  };
+  
+  const handleDeleteModal = (row) => {
+    setSelected(row); 
+    setDeleteModal(true);
+  };
+  
+
   const columns = [
-    { id: 'picture', label: 'Avatar' },
+    { id: 'pictureFormat', label: 'Avatar' },
     { id: 'name', label: 'Name' },
-    { id: 'amIn', label: 'AM IN' },
-    { id: 'amOut', label: 'AM OUT' },
-    { id: 'pmIn', label: 'PM IN' },
-    { id: 'pmOut', label: 'PM OUT' },
+    { id: 'amInFormat', label: 'AM IN' },
+    { id: 'amOutFormat', label: 'AM OUT' },
+    { id: 'pmInFormat', label: 'PM IN' },
+    { id: 'pmOutFormat', label: 'PM OUT' },
   ];
 
   const rows = useMemo(() => 
     attendances.map((attendance) => ({
-      picture: <Avatar src={attendance.picture} alt={attendance.picture} />,  // Use picture from the data
-      name: attendance.name,  // Assuming name is available in attendance data
-      amIn: moment(attendance.amIn).format('hh:mm A'),
-      amOut: moment(attendance.amOut).format('hh:mm A'),
-      pmIn: moment(attendance.pmIn).format('hh:mm A'),
-      pmOut: moment(attendance.pmOut).format('hh:mm A'),
+      _id: attendance._id,  
+      pictureFormat: <Avatar src={attendance.picture} alt={attendance.picture} />, 
+      name: attendance.name,
+      amInFormat: moment(attendance.amIn).format('hh:mm A'),
+      amOutFormat: moment(attendance.amOut).format('hh:mm A'),
+      pmInFormat: moment(attendance.pmIn).format('hh:mm A'),
+      pmOutFormat: moment(attendance.pmOut).format('hh:mm A'),
+      picture: attendance.picture, 
+      amIn: attendance.amIn,
+      amOut: attendance.amOut,
+      pmIn: attendance.pmIn,
+      pmOut: attendance.pmOut,
     })),
     [attendances]
   );
 
   return (
-    <React.Fragment>
-      <DataTable rows={rows} columns={columns}>
-        <MenuItem onClick={() => setUpdateModal(true)}>
-          <Typography color="warning.main">Edit</Typography>
-        </MenuItem>
-        <MenuItem onClick={() => setDeleteModal(true)}>
-          <Typography color="error.main">Delete</Typography>
-        </MenuItem>
-      </DataTable>
-      <UpdateDrawer open={updateModal} setOpen={setUpdateModal} />
-      <DeleteModal open={deleteModal} anchor='right' onClose={handleCloseModal}/>
-    </React.Fragment>
-  );
-}
-
-function UpdateDrawer({ open, setOpen }) {
-  return (
-    <Drawer
-      open={open}
-      anchor="right"
-      onClose={() => setOpen(false)}
-      sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}
-    >
-      <Update />
-    </Drawer>
-  );
-}
-
-function DeleteDrawer({ open, handleClose }) {
-  return (
-    <DeleteModal open={open} anchor="right" handleClose={handleClose}>
-      <Delete />
-    </DeleteModal>
+    <Box>
+      <DataTable 
+        rows={rows} 
+        columns={columns}
+        rowAction={(row) => (
+            <>
+              <MenuItem onClick={() => handleUpdateModal(row)}>
+                <Typography color="warning.main">Edit</Typography>
+              </MenuItem>
+              <MenuItem onClick={(e) => handleDeleteModal(row)}>
+                <Typography color="error.main">Delete</Typography>
+              </MenuItem>
+            </>
+          )}
+        />
+      <Drawer anchor='right' open={updateModal} onClose={handleCloseModal}>
+        <Update onClose={handleCloseModal} selected={selected} setAttendances={setAttendances}/>
+      </Drawer>
+      <AlertModal open={deleteModal} onClose={handleCloseModal}>
+        <Delete onClose={handleCloseModal} selected={selected} setAttendances={setAttendances}/>
+      </AlertModal>
+    </Box>
   );
 }
 

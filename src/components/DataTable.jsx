@@ -11,7 +11,7 @@ import DropDown from './DropDown';
 import { useTheme } from '@emotion/react';
 import { Card } from '@mui/material';
 
-export default function DataTable({columns, rows, children}) {
+export default function DataTable({columns, rows, children, rowAction}) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -72,7 +72,7 @@ export default function DataTable({columns, rows, children}) {
                     })}
                     <TableCell sx={{textAlign: 'center'}}>
                       <DropDown>
-                        {children}
+                        {rowAction(row)}
                       </DropDown>
                     </TableCell>
                   </TableRow>

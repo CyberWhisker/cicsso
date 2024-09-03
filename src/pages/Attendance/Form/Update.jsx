@@ -1,115 +1,121 @@
 import React, { useState } from 'react';
-import { Box, Button, Grid, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, Divider, Grid, Stack, TextField, Typography } from '@mui/material';
 import { Form } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import moment from 'moment';
+import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { updateAttendance } from '../../../api/AttendanceApi';
 
-function Update() {
-    const [formData, setFormData] = useState({
-        name: '',
-        am_in: '',
-        am_out: '',
-        pm_in: '',
-        pm_out: ''
-    });
+function Update({selected, onClose, setAttendances}) {
+    const [formData, setFormData] = useState(selected);
     const [submitted, setSubmitted] = useState(false);
 
-    const handleChange = (e) => 
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleTimeChange = (name, time) => {
+        console.log(time)
+        setFormData({ ...formData, [name]: time });
+    };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
-
-        const { name, am_in, am_out, pm_in, pm_out } = formData;
-        if (!name || !am_in || !am_out || pm_in || pm_out) {
+        const { amIn, amOut, pmIn, pmOut } = formData;
+        if (!amIn || !amOut || !pmIn || !pmOut) {
             toast.error("All fields are required");
             return;
         }
 
-        console.log("Event submitted:", formData);
-        toast.success("Event added successfully");
-        setFormData({ name: '', am_in: '', am_out: '', pm_in: '', pm_out: '' });
+        const serializableData = { ...formData };
+        delete serializableData.pictureFormat;
+        const {data, error} = await updateAttendance(serializableData);
+        if (error) {
+            console.log(error)
+            toast.error("Something went wrong");
+            return
+        } else {
+            setAttendances(prevData =>
+                prevData.map(item =>
+                    item._id === data._id ? data : item
+                )
+            );
+            toast.success("Successfully updated")
+            onClose();
+        }
+        setFormData({ name: '', amIn: '', amOut: '', pmIn: '', pmOut: '' });
         setSubmitted(false);
     };
 
     return (
-        <Box sx={{ width: '60vh', p: 2 }}>
-            <Typography variant='h4' fontWeight='bold'>Update Event</Typography>
-            <Box mt={2}>
-                <Form onSubmit={handleSubmit}>
-                    <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
-                        <Typography>Select Student</Typography>
-                        <Select
-                            name='name'
-                            id="demo-simple-select"
-                            value={formData.event}
-                            onChange={handleChange}
-                        >
-                            <MenuItem value={10}>Student 1</MenuItem>
-                            <MenuItem value={20}>Student 2</MenuItem>
-                        </Select>
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <Typography>AM IN</Typography>
-                                <TextField
-                                    name='am_in'
-                                    variant="outlined"
-                                    sx={{ width: '100%'}}
-                                    value={formData.event}
-                                    onChange={handleChange}
-                                    error={submitted && !formData.event}
-                                    helperText={submitted && !formData.event ? "Required" : ""}
-                                    type='time'
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+            <Box sx={{ width: '60vh', p: 2 }}>
+                <Typography variant='h4' fontWeight='bold'>Update Event</Typography>
+                <Box mt={2}>
+                    <Form onSubmit={handleSubmit}>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
+                            <Typography>Select Student</Typography>
+                            <TextField
+                                name='name'
+                                value={formData.name}
+                                disabled
+                            />
+                            <Divider/>
+                            <Stack direction={'row'} spacing={2}>
+                                <TimePicker 
+                                    label="AM IN"
+                                    defaultValue={moment(formData.amIn)}
+                                    onChange={(newValue) => handleTimeChange('amIn', newValue)}
+                                    slotProps={{
+                                        textField: {
+                                            error: submitted && !formData.amIn,
+                                            helperText: submitted && !formData.amIn ? "Required" : "",
+                                        },
+                                    }}
                                 />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography>AM OUT</Typography>
-                                <TextField
-                                    name='am_out'
-                                    variant="outlined"
-                                    sx={{ width: '100%'}}
-                                    value={formData.event}
-                                    onChange={handleChange}
-                                    error={submitted && !formData.event}
-                                    helperText={submitted && !formData.event ? "Required" : ""}
-                                    type='time'
+                                <TimePicker 
+                                    label="AM OUT"
+                                    defaultValue={moment(formData.amOut)}
+                                    onChange={(newValue) => handleTimeChange('amOut', newValue)}
+                                    slotProps={{
+                                        textField: {
+                                            error: submitted && !formData.amOut,
+                                            helperText: submitted && !formData.amOut ? "Required" : "",
+                                        },
+                                    }}
                                 />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography>PM IN</Typography>
-                                <TextField
-                                    name='pm_in'
-                                    variant="outlined"
-                                    sx={{ width: '100%'}}
-                                    value={formData.startDate}
-                                    onChange={handleChange}
-                                    error={submitted && !formData.startDate}
-                                    helperText={submitted && !formData.startDate ? "Required" : ""}
-                                    type='time'
+                            </Stack>
+                            <Stack direction={'row'} spacing={2}>
+                                <TimePicker 
+                                    label="PM IN"
+                                    defaultValue={moment(formData.pmIn)}
+                                    onChange={(newValue) => handleTimeChange('pmIn', newValue)}
+                                    slotProps={{
+                                        textField: {
+                                            error: submitted && !formData.pmIn,
+                                            helperText: submitted && !formData.pmIn ? "Required" : "",
+                                        },
+                                    }}
                                 />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography>PM OUT</Typography>
-                                <TextField
-                                    name='pm_out'
-                                    variant="outlined"
-                                    sx={{ width: '100%'}}
-                                    value={formData.endDate}
-                                    onChange={handleChange}
-                                    error={submitted && !formData.endDate}
-                                    helperText={submitted && !formData.endDate ? "Required" : ""}
-                                    type='time'
+                                <TimePicker 
+                                    label="PM OUT"
+                                    defaultValue={moment(formData.pmOut)}
+                                    onChange={(newValue) => handleTimeChange('pmOut', newValue)}
+                                    slotProps={{
+                                        textField: {
+                                            error: submitted && !formData.pmOut,
+                                            helperText: submitted && !formData.pmOut ? "Required" : "",
+                                        },
+                                    }}
                                 />
-                            </Grid>
-                        </Grid>
-                        
-                        <Button type='submit' variant='contained' color='warning' sx={{ mt: 2 ,width: '100%'}}>
-                            Submit
-                        </Button>
-                    </Box>
-                </Form>
+                            </Stack>
+                            
+                            <Button type='submit' variant='contained' color='warning' sx={{ mt: 2 ,width: '100%'}}>
+                                Submit
+                            </Button>
+                        </Box>
+                    </Form>
+                </Box>
             </Box>
-        </Box>
+        </LocalizationProvider>
     );
 }
 

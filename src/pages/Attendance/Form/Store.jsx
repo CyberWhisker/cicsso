@@ -4,11 +4,10 @@ import { Form, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-import moment from 'moment';
 import { fetchUsers } from '../../../api/userApi';
 import { storeAttendance } from '../../../api/AttendanceApi';
 
-function Store({setAttendance, onClose}) {
+function Store({setAttendances, onClose}) {
     const {id} = useParams();
     const [submitted, setSubmitted] = useState(false);
     const [userDatas, setUserDatas] = useState([]);
@@ -27,7 +26,7 @@ function Store({setAttendance, onClose}) {
         const getUsers = async () => {
             const {data, error} = await fetchUsers();
             if (error) {
-                console.log(error) 
+                toast.error("Something wen wrong")
             } else {
                 setUserDatas(data)
             }
@@ -63,10 +62,13 @@ function Store({setAttendance, onClose}) {
 
         const {data, error} = await storeAttendance(formData);
         if (error) {
+            onClose();
             toast.error("Opss.. Something went wrong")
         } else {
-            console.log(data)
+            onClose();
             toast.success("Successfully Inserted")
+            setAttendances(prevData => [formData, ...prevData])
+            setSubmitted(false);
             setFormData({
                 user_id: null,
                 amIn: null,
@@ -74,7 +76,6 @@ function Store({setAttendance, onClose}) {
                 pmIn: null,
                 pmOut: null,
             });
-            setSubmitted(false);
         }
         
     };

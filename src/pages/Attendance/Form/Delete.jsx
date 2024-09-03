@@ -1,16 +1,61 @@
-import React from 'react'
-import { Card, Typography } from '@mui/material'
+import React from 'react';
+import { Box, Typography, Button, Divider } from '@mui/material';
+import { deleteAttendance } from '../../../api/AttendanceApi';
+import { toast } from 'react-toastify';
 
-function Delete() {
+const headerStyle = {
+  p: 2,
+  backgroundColor: (theme) => theme.palette.error.main,  // Error color for header
+  color: 'white',
+  borderRadius: '4px 4px 0 0',  // Rounded corners for the top
+};
+
+const footerStyle = {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  gap: 1,
+  p: 2
+};
+
+function Delete({selected, onClose, setAttendances}) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const id = selected._id
+    const {data, error} = await deleteAttendance(id);
+    if (error) {
+      onClose();
+      toast.error("Something went wrong!")
+    } else {
+      onClose();
+      toast.success("Successfully deleted")
+      setAttendances((prevData) => 
+        prevData.filter((attendances) => attendances._id !== id)
+      )
+    }
+
+  }
   return (
-    <Card>
-      <Typography variant="h6" component="h2">
-        Text in a modal
+    <>
+      <Box sx={headerStyle}>
+        <Typography id="delete-modal-title" variant="h6" component="h2">
+          Delete Confirmation
+        </Typography>
+      </Box>
+      <Typography id="delete-modal-description" sx={{ p:2}}>
+        Are you sure you want to delete this item? This action cannot be undone.
       </Typography>
-      <Typography sx={{ mt: 2 }}>
-        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-      </Typography>
-    </Card>
+      <Divider/>
+      <form onSubmit={handleSubmit}>
+        <Box sx={footerStyle}>
+          <Button variant="outlined" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="error" type='submit'>
+            Delete
+          </Button>
+        </Box>
+      </form>
+    </>
   )
 }
 
