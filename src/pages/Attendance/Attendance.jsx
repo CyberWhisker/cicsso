@@ -134,7 +134,6 @@ function AttendanceList() {
   },[])
 
   const handleCloseModal = () => {
-    setStoreModal(false);
     setUpdateModal(false);
     setDeleteModal(false);
   }

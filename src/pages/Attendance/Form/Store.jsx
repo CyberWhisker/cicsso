@@ -35,8 +35,16 @@ function Store({setAttendance, onClose}) {
         getUsers();
     }, [])
 
-    const handleChange = (e) => 
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleChange = (e) => {
+        const user = userDatas.find(item => item.user_id == e.target.value)
+        // Update formData with new values
+        setFormData(prevState => ({
+            ...prevState,
+            user_id: e.target.value,
+            name: user ? user.name : prevState.name,
+            picture: user ? user.picture : prevState.picture
+        }));
+    }
 
     const handleTimeChange = (name, time) => {
         setFormData({ ...formData, [name]: time });
