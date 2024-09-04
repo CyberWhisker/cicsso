@@ -12,7 +12,6 @@ function Update({selected, onClose, setAttendances}) {
     const [submitted, setSubmitted] = useState(false);
 
     const handleTimeChange = (name, time) => {
-        console.log(time)
         setFormData({ ...formData, [name]: time });
     };
 

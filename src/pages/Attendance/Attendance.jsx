@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Avatar, Box, Button, Divider, Drawer, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Chip, Divider, Drawer, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
 import { DataTable } from '../../components';
 import Store from './Form/Store';
@@ -11,15 +11,27 @@ import { fetchAttendanceBySchedule } from '../../api/AttendanceApi';
 import { toast } from 'react-toastify';
 import moment from 'moment';
 import AlertModal from '../../components/AlertModal';
+import { fetchScheduleById } from '../../api/ScheduleApi';
+import { fetchUsers } from '../../api/userApi';
 
 function Attendance() {
   const {id} = useParams();
   const [storeModal, setStoreModal] = useState(false);
   const [attendances, setAttendances] = useState([]);
+  const [users, setUsers] = useState([]); 
+  const [combinedData, setCombinedData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const getUsers = async () => {
+      const {data, error} = await fetchUsers();
+      if (error) {
+        console.log(error)
+      } else {
+        setUsers(data)
+      }
+    }
     const getAttendance = async () => {
       setIsLoading(true);
       const {data, error} = await fetchAttendanceBySchedule(id)
@@ -30,7 +42,23 @@ function Attendance() {
       }
       setIsLoading(false);
     }
-    getAttendance(attendances)
+    const combineData = async () => {
+      await getUsers();
+
+      const combined = users.map(user => {
+        const userAttendance = attendances.find(att => att.user_id === user.user_id);
+        return {
+          ...user,
+          attendance: userAttendance || {}
+        };
+      });
+
+      setCombinedData(combined);
+      console.log(combinedData)
+    };
+
+    getAttendance();
+    combineData();
   },[])
 
   const handleGoBack = () => {
@@ -68,7 +96,7 @@ function Attendance() {
             <LinearProgress/>
           )}
         </Box>
-        <AttendanceTable attendances={attendances} setAttendances={setAttendances}/>
+        <AttendanceTable attendances={attendances} setAttendances={setAttendances} id={id}/>
       </Stack>
 
       <Drawer
@@ -83,11 +111,16 @@ function Attendance() {
 }
 
 
-function AttendanceTable({attendances, setAttendances}) {
+function AttendanceTable({attendances, setAttendances, id}) {
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [selected, setSelected] = useState([]);
-
+  const [active, setActive] = useState({
+    amInChip: false,
+    amOutChip: false,
+    pmINChip: false,
+    pmOutChip: false,
+  });
   const handleCloseModal = () => {
     setUpdateModal(false);
     setDeleteModal(false);
@@ -102,15 +135,58 @@ function AttendanceTable({attendances, setAttendances}) {
     setSelected(row); 
     setDeleteModal(true);
   };
+
+  const handleActive = (sched) => {
+    // Parse the time limit from environment variable and ensure it's an integer
+    const timeLimit = parseInt(import.meta.env.VITE_TIME_LIMIT, 10);
+    
+    // Create moment objects from schedule times
+    const amIn = moment(sched[0].amIn);
+    const amOut = moment(sched[0].amOut);
+    const pmIn = moment(sched[0].pmIn);
+    const pmOut = moment(sched[0].pmOut);
+    
+    // Get the current time
+    const currentTime = moment();
   
+    // Helper function to compute end time based on the given limit
+    const getEndTime = (time) => time.clone().add(timeLimit, 'hours');
+  
+    // Check if currentTime falls within any of the adjusted time ranges
+    if (amIn.isSameOrBefore(currentTime) && currentTime.isBefore(getEndTime(amIn))) {
+      setActive({...active, amInChip: true})
+    } 
+    if (amOut.isSameOrBefore(currentTime) && currentTime.isBefore(getEndTime(amOut))) {
+      setActive({...active, amOutChip: true})
+    } 
+    if (pmIn.isSameOrBefore(currentTime) && currentTime.isBefore(getEndTime(pmIn))) {
+      setActive({...active, pmINChip: true})
+    } 
+    if (pmOut.isSameOrBefore(currentTime) && currentTime.isBefore(getEndTime(pmOut))) {
+      setActive({...active, pmOutChip: true})
+    } 
+  };
+
+  useEffect(() => 
+  {
+    const getSchedule = async () => {
+      const {data, error} = await fetchScheduleById(id)
+      if ( error ) {
+        console.log(error)
+      } else {
+        handleActive(data)
+      }
+    }
+    getSchedule();
+  },[]);
 
   const columns = [
     { id: 'pictureFormat', label: 'Avatar' },
     { id: 'name', label: 'Name' },
-    { id: 'amInFormat', label: 'AM IN' },
-    { id: 'amOutFormat', label: 'AM OUT' },
-    { id: 'pmInFormat', label: 'PM IN' },
-    { id: 'pmOutFormat', label: 'PM OUT' },
+    { id: 'amInFormat', label: <Chip color={active.amInChip ? 'success' : 'error'} label="AM IN"/> },
+    { id: 'amOutFormat', label: <Chip color={active.amOutChip ? 'success' : 'error'} label='AM OUT'/> },
+    { id: 'pmInFormat', label: <Chip color={active.pmINChip ? 'success' : 'error'} label='PM IN'/> },
+    { id: 'pmOutFormat', label: <Chip color={active.pmOutChip ? 'success' : 'error'} label='PM OUT'/> },
   ];
 
   const rows = useMemo(() => 
