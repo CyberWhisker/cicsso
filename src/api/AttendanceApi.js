@@ -1,3 +1,20 @@
+export const fetchAttendances = async () => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/attendance`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (!response.ok) {
+            throw new Error('Failed to fetch users');
+        }
+        const data = await response.json();
+        return { data, error: null };
+    } catch (error) {
+        return { data: [], error: error };
+    }
+}
+
 export const fetchAttendanceBySchedule = async (id) => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API}/api/attendance/sched/${id}`, {
@@ -7,6 +24,24 @@ export const fetchAttendanceBySchedule = async (id) => {
         })
         if (!response.ok) {
             throw new Error('Failed to fetch users');
+        }
+        const data = await response.json();
+        return { data, error: null };
+    } catch (error) {
+        return { data: [], error: error };
+    }
+}
+
+export const fetchAttendanceByUserId = async (id) => {
+    console.log(id)
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/attendance/user/${id}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (!response.ok) {
+            throw new Error('Failed to fetch attendance');
         }
         const data = await response.json();
         return { data, error: null };

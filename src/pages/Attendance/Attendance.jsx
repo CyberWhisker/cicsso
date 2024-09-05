@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Avatar, Box, Button, Chip, Divider, Drawer, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
-import { DataTable } from '../../components';
+import { DataTable, DropDown } from '../../components';
 import Store from './Form/Store';
 import Update from './Form/Update';
 import Delete from './Form/Delete';
@@ -183,6 +183,7 @@ function AttendanceTable({combinedData, handleGetData, id}) {
     { id: 'amOutFormat', label: <Chip color={active.amOutChip ? 'success' : 'error'} label='AM OUT'/> },
     { id: 'pmInFormat', label: <Chip color={active.pmINChip ? 'success' : 'error'} label='PM IN'/> },
     { id: 'pmOutFormat', label: <Chip color={active.pmOutChip ? 'success' : 'error'} label='PM OUT'/> },
+    { id: 'setting', label: 'Settings'},
   ];
 
   const rows = useMemo(() => 
@@ -207,6 +208,23 @@ function AttendanceTable({combinedData, handleGetData, id}) {
       amOut: item.attendance?.amOut ? item.attendance.amOut : null,
       pmIn: item.attendance?.pmIn ? item.attendance.pmIn : null,
       pmOut: item.attendance?.pmOut ? item.attendance.pmOut : null,
+      setting: 
+        <DropDown>
+          {item.attendance._id ? (
+            <>
+              <MenuItem onClick={() => handleUpdateModal(item.attendance)}>
+                <Typography color="warning.main">Edit</Typography>
+              </MenuItem>
+              <MenuItem onClick={(e) => handleDeleteModal(item.attendance)}>
+                <Typography color="error.main">Delete</Typography>
+              </MenuItem>
+            </>
+          ) : (
+            <MenuItem disabled>
+              <Typography color="error.main">No Record</Typography>
+            </MenuItem>
+          )}
+        </DropDown> 
     })),
     [combinedData]
   );
@@ -216,25 +234,6 @@ function AttendanceTable({combinedData, handleGetData, id}) {
       <DataTable 
         rows={rows} 
         columns={columns}
-        rowAction={(row) => (
-            <>
-              {row._id ? (
-                <>
-                  <MenuItem onClick={() => handleUpdateModal(row)}>
-                    <Typography color="warning.main">Edit</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={(e) => handleDeleteModal(row)}>
-                    <Typography color="error.main">Delete</Typography>
-                  </MenuItem>
-                </>
-              ) : (
-                
-                <MenuItem disabled>
-                  <Typography color="error.main">No Record</Typography>
-                </MenuItem>
-              )}
-            </>
-          )}
         />
       <Drawer anchor='right' open={updateModal} onClose={handleCloseModal}>
         <Update onClose={handleCloseModal} selected={selected} handleGetData={handleGetData}/>

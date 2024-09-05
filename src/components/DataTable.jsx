@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -7,11 +6,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import DropDown from './DropDown';
 import { useTheme } from '@emotion/react';
 import { Card } from '@mui/material';
 
-export default function DataTable({columns, rows, children, rowAction}) {
+export default function DataTable({columns, rows}) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -42,7 +40,6 @@ export default function DataTable({columns, rows, children, rowAction}) {
                   {column.label}
                 </TableCell>
               ))}
-              <TableCell sx={{textAlign: 'center'}}>Settings</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -70,11 +67,6 @@ export default function DataTable({columns, rows, children, rowAction}) {
                         </TableCell>
                       );
                     })}
-                    <TableCell sx={{textAlign: 'center'}}>
-                      <DropDown>
-                        {rowAction(row)}
-                      </DropDown>
-                    </TableCell>
                   </TableRow>
                 );
               })}

@@ -18,13 +18,7 @@ function Update({selected, onClose, handleGetData}) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
-        const serializableData = { ...formData };
-        delete serializableData.pictureFormat;
-        delete serializableData.amInFormat;
-        delete serializableData.amOutFormat;
-        delete serializableData.pmInFormat;
-        delete serializableData.pmOutFormat;
-        const {data, error} = await updateAttendance(serializableData);
+        const {data, error} = await updateAttendance(formData);
         console.log(formData)
         if (error) {
             console.log(error)
