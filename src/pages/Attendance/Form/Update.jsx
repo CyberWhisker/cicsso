@@ -7,7 +7,7 @@ import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { updateAttendance } from '../../../api/AttendanceApi';
 
-function Update({selected, onClose, setAttendances}) {
+function Update({selected, onClose, handleGetData}) {
     const [formData, setFormData] = useState(selected);
     const [submitted, setSubmitted] = useState(false);
 
@@ -18,25 +18,20 @@ function Update({selected, onClose, setAttendances}) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
-        const { amIn, amOut, pmIn, pmOut } = formData;
-        if (!amIn || !amOut || !pmIn || !pmOut) {
-            toast.error("All fields are required");
-            return;
-        }
-
         const serializableData = { ...formData };
         delete serializableData.pictureFormat;
+        delete serializableData.amInFormat;
+        delete serializableData.amOutFormat;
+        delete serializableData.pmInFormat;
+        delete serializableData.pmOutFormat;
         const {data, error} = await updateAttendance(serializableData);
+        console.log(formData)
         if (error) {
             console.log(error)
             toast.error("Something went wrong");
             return
         } else {
-            setAttendances(prevData =>
-                prevData.map(item =>
-                    item._id === data._id ? data : item
-                )
-            );
+            handleGetData()
             toast.success("Successfully updated")
             onClose();
         }

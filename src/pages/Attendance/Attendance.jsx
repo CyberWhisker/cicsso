@@ -17,49 +17,45 @@ import { fetchUsers } from '../../api/userApi';
 function Attendance() {
   const {id} = useParams();
   const [storeModal, setStoreModal] = useState(false);
-  const [attendances, setAttendances] = useState([]);
-  const [users, setUsers] = useState([]); 
   const [combinedData, setCombinedData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const getUsers = async () => {
-      const {data, error} = await fetchUsers();
-      if (error) {
-        console.log(error)
+  const handleGetData = async () => {
+    setIsLoading(true);
+  
+    try {
+      // Fetch both users and attendance
+      const [{ data: userData, error: userError }, { data: attendanceData, error: attendanceError }] = await Promise.all([
+        fetchUsers(),
+        fetchAttendanceBySchedule(id)
+      ]);
+  
+      if (userError || attendanceError) {
+        console.log(userError || attendanceError);
+        toast.error("Opss... Something went wrong");
       } else {
-        setUsers(data)
+        // Combine the data after both are fetched
+        const combined = userData.map(user => {
+          const userAttendance = attendanceData.find(att => att.user_id === user.user_id);
+          return {
+            ...user,
+            attendance: userAttendance || {}
+          };
+        });
+        setCombinedData(combined);  // Set the combined data
       }
-    }
-    const getAttendance = async () => {
-      setIsLoading(true);
-      const {data, error} = await fetchAttendanceBySchedule(id)
-      if (error) {
-        toast.error("Opss... Something went wrong")
-      } else {
-        setAttendances(data)
-      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Opss... Something went wrong");
+    } finally {
       setIsLoading(false);
     }
-    const combineData = async () => {
-      await getUsers();
+  };
 
-      const combined = users.map(user => {
-        const userAttendance = attendances.find(att => att.user_id === user.user_id);
-        return {
-          ...user,
-          attendance: userAttendance || {}
-        };
-      });
-
-      setCombinedData(combined);
-      console.log(combinedData)
-    };
-
-    getAttendance();
-    combineData();
-  },[])
+  useEffect(() => {
+    handleGetData();
+  }, [id]);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -96,7 +92,7 @@ function Attendance() {
             <LinearProgress/>
           )}
         </Box>
-        <AttendanceTable attendances={attendances} setAttendances={setAttendances} id={id}/>
+        <AttendanceTable combinedData={combinedData} handleGetData={handleGetData} id={id}/>
       </Stack>
 
       <Drawer
@@ -104,14 +100,14 @@ function Attendance() {
         anchor="right"
         onClose={handleCloseModal}
       >
-        <Store setAttendances={setAttendances} onClose={handleCloseModal}/>
+        <Store onClose={handleCloseModal} handleGetData={handleGetData}/>
       </Drawer>
     </Master>
   );
 }
 
 
-function AttendanceTable({attendances, setAttendances, id}) {
+function AttendanceTable({combinedData, handleGetData, id}) {
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [selected, setSelected] = useState([]);
@@ -190,21 +186,29 @@ function AttendanceTable({attendances, setAttendances, id}) {
   ];
 
   const rows = useMemo(() => 
-    attendances.map((attendance) => ({
-      _id: attendance._id,  
-      pictureFormat: <Avatar src={attendance.picture} alt={attendance.picture} />, 
-      name: attendance.name,
-      amInFormat: moment(attendance.amIn).format('hh:mm A'),
-      amOutFormat: moment(attendance.amOut).format('hh:mm A'),
-      pmInFormat: moment(attendance.pmIn).format('hh:mm A'),
-      pmOutFormat: moment(attendance.pmOut).format('hh:mm A'),
-      picture: attendance.picture, 
-      amIn: attendance.amIn,
-      amOut: attendance.amOut,
-      pmIn: attendance.pmIn,
-      pmOut: attendance.pmOut,
+    combinedData.map((item) => ({
+      _id: item.attendance?._id ? item.attendance._id : null,  
+      pictureFormat: <Avatar src={item.picture} alt={item.picture} />, 
+      name: item.name,
+      amInFormat: item.attendance?.amIn ? 
+        <Chip color='success' label={moment(item.attendance.amIn).format('hh:mm A')}/> : 
+        <Chip color='error' label='Absent'/>,
+      amOutFormat: item.attendance?.amOut ? 
+        <Chip color='success' label={moment(item.attendance.amOut).format('hh:mm A')}/> : 
+        <Chip color='error' label='Absent'/>,
+      pmInFormat: item.attendance?.pmIn ? 
+        <Chip color='success' label={moment(item.attendance.pmIn).format('hh:mm A')}/> : 
+        <Chip color='error' label='Absent'/>,
+      pmOutFormat: item.attendance?.pmOut ? 
+        <Chip color='success' label={moment(item.attendance.pmOut).format('hh:mm A')}/> : 
+        <Chip color='error' label='Absent'/>,
+      picture: item.picture, 
+      amIn: item.attendance?.amIn ? item.attendance.amIn : null,
+      amOut: item.attendance?.amOut ? item.attendance.amOut : null,
+      pmIn: item.attendance?.pmIn ? item.attendance.pmIn : null,
+      pmOut: item.attendance?.pmOut ? item.attendance.pmOut : null,
     })),
-    [attendances]
+    [combinedData]
   );
 
   return (
@@ -214,20 +218,29 @@ function AttendanceTable({attendances, setAttendances, id}) {
         columns={columns}
         rowAction={(row) => (
             <>
-              <MenuItem onClick={() => handleUpdateModal(row)}>
-                <Typography color="warning.main">Edit</Typography>
-              </MenuItem>
-              <MenuItem onClick={(e) => handleDeleteModal(row)}>
-                <Typography color="error.main">Delete</Typography>
-              </MenuItem>
+              {row._id ? (
+                <>
+                  <MenuItem onClick={() => handleUpdateModal(row)}>
+                    <Typography color="warning.main">Edit</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={(e) => handleDeleteModal(row)}>
+                    <Typography color="error.main">Delete</Typography>
+                  </MenuItem>
+                </>
+              ) : (
+                
+                <MenuItem disabled>
+                  <Typography color="error.main">No Record</Typography>
+                </MenuItem>
+              )}
             </>
           )}
         />
       <Drawer anchor='right' open={updateModal} onClose={handleCloseModal}>
-        <Update onClose={handleCloseModal} selected={selected} setAttendances={setAttendances}/>
+        <Update onClose={handleCloseModal} selected={selected} handleGetData={handleGetData}/>
       </Drawer>
       <AlertModal open={deleteModal} onClose={handleCloseModal}>
-        <Delete onClose={handleCloseModal} selected={selected} setAttendances={setAttendances}/>
+        <Delete onClose={handleCloseModal} selected={selected} handleGetData={handleGetData}/>
       </AlertModal>
     </Box>
   );

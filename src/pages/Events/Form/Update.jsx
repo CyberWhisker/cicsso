@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/material';
 import { Form } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
@@ -60,7 +60,7 @@ function Update({data, setEvents, events, onClose}) {
                 <Typography variant='h4' fontWeight='bold'>Update Event</Typography>
                 <Box mt={2}>
                     <Form onSubmit={handleSubmit}>
-                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
+                        <Stack direction={'column'} spacing={2}>
                             <TextField
                                 label='Enter Event'
                                 name='event'
@@ -71,6 +71,7 @@ function Update({data, setEvents, events, onClose}) {
                                 error={submitted && !formData.event}
                                 helperText={submitted && !formData.event ? "Required" : ""}
                             />
+                            <Divider/>
                             <DatePicker 
                                 label="Start Date"
                                 defaultValue={moment(formData.startDate)}
@@ -96,54 +97,7 @@ function Update({data, setEvents, events, onClose}) {
                                     },
                                 }}
                             />
-                            <Stack direction={'row'} spacing={2}>
-                                <TimePicker 
-                                    label="AM IN"
-                                    defaultValue={moment(formData.amIn)}
-                                    onChange={(newValue) => handleTimeChange('amIn', newValue)}
-                                    slotProps={{
-                                        textField: {
-                                            error: submitted && !formData.amIn,
-                                            helperText: submitted && !formData.amIn ? "Required" : "",
-                                        },
-                                    }}
-                                />
-                                <TimePicker 
-                                    label="AM OUT"
-                                    defaultValue={moment(formData.amOut)}
-                                    onChange={(newValue) => handleTimeChange('amOut', newValue)}
-                                    slotProps={{
-                                        textField: {
-                                            error: submitted && !formData.amOut,
-                                            helperText: submitted && !formData.amOut ? "Required" : "",
-                                        },
-                                    }}
-                                />
-                            </Stack>
-                            <Stack direction={'row'} spacing={2}>
-                                <TimePicker 
-                                    label="PM IN"
-                                    defaultValue={moment(formData.pmAn)}
-                                    onChange={(newValue) => handleTimeChange('pmIn', newValue)}
-                                    slotProps={{
-                                        textField: {
-                                            error: submitted && !formData.pmIn,
-                                            helperText: submitted && !formData.pmIn ? "Required" : "",
-                                        },
-                                    }}
-                                />
-                                <TimePicker 
-                                    label="PM OUT"
-                                    defaultValue={moment(formData.pmOut)}
-                                    onChange={(newValue) => handleTimeChange('pmOut', newValue)}
-                                    slotProps={{
-                                        textField: {
-                                            error: submitted && !formData.pmOut,
-                                            helperText: submitted && !formData.pmOut ? "Required" : "",
-                                        },
-                                    }}
-                                />
-                            </Stack>
+                            <Divider/>
                             <Typography>Insert Banner</Typography>
                             <TextField
                                 name='image'
@@ -156,7 +110,7 @@ function Update({data, setEvents, events, onClose}) {
                             <Button type='submit' variant='contained' color='warning' sx={{ mt: 2 ,width: '100%'}}>
                                 Submit
                             </Button>
-                        </Box>
+                        </Stack>
                     </Form>
                 </Box>
             </Box>

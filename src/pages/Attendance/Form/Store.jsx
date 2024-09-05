@@ -7,7 +7,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { fetchUsers } from '../../../api/userApi';
 import { storeAttendance } from '../../../api/AttendanceApi';
 
-function Store({setAttendances, onClose}) {
+function Store({onClose, handleGetData}) {
     const {id} = useParams();
     const [submitted, setSubmitted] = useState(false);
     const [userDatas, setUserDatas] = useState([]);
@@ -53,9 +53,9 @@ function Store({setAttendances, onClose}) {
         e.preventDefault();
         setSubmitted(true);
 
-        const { user_id,  amIn, amOut, pmIn, pmOut } = formData;
+        const { user_id } = formData;
         // Check if all fields are filled
-        if (!user_id || !amIn || !amOut || !pmIn || !pmOut) {
+        if (!user_id ) {
             toast.error("All fields, including times, are required");
             return;
         }
@@ -67,7 +67,7 @@ function Store({setAttendances, onClose}) {
         } else {
             onClose();
             toast.success("Successfully Inserted")
-            setAttendances(prevData => [formData, ...prevData])
+            handleGetData()
             setSubmitted(false);
             setFormData({
                 user_id: null,

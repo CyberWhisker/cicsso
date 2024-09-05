@@ -9,7 +9,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
-import { Folder, List, PanTool } from '@mui/icons-material';
+import { Folder, List, PanTool, WarningAmber } from '@mui/icons-material';
 
 function Navlist({ setopen }) {
   let location = useLocation();
@@ -81,6 +81,13 @@ function NavAdmin() {
         <ListItemText primary="Events" />
       </ListItemButton>
       
+      <ListItemButton component={Link} to={'/penalties'} selected={location.pathname.startsWith('/penalties')}>
+        <ListItemIcon>
+          <WarningAmber />
+        </ListItemIcon>
+        <ListItemText primary="Penalties" />
+      </ListItemButton>
+
       <ListItemButton component={Link} to={'/projects'} selected={location.pathname.startsWith('/projects')}>
         <ListItemIcon>
           <Folder />
@@ -95,12 +102,12 @@ function NavAdmin() {
         <ListItemText primary="Reports" />
       </ListItemButton>
 
-      <ListItemButton component={Link} to={'/transaction'} selected={location.pathname.startsWith('/transaction')}>
+      {/* <ListItemButton component={Link} to={'/transaction'} selected={location.pathname.startsWith('/transaction')}>
         <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
         <ListItemText primary="Transaction" />
-      </ListItemButton>
+      </ListItemButton> */}
     </React.Fragment>
   )
 }

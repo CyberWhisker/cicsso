@@ -17,7 +17,7 @@ const footerStyle = {
   p: 2
 };
 
-function Delete({selected, onClose, setAttendances}) {
+function Delete({selected, onClose, handleGetData}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const id = selected._id
@@ -28,9 +28,7 @@ function Delete({selected, onClose, setAttendances}) {
     } else {
       onClose();
       toast.success("Successfully deleted")
-      setAttendances((prevData) => 
-        prevData.filter((attendances) => attendances._id !== id)
-      )
+      handleGetData();
     }
 
   }
