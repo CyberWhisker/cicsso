@@ -26,7 +26,7 @@ function Store({onClose, handleGetData}) {
         const getUsers = async () => {
             const {data, error} = await fetchUsers();
             if (error) {
-                toast.error("Something wen wrong")
+                toast.error("Something went wrong")
             } else {
                 setUserDatas(data)
             }
@@ -63,7 +63,7 @@ function Store({onClose, handleGetData}) {
         const {data, error} = await storeAttendance(formData);
         if (error) {
             onClose();
-            toast.error("Opss.. Something went wrong")
+            toast.error("Data already exist")
         } else {
             onClose();
             toast.success("Successfully Inserted")

@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
-import { Attendance, Dashboard, Events, Penalties, ProjectDetails, ProjectPage, Schedule, Transaction, Users } from './pages/index.jsx';
+import { Attendance, Dashboard, Events, Login, Penalties, ProjectDetails, ProjectPage, Register, Schedule, Transaction, Users } from './pages/index.jsx';
 import Auth0Context from './context/Auth0Context.jsx';
 import AuthRoute from './components/AuthRoute.jsx';
 
@@ -17,6 +17,14 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App/>,
+  },
+  {
+    path: "/login",
+    element: <Login/>,
+  },
+  {
+    path: "/register",
+    element: <Register/>,
   },
   {
     path: "/dashboard",

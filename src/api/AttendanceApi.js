@@ -33,7 +33,6 @@ export const fetchAttendanceBySchedule = async (id) => {
 }
 
 export const fetchAttendanceByUserId = async (id) => {
-    console.log(id)
     try {
         const response = await fetch(`${import.meta.env.VITE_API}/api/attendance/user/${id}`, {
             headers: {

@@ -6,7 +6,7 @@ export const fetchEvent = async () => {
             }
         })
         if (!response.ok) {
-            throw new Error('Failed to fetch users');
+            throw new Error('Failed to fetch events');
         }
         const data = await response.json();
         return { data, error: null };
