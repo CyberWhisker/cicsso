@@ -1,8 +1,7 @@
 import React from 'react'
 import MasterAuth from '../../../layouts/MasterAuth'
-import { Avatar, Box, Card, Divider, Stack, Typography } from '@mui/material'
+import { Box, Card, Divider, Stack, Typography } from '@mui/material'
 import Store from './Form/Store'
-import Logo from '/appImg/Logo.png';
 
 function Register() {
   return (
