@@ -100,3 +100,38 @@ export const updateUserRole = async(userData, selectedRole) => {
         console.log('Error updating role:', error);
     }
 }
+
+export const verifyUser = async (token) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/verify`, {
+            'Content-Type': 'application/json',
+            body: token
+        })
+        if (response.ok) {
+            const data = await response.json()
+            console.log(data)
+        } else {
+            console.log('verification failed');
+        }
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+export const userLogin = async (formData) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/user/login`,{
+            method: 'POST',
+            'Content-Type': 'application/json',
+            body: JSON.stringify(formData)
+        })
+        if (response.ok) {
+            const data = await response.json()
+            return{data: data, error: null}
+        } else {
+            return{data: [], error: 'Login Failed'}
+        }
+    } catch (error) {
+        return {data: [], error: error.message}
+    }
+}

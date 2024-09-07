@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Attendance, Dashboard, Events, Login, Penalties, ProjectDetails, ProjectPage, Register, Schedule, Transaction, Users } from './pages/index.jsx';
 import Auth0Context from './context/Auth0Context.jsx';
 import AuthRoute from './components/AuthRoute.jsx';
+import { AuthContextProvider } from './context/AuthContext.jsx';
 
 // if user is login
 const user = true;
