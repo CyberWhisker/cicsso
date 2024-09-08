@@ -35,7 +35,7 @@ function Penalties() {
             // Combine the data after both are fetched
             const combined = userData.map(user => {
                 let countAbsent = 0;
-                const userAttendance = attendanceData.filter(att => att.user_id === user.user_id);
+                const userAttendance = attendanceData.filter(att => att.userId === user._id);
                 userAttendance.map((item) => {
                     if (item.amIn) {
                         countAbsent++;
@@ -134,7 +134,7 @@ function UsersList({usersData, setSelectedUserData, setIsLoading}) {
                 <Divider/>
                 {usersData.map((item, index) => (
                     <CustomCard key={index} >
-                        <Box sx={{height: 50}} onClick={() => getUserAttendance(item.user_id)}>
+                        <Box sx={{height: 50}} onClick={() => getUserAttendance(item._id)}>
                             <Stack direction={'row'} spacing={2}>
                                 <Avatar alt='img' src={item.picture} sx={{
                                     height: 50,

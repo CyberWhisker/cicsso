@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { Button, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useSignup } from '../../../../hooks/useSignUp';
 
 function Store() {
   // State to hold form values
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [year, setYear] = useState('');
-  const [section, setSection] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  
-  // State to hold validation errors
-  const [errors, setErrors] = useState({
+  const {signup, error, loading} = useSignup()
+  const [formData, setFormData] = useState({
     email: '',
     name: '',
     year: '',
@@ -21,55 +15,33 @@ function Store() {
     confirmPassword: ''
   });
 
+  // State to hold validation errors
+  const [errors, setErrors] = useState({});
+
+  // Handle input change
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    
+    const { email, name, year, section, password, confirmPassword } = formData;
+    const newErrors = {};
+
     // Basic validation
-    const newErrors = {
-      email: '',
-      name: '',
-      year: '',
-      section: '',
-      password: '',
-      confirmPassword: ''
-    };
-    
-    if (!email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
-    }
+    if (!email || !/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Valid email is required';
+    if (!name) newErrors.name = 'Name is required';
+    if (!year) newErrors.year = 'Year is required';
+    if (!section) newErrors.section = 'Section is required';
+    if (!password || password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
 
-    if (!name) {
-      newErrors.name = 'Name is required';
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      // Handle successful form submission
+      signup(formData)
     }
-
-    if (!year) {
-      newErrors.year = 'Year is required';
-    }
-
-    if (!section) {
-      newErrors.section = 'Section is required';
-    }
-
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters long';
-    }
-
-    if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-    
-    if (Object.values(newErrors).some(error => error)) {
-      setErrors(newErrors);
-      return;
-    }
-
-    // Handle successful form submission here (e.g., send data to server)
-    console.log('Form submitted successfully!');
   };
 
   return (
@@ -77,25 +49,26 @@ function Store() {
       <Stack spacing={2}>
         <TextField
           label="Enter Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
           error={Boolean(errors.email)}
           helperText={errors.email}
         />
         <TextField
           label="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
           error={Boolean(errors.name)}
           helperText={errors.name}
         />
         <Select
-          value={year}
-          onChange={(e) => setYear(e.target.value)}
+          name="year"
+          value={formData.year}
+          onChange={handleChange}
           displayEmpty
-          inputProps={{ 'aria-label': 'Year' }}
           error={Boolean(errors.year)}
-          helperText={errors.year}
         >
           <MenuItem value="" disabled>Select Year</MenuItem>
           <MenuItem value="1st Year">1st Year</MenuItem>
@@ -106,10 +79,9 @@ function Store() {
         <TextField
           select
           label="Section"
-          value={section}
-          onChange={(e) => setSection(e.target.value)}
-          displayEmpty
-          inputProps={{ 'aria-label': 'Section' }}
+          name="section"
+          value={formData.section}
+          onChange={handleChange}
           error={Boolean(errors.section)}
           helperText={errors.section}
         >
@@ -122,20 +94,23 @@ function Store() {
         <TextField
           label="Enter Password"
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
           error={Boolean(errors.password)}
           helperText={errors.password}
         />
         <TextField
           label="Confirm Password"
           type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleChange}
           error={Boolean(errors.confirmPassword)}
           helperText={errors.confirmPassword}
         />
-        <Button type="submit" variant="contained">Submit</Button>
+        {error && <Typography color={'error'} textAlign={'center'}>{error}</Typography>}
+        <Button type="submit" variant="contained" disabled={loading}>Submit</Button>
         <Typography
           variant="body2"
           color="primary"

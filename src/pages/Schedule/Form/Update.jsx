@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/material';
-import { Form } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
@@ -51,7 +50,7 @@ function Update({data, onClose, setSchedule, schedule}) {
             <Box sx={{ width: '60vh', p: 2 }}>
                 <Typography variant='h4' fontWeight='bold'>Update Event</Typography>
                 <Box mt={2}>
-                    <Form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <Stack direction={'column'} spacing={2}>
                             <TextField
                                 label="Date"
@@ -114,7 +113,7 @@ function Update({data, onClose, setSchedule, schedule}) {
                                 Submit
                             </Button>
                         </Stack>
-                    </Form>
+                    </form>
                 </Box>
             </Box>
         </LocalizationProvider>

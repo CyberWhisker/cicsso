@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Divider, MenuItem, Stack, TextField, Typography } from '@mui/material';
-import { Form, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
@@ -13,7 +13,7 @@ function Store({onClose, handleGetData}) {
     const [userDatas, setUserDatas] = useState([]);
     const [formData, setFormData] = useState({
         scheduleId: id,
-        user_id: '',
+        userId: '',
         name: '',
         picture: '',
         amIn: null,
@@ -35,11 +35,11 @@ function Store({onClose, handleGetData}) {
     }, [])
 
     const handleChange = (e) => {
-        const user = userDatas.find(item => item.user_id == e.target.value)
+        const user = userDatas.find(item => item._id == e.target.value)
         // Update formData with new values
         setFormData(prevState => ({
             ...prevState,
-            user_id: e.target.value,
+            userId: e.target.value,
             name: user ? user.name : prevState.name,
             picture: user ? user.picture : prevState.picture
         }));
@@ -53,9 +53,9 @@ function Store({onClose, handleGetData}) {
         e.preventDefault();
         setSubmitted(true);
 
-        const { user_id } = formData;
+        const { userId } = formData;
         // Check if all fields are filled
-        if (!user_id ) {
+        if (!userId ) {
             toast.error("All fields, including times, are required");
             return;
         }
@@ -70,7 +70,7 @@ function Store({onClose, handleGetData}) {
             handleGetData()
             setSubmitted(false);
             setFormData({
-                user_id: null,
+                userId: null,
                 amIn: null,
                 amOut: null,
                 pmIn: null,
@@ -86,24 +86,24 @@ function Store({onClose, handleGetData}) {
             <Box sx={{ width: '70vh', p: 2 }}>
                 <Typography variant='h4' fontWeight='bold'>Add Event</Typography>
                 <Box mt={2}>
-                    <Form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <Stack direction={'column'} spacing={2}>
                             <TextField
                                 label='Enter Event'
-                                name='user_id'
+                                name='userId'
                                 variant="outlined"
                                 sx={{ width: '100%'}}
-                                value={formData.user_id}
+                                value={formData.userId}
                                 onChange={handleChange}
-                                error={submitted && !formData.user_id}
-                                helperText={submitted && !formData.user_id ? "Required" : ""}
+                                error={submitted && !formData.userId}
+                                helperText={submitted && !formData.userId ? "Required" : ""}
                                 select
                             >
                                 {!userDatas && (
                                     <MenuItem value={0}>No Record Found</MenuItem>
                                 )}
                                 {userDatas && userDatas.map((item, index) => (
-                                    <MenuItem value={item.user_id} key={index}>{item.name}</MenuItem>
+                                    <MenuItem value={item._id} key={index}>{item.name}</MenuItem>
                                 ))}
                             </TextField>
                             <Divider/>
@@ -160,7 +160,7 @@ function Store({onClose, handleGetData}) {
                                 Submit
                             </Button>
                         </Stack>
-                    </Form>
+                    </form>
                 </Box>
             </Box>
         </LocalizationProvider>

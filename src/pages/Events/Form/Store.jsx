@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/material';
-import { Form } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
@@ -127,7 +126,7 @@ function Store({setEvents, onClose}) {
             <Box sx={{ width: '70vh', p: 2 }}>
                 <Typography variant='h4' fontWeight='bold'>Add Event</Typography>
                 <Box mt={2}>
-                    <Form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
                             <TextField
                                 label='Enter Event'
@@ -230,7 +229,7 @@ function Store({setEvents, onClose}) {
                                 Submit
                             </Button>
                         </Box>
-                    </Form>
+                    </form>
                 </Box>
             </Box>
         </LocalizationProvider>

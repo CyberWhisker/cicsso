@@ -43,6 +43,7 @@ export const fetchAttendanceByUserId = async (id) => {
             throw new Error('Failed to fetch attendance');
         }
         const data = await response.json();
+        console.log(data)
         return { data, error: null };
     } catch (error) {
         return { data: [], error: error };
@@ -50,6 +51,7 @@ export const fetchAttendanceByUserId = async (id) => {
 }
 
 export const storeAttendance = async (formData) => {
+    console.log(formData)
     try {
         const response = await fetch(`${import.meta.env.VITE_API}/api/attendance`, {
             method: 'POST',

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Divider, Grid, Stack, TextField, Typography } from '@mui/material';
-import { Form } from 'react-router-dom';
+import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
 import moment from 'moment';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
@@ -38,7 +37,7 @@ function Update({selected, onClose, handleGetData}) {
             <Box sx={{ width: '60vh', p: 2 }}>
                 <Typography variant='h4' fontWeight='bold'>Update Event</Typography>
                 <Box mt={2}>
-                    <Form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
                             <Typography>Select Student</Typography>
                             <TextField
@@ -100,7 +99,7 @@ function Update({selected, onClose, handleGetData}) {
                                 Submit
                             </Button>
                         </Box>
-                    </Form>
+                    </form>
                 </Box>
             </Box>
         </LocalizationProvider>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
-import { Form } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 function Store() {
@@ -36,7 +35,7 @@ function Store() {
             <Box sx={{ width: '60vh', p: 2 }}>
                 <Typography variant='h4' fontWeight='bold'>Add Event</Typography>
                 <Box mt={2}>
-                    <Form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
                             <Typography>Enter Event</Typography>
                             <TextField
@@ -85,7 +84,7 @@ function Store() {
                                 Submit
                             </Button>
                         </Box>
-                    </Form>
+                    </form>
                 </Box>
             </Box>
         </React.Fragment>

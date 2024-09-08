@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box } from '@mui/material';
-import { userLogin } from '../../../../api/userApi';
+import { TextField, Button, Box, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { useLogin } from '../../../../hooks/useLogin';
 
 const LoginForm = () => {
+  const {login, error, loading} = useLogin()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -56,12 +58,7 @@ const LoginForm = () => {
     }
 
     // Handle form submission logic here
-    const {data, error} = await userLogin(formData);
-    if(error){
-      console.log(error)
-    } else {
-      console.log(data)
-    }
+    await login(formData.email, formData.password)
 
   };
 
@@ -100,8 +97,12 @@ const LoginForm = () => {
         fullWidth
       />
 
-      <Button variant="contained" color="primary" type="submit" fullWidth>
+      {error && <Typography color={'error'} textAlign={'center'}>{error}</Typography>}
+      <Button variant="contained" color="primary" type="submit" fullWidth disabled={loading}>
         Login
+      </Button>
+      <Button variant="outlined" color="primary" fullWidth component={Link} to='/register'>
+        Register
       </Button>
     </Box>
   );

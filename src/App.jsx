@@ -1,54 +1,41 @@
-import React from 'react'
-import MasterLanding from './layouts/MasterLanding';
-import { AttendanceSection, ClearanceSection, FooterSection, HeroSection, PaymentSection, ProcedureSection } from './pages/Landing';
-import { Box } from '@mui/material';
-
+import React from 'react';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { 
+  Attendance, 
+  Dashboard, 
+  Events, 
+  Landing, 
+  Login, 
+  Penalties, 
+  ProjectDetails, 
+  ProjectPage, 
+  Register, 
+  Schedule, 
+  Transaction, 
+  Users 
+} from './pages';
+import { useAuthContext } from './hooks/useAuthContext';
 
 function App() {
+  const {user} = useAuthContext();
   return (
-    <MasterLanding>
-        <Box 
-        sx={{
-          pt: { xs: 10, sm: 20 },
-        }}
-        >
-          <HeroSection />
-        </Box>
-        <Box 
-        sx={{
-          pt: { xs: 5, sm: 11 },
-        }}
-        >
-          <ProcedureSection/>
-        </Box>
-        <Box 
-        id="attendance"
-        sx={{
-          pt: { xs: 5, sm: 11 },
-        }}
-        >
-          <AttendanceSection/>
-        </Box>
-        <Box 
-        id="payment"
-        sx={{
-          pt: { xs: 5, sm: 11 },
-        }}
-        >
-          <PaymentSection/>
-        </Box>
-        <Box 
-        id="clearance"
-        sx={{
-          pt: { xs: 5, sm: 11 },
-        }}
-        >
-          <ClearanceSection/>
-        </Box>
-        <FooterSection/>
-        
-    </MasterLanding>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/events" element={<Events />} />
+        <Route path="/schedule/:id" element={<Schedule />} />
+        <Route path="/attendance/:id" element={<Attendance />} />
+        <Route path="/penalties" element={<Penalties />} />
+        <Route path="/transaction" element={<Transaction />} />
+        <Route path="/projects" element={<ProjectPage />} />
+        <Route path="/projects/:projectId" element={<ProjectDetails />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-export default App
+export default App;

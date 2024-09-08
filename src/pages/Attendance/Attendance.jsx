@@ -37,7 +37,7 @@ function Attendance() {
       } else {
         // Combine the data after both are fetched
         const combined = userData.map(user => {
-          const userAttendance = attendanceData.find(att => att.user_id === user.user_id);
+          const userAttendance = attendanceData.find(att => att.userId === user._id);
           return {
             ...user,
             attendance: userAttendance || {}

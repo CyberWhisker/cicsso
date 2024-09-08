@@ -4,8 +4,7 @@ import Master from '../../layouts/Master';
 import { CustomCard } from '../../components';
 import { Person } from '@mui/icons-material';
 import { toast } from 'react-toastify';
-import { fetchUserById, fetchUsers, updateUserRole } from '../../api/userApi';
-import { fetchRoles } from '../../api/roleApi';
+import { deleteUser, fetchUserById, fetchUsers, updateUser } from '../../api/userApi';
 
 
 function Users() {
@@ -14,17 +13,18 @@ function Users() {
     const [usersData, setUsersData] = useState([]);
     const [userData, setUserData] = useState(null);
 
+    const getUsers = async () => {
+        setIsLoading(true);
+        const { data, error } = await fetchUsers();
+        if (error) {
+            setError(error);
+        } else {
+            setUsersData(data);
+        }
+        setIsLoading(false);
+    };
+
     useEffect(() => {
-        const getUsers = async () => {
-            setIsLoading(true);
-            const { data, error } = await fetchUsers();
-            if (error) {
-                setError(error);
-            } else {
-                setUsersData(data);
-            }
-            setIsLoading(false);
-        };
         getUsers();
     }, []);
 
@@ -44,7 +44,7 @@ function Users() {
                     <UsersList usersData={usersData} setIsLoading={setIsLoading} setUserData={setUserData}/>
                 </Grid>
                 <Grid item xs={8}>
-                    <UserDetails userData={userData} setIsLoading={setIsLoading}/>
+                    <UserDetails userData={userData} setIsLoading={setIsLoading} setUserData={setUserData} getUsers={getUsers}/>
                 </Grid>
             </Grid>
         </Master>
@@ -69,7 +69,7 @@ function UsersList({usersData, setIsLoading, setUserData}) {
                 <Divider/>
                 {usersData.map((item, index) => (
                     <CustomCard key={index} >
-                        <Box sx={{height: 50}} onClick={() => handleUserData(item.user_id)}>
+                        <Box sx={{height: 50}} onClick={() => handleUserData(item._id)}>
                             <Stack direction={'row'} spacing={2}>
                                 <Avatar alt='img' src={item.picture} sx={{
                                     height: 50,
@@ -88,7 +88,34 @@ function UsersList({usersData, setIsLoading, setUserData}) {
     );
 }
 
-function UserDetails({userData, setIsLoading}) {
+function UserDetails({userData, setUserData, getUsers}) {
+    const [toggleUpdate, setToggleUpdate] = useState(true)
+    const handleUpdate = () => {
+        setToggleUpdate(false);
+    }
+    const handleChange = (e) => {
+        setUserData({...userData, [e.target.name]: e.target.value})
+    }
+    const handleUpdateSubmit = async () => {
+        const {data, error} = await updateUser(userData)
+        if (error) {
+            toast.error(error)
+        } else {
+            getUsers()
+            toast.success('Successfully Updated')
+        }
+        setToggleUpdate(true)
+    }
+    const handleDeleteSubmit = async () => {
+        const {data, error} = await deleteUser(userData)
+        if (error) {
+            toast.error(error)
+        } else {
+            getUsers()
+            toast.success('Successfully Deleted')
+        }
+        setToggleUpdate(true)
+    }
     if (!userData) {
       return(
         <Card sx={{p: 2, height: '75vh', overflowY: 'auto'}} elevation={5}>
@@ -109,119 +136,100 @@ function UserDetails({userData, setIsLoading}) {
     }
     return(
         <Card sx={{p: 2, height: '75vh', overflow: 'auto'}} elevation={5}>
-            <Stack direction={'column'} spacing={2}>
+            <Stack direction={'column'} spacing={1}>
                 <Typography fontWeight={'bold'}>User Details</Typography>
                 <Divider/>
-                <Grid container>
-                    <Grid item xs={4}>
-                        <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                            <Avatar alt='user' src={userData.picture} sx={{
-                                height: 150,
-                                width: 150,
-                            }}/>
-                        
-                        </Box>
-                    </Grid>
-                    <Grid item xs={8}>
-                        <Stack direction={'column'} spacing={2}>
-                            <Box>
-                                <Typography>Email:</Typography>
-                                <TextField 
-                                sx={{width: '100%'}} 
-                                value={userData.email}
-                                disabled
-                                />
-                            </Box>
-                            <Box>
-                                <Typography>First Name:</Typography>
-                                <TextField 
-                                sx={{width: '100%'}} 
-                                value={userData.given_name}
-                                disabled
-                                />
-                            </Box>
-                            <Box>
-                                <Typography>Last Name:</Typography>
-                                <TextField 
-                                sx={{width: '100%'}} 
-                                value={userData.family_name}
-                                disabled
-                                />
-                            </Box>
-                            <Box>
-                                <Typography>Nickname:</Typography>
-                                <TextField 
-                                sx={{width: '100%'}} 
-                                value={userData.nickname}
-                                disabled
-                                />
-                            </Box>
-                            <Divider/>
-                            <RoleList userData={userData} setIsLoading={setIsLoading}/>
-                        </Stack>
-                    </Grid>
+                <Grid container spacing={2} px={2}>
+                        <Grid item xs={4}>
+                            <Stack spacing={2}>
+                                <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                                    <Avatar alt='user' src={userData.picture} sx={{
+                                        height: 150,
+                                        width: 150,
+                                    }}/>
+                                </Box>
+                                {!toggleUpdate && <Button variant='contained' onClick={handleUpdateSubmit}>Save Changes</Button>}
+                                {toggleUpdate && <Button variant='contained' color='warning' onClick={() => handleUpdate()}>Update</Button>}                         
+                                <Button variant='contained' color='error' onClick={handleDeleteSubmit}>Delete User</Button>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <Stack direction={'column'} spacing={2}>
+                                <Box>
+                                    <Typography>Name:</Typography>
+                                    <TextField 
+                                    name='name'
+                                    sx={{width: '100%'}} 
+                                    value={userData.name}
+                                    disabled={toggleUpdate}
+                                    onChange={handleChange}
+                                    />
+                                </Box>
+                                <Box>
+                                    <Typography>Email:</Typography>
+                                    <TextField 
+                                    name='email'
+                                    sx={{width: '100%'}} 
+                                    value={userData.email}
+                                    disabled={toggleUpdate}
+                                    onChange={handleChange}
+                                    />
+                                </Box>
+                                <Stack direction={'row'} spacing={2}>
+                                    <Box sx={{width: '100%'}}>
+                                        <Typography>Year</Typography>
+                                        <TextField 
+                                        name='year'
+                                        sx={{width: '100%'}} 
+                                        value={userData.year}
+                                        select
+                                        disabled={toggleUpdate}
+                                        onChange={handleChange}
+                                        >
+                                            <MenuItem value='1st Year'>1st year</MenuItem>
+                                            <MenuItem value='2nd Year'>2nd year</MenuItem>
+                                            <MenuItem value='3rd Year'>3rd year</MenuItem>
+                                            <MenuItem value='4th Year'>4th year</MenuItem>
+                                        </TextField>
+                                    </Box>
+                                    <Box sx={{width: '100%'}}>
+                                        <Typography>Section</Typography>
+                                        <TextField 
+                                        name='section'
+                                        sx={{width: '100%'}} 
+                                        value={userData.section}
+                                        disabled={toggleUpdate}
+                                        select
+                                        onChange={handleChange}
+                                        >
+                                            <MenuItem value='A'>A</MenuItem>
+                                            <MenuItem value='B'>B</MenuItem>
+                                            <MenuItem value='C'>C</MenuItem>
+                                            <MenuItem value='D'>Dr</MenuItem>
+                                        </TextField>
+                                    </Box>
+                                </Stack>
+                                <Divider/>
+                                <Box>
+                                    <Typography>Role</Typography>
+                                    <TextField 
+                                    name='role'
+                                    sx={{width: '100%'}} 
+                                    value={userData.role}
+                                    select
+                                    disabled={toggleUpdate}
+                                    onChange={handleChange}
+                                    >
+                                        <MenuItem value='admin'>Admin</MenuItem>
+                                        <MenuItem value='user'>User</MenuItem>
+                                    </TextField>
+                                </Box>
+                            </Stack>
+                        </Grid>
                 </Grid>
             </Stack>
         </Card>
     )
-}
-
-function RoleList({userData, setIsLoading}) {
-    const [roleIsLoading, setRoleIsLoading] = useState(false);
-    const [selectedRole, setSelectedRole] = useState('');
-    const [roles, setRoles] = useState([]);
-    useEffect(() => {
-        const getRoles = async () => {
-            setIsLoading(true);
-            setRoleIsLoading(true);
-            const {data, error} = await fetchRoles();
-            if (error) {
-                console.log(error)
-            } else {
-                setRoles(data)
-                setSelectedRole(userData.roles[0].id)
-            }
-            setRoleIsLoading(false);
-            setIsLoading(false);
-        }
-        getRoles();
-    }, []);
-
-    const handleChange = (event) => {
-        setSelectedRole(event.target.value);
-    };
-
-    const handleSubmit = async () => {
-        setIsLoading(true);
-        await updateUserRole(userData, selectedRole)
-        setIsLoading(false);
-    };
-    return (
-        <Box>
-            <Typography>Roles:</Typography>
-            <Stack spacing={2}>
-                <TextField 
-                    sx={{ width: '100%' }} 
-                    value={selectedRole}
-                    select
-                    onChange={handleChange}
-                >
-                    {roleIsLoading ? (
-                        <MenuItem disabled>Loading...</MenuItem>
-                    ) : (
-                        roles && roles.length > 0 ? (
-                            roles.map((item, index) => (
-                                <MenuItem key={index} value={item.id}>{item.name}</MenuItem>
-                            ))
-                        ) : (
-                            <MenuItem disabled>No roles available</MenuItem>
-                        )
-                    )}
-                </TextField>
-                <Button variant='contained' onClick={handleSubmit}>Save</Button>
-            </Stack>
-        </Box>
-    );
 }
 
 export default Users
