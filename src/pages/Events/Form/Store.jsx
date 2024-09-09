@@ -85,6 +85,7 @@ function Store({setEvents, onClose}) {
             onClose()
             await handleSchedule(eventId);
         }
+        await handleSchedule(eventId);
     }
 
     const handleSchedule = async (eventId) => {
@@ -92,16 +93,52 @@ function Store({setEvents, onClose}) {
         const endDate = moment(formData.endDate);
     
         while (minDate.isSameOrBefore(endDate)) {
+            let scheduleDateAmIn = minDate.clone();
+            let scheduleDateAmOut = minDate.clone();
+            let scheduleDatePmIn = minDate.clone();
+            let scheduleDatePmOut = minDate.clone();
+            if (formSchedule.amIn) {
+                const amInTime = moment(formSchedule.amIn); // Ensure amIn is a Moment.js object
+                scheduleDateAmIn.set({
+                    hour: amInTime.hour(),
+                    minute: amInTime.minute(),
+                    second: amInTime.second(), // Optional, if you need seconds as well
+                });
+            }
+            if (formSchedule.amIn) {
+                const amOutTime = moment(formSchedule.amOut); // Ensure amIn is a Moment.js object
+                scheduleDateAmOut.set({
+                    hour: amOutTime.hour(),
+                    minute: amOutTime.minute(),
+                    second: amOutTime.second(), // Optional, if you need seconds as well
+                });
+            }
+            if (formSchedule.pmIn) {
+                const pmInTime = moment(formSchedule.pmIn); // Ensure amIn is a Moment.js object
+                scheduleDatePmIn.set({
+                    hour: pmInTime.hour(),
+                    minute: pmInTime.minute(),
+                    second: pmInTime.second(), // Optional, if you need seconds as well
+                });
+            }
+            if (formSchedule.pmOut) {
+                const pmOutTime = moment(formSchedule.pmOut); // Ensure amIn is a Moment.js object
+                scheduleDatePmOut.set({
+                    hour: pmOutTime.hour(),
+                    minute: pmOutTime.minute(),
+                    second: pmOutTime.second(), // Optional, if you need seconds as well
+                });
+            }
+    
             const currentSchedule = {
                 eventId: eventId,
                 date: minDate, 
-                amIn: formSchedule.amIn,
-                amOut: formSchedule.amOut,
-                pmIn: formSchedule.pmIn,
-                pmOut: formSchedule.pmOut,
+                amIn: scheduleDateAmIn,
+                amOut: scheduleDateAmOut,
+                pmIn: scheduleDatePmIn,
+                pmOut: scheduleDatePmOut,
             };
     
-            // Make the API call using the current schedule data
             const response = await fetch(`${import.meta.env.VITE_API}/api/schedule`, {
                 method: 'POST',
                 body: JSON.stringify(currentSchedule),
@@ -110,7 +147,6 @@ function Store({setEvents, onClose}) {
                 },
             });
     
-            // Handle the response
             if (response.ok) {
                 toast.success("Schedule added successfully");
             } else {

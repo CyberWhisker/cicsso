@@ -134,7 +134,7 @@ function AttendanceTable({combinedData, handleGetData, id}) {
 
   const handleActive = (sched) => {
     // Parse the time limit from environment variable and ensure it's an integer
-    const timeLimit = parseInt(import.meta.env.VITE_TIME_LIMIT, 10);
+    const timeLimit = parseInt(import.meta.env.VITE_TIME_LIMIT);
     
     // Create moment objects from schedule times
     const amIn = moment(sched[0].amIn);
@@ -149,16 +149,17 @@ function AttendanceTable({combinedData, handleGetData, id}) {
     const getEndTime = (time) => time.clone().add(timeLimit, 'hours');
   
     // Check if currentTime falls within any of the adjusted time ranges
-    if (amIn.isSameOrBefore(currentTime) && currentTime.isBefore(getEndTime(amIn))) {
+    console.log(currentTime.format('dd hh:mm:ss a'), getEndTime(pmOut).format('dd hh:mm:ss a'))
+    if (currentTime.isSameOrAfter(amIn) && currentTime.isSameOrBefore(getEndTime(amIn))) {
       setActive({...active, amInChip: true})
     } 
-    if (amOut.isSameOrBefore(currentTime) && currentTime.isBefore(getEndTime(amOut))) {
+    if (currentTime.isSameOrAfter(amOut) && currentTime.isSameOrBefore(getEndTime(amOut))) {
       setActive({...active, amOutChip: true})
     } 
-    if (pmIn.isSameOrBefore(currentTime) && currentTime.isBefore(getEndTime(pmIn))) {
+    if (currentTime.isSameOrAfter(pmIn) && currentTime.isSameOrBefore(getEndTime(pmIn))) {
       setActive({...active, pmINChip: true})
     } 
-    if (pmOut.isSameOrBefore(currentTime) && currentTime.isBefore(getEndTime(pmOut))) {
+    if (currentTime.isSameOrAfter(pmOut) && currentTime.isSameOrBefore(getEndTime(pmOut))) {
       setActive({...active, pmOutChip: true})
     } 
   };
