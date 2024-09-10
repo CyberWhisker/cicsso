@@ -1,90 +1,72 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
-import { Form } from 'react-router-dom';
+import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
+import { storeProject } from '../../../api/ProjectApi';
 
-function Store() {
+function Store({getProjects, handleCloseModal}) {
     const [formData, setFormData] = useState({
-        event: '',
-        startDate: '',
-        endDate: '',
-        image: ''
+        project: '',
+        description: ''
     });
     const [submitted, setSubmitted] = useState(false);
 
     const handleChange = (e) => 
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
 
-        const { event, startDate, endDate } = formData;
-        if (!event || !startDate || !endDate) {
+        const { project, description } = formData;
+        if (!project || !description) {
             toast.error("All fields are required");
             return;
         }
-
-        console.log("Event submitted:", formData);
-        toast.success("Event added successfully");
-        setFormData({ event: '', startDate: '', endDate: '' });
+        const {data, error} = await storeProject(formData)
+        if (error) {
+            toast.error(error)
+        } else {
+            getProjects();
+            toast.success("Project added successfully");
+            setFormData({ project: '', description: ''});
+            handleCloseModal();
+        }
         setSubmitted(false);
     };
 
     return (
         <Box sx={{ width: '60vh', p: 2 }}>
-            <Typography variant='h4' fontWeight='bold'>Add Event</Typography>
+            <Typography variant='h4' fontWeight='bold'>Add Project</Typography>
             <Box mt={2}>
-                <Form onSubmit={handleSubmit}>
-                    <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
-                        <Typography>Enter Event</Typography>
+                <form onSubmit={handleSubmit}>
+                    <Stack spacing={2}>
                         <TextField
-                            name='event'
+                            label='Project Name'
+                            name='project'
                             variant="outlined"
                             sx={{ width: '100%'}}
-                            value={formData.event}
+                            value={formData.project}
                             onChange={handleChange}
-                            error={submitted && !formData.event}
-                            helperText={submitted && !formData.event ? "Required" : ""}
+                            error={submitted && !formData.project}
+                            helperText={submitted && !formData.project ? "Required" : ""}
                         />
-                        <Typography>Enter Start Date</Typography>
                         <TextField
-                            name='startDate'
+                            label='Project Details'
+                            name='description'
                             variant="outlined"
                             sx={{ width: '100%'}}
-                            value={formData.startDate}
+                            value={formData.description}
                             onChange={handleChange}
-                            type='date'
-                            error={submitted && !formData.startDate}
-                            helperText={submitted && !formData.startDate ? "Required" : ""}
-                        />
-                        <Typography>Enter End Date</Typography>
-                        <TextField
-                            name='endDate'
-                            variant="outlined"
-                            sx={{ width: '100%'}}
-                            value={formData.endDate}
-                            onChange={handleChange}
-                            type='date'
-                            error={submitted && !formData.endDate}
-                            helperText={submitted && !formData.endDate ? "Required" : ""}
-                        />
-                        <Typography>Insert Banner</Typography>
-                        <TextField
-                            name='image'
-                            variant="outlined"
-                            sx={{ width: '100%'}}
-                            value={formData.image}
-                            onChange={handleChange}
-                            type='file'
-                            error={submitted && !formData.image}
-                            helperText={submitted && !formData.image ? "Required" : ""}
+                            error={submitted && !formData.description}
+                            helperText={submitted && !formData.description ? "Required" : ""}
+                            multiline
+                            rows={4}
                         />
                         <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
                             Submit
                         </Button>
-                    </Box>
-                </Form>
+                    </Stack>
+                </form>
             </Box>
         </Box>
     );

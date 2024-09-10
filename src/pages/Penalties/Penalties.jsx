@@ -135,15 +135,17 @@ function UsersList({usersData, setSelectedUserData, setIsLoading}) {
                 {usersData.map((item, index) => (
                     <CustomCard key={index} >
                         <Box sx={{height: 50}} onClick={() => getUserAttendance(item._id)}>
-                            <Stack direction={'row'} spacing={2}>
-                                <Avatar alt='img' src={item.picture} sx={{
-                                    height: 50,
-                                    width: 50
-                                }}/>
-                                <Box>
-                                    <Typography fontWeight={'bold'}>{item.name}</Typography>
-                                    <Typography>{item.email}</Typography>
-                                </Box>
+                            <Stack direction={'row'} spacing={2} justifyContent={'space-between'}>
+                                <Stack direction={'row'} spacing={2}>
+                                    <Avatar alt='img' src={item.picture} sx={{
+                                        height: 50,
+                                        width: 50
+                                    }}/>
+                                    <Box>
+                                        <Typography fontWeight={'bold'}>{item.name}</Typography>
+                                        <Typography>{item.email}</Typography>
+                                    </Box>
+                                </Stack>
                                 <Badge badgeContent={item.absent} color="error">
                                     <CalendarMonth />
                                 </Badge>
