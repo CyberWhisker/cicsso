@@ -17,6 +17,8 @@
     "@mui/lab": "^5.0.0-alpha.171",
     "@mui/material": "^5.16.0",
     "@mui/x-charts": "^7.10.0",
+    "@mui/x-data-grid": "^7.16.0",
+    "@mui/x-data-grid-generator": "^7.16.0",
     "@mui/x-date-pickers": "^7.15.0",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.13",

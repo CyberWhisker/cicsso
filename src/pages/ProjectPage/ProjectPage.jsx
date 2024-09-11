@@ -10,6 +10,7 @@ import Delete from './Form/Delete'
 import { fetchProjects } from '../../api/ProjectApi'
 import { toast } from 'react-toastify'
 import moment from 'moment'
+import { fetchItem } from '../../api/ItemApi'
 
 function ProjectPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -40,13 +41,23 @@ function EventList({setIsLoading}) {
   
   const getProjects = async () => {
     setIsLoading(true)
-    const {data, error} = await fetchProjects();
-    if (error) {
+    const [
+      {data: projectData, error: projectError},
+      {data: itemData, error: itemError}
+    ] = await Promise.all([
+      fetchProjects(),
+      fetchItem()
+    ]);
+    if (projectError || itemError) {
       setIsLoading(false)
       toast.error(error)
     } else {
+      const combinedData = projectData.map(project => ({
+        ...project,
+        items: itemData.filter(item => item.projectId == project._id )
+      })) 
       setIsLoading(false)
-      setProjects(data)
+      setProjects(combinedData)
     }
   }
 
@@ -72,36 +83,39 @@ function EventList({setIsLoading}) {
   
   return (
     <Grid container spacing={2}>
-      {projects.map((item, index) => (
-        <Grid 
-          item 
-          xs={6} 
-          md={4}
-          key={index}
-        >
-          <CustomCard>
-            <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
-              <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary">{item.project}</Typography>
-                <DropDown >
-                  <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
-                  <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
-                </DropDown>
+      {projects.map((item, index) => {
+        const totalCost = item.items.reduce((sum, item) => sum + item.price, 0);
+        return (
+          <Grid 
+            item 
+            xs={6} 
+            md={4}
+            key={index}
+          >
+            <CustomCard>
+              <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary">{item.project}</Typography>
+                  <DropDown >
+                    <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
+                    <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
+                  </DropDown>
+                </Box>
+                <Box sx={{display: 'flex',flexDirection: 'column' ,justifyContent: 'center', textDecoration: 'none', minHeight: '15vh'}} 
+                  component={Link}
+                  to={`/item/${item._id}`}
+                >
+                  <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱{totalCost}</Typography>
+                  <Typography textAlign='center' fontWeight='bold' color='primary'>Total Cost</Typography>
+                </Box>
+                <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+                  <Typography>Created At: {moment(item.createdAt).format('MMMM DD, YYYY')}</Typography>
+                </Box>
               </Box>
-              <Box sx={{display: 'flex',flexDirection: 'column' ,justifyContent: 'center', textDecoration: 'none', minHeight: '15vh'}} 
-                component={Link}
-                to={`/projects/${item._id}`}
-              >
-                <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱</Typography>
-                <Typography textAlign='center' fontWeight='bold' color='primary'>Total Cost</Typography>
-              </Box>
-              <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
-                <Typography>Created At: {moment(item.createdAt).format('MMMM DD, YYYY')}</Typography>
-              </Box>
-            </Box>
-          </CustomCard>
-        </Grid>
-      ))}
+            </CustomCard>
+          </Grid>
+        )
+      })}
       <Grid 
         item 
         xs={6} 

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Button, Card, Chip, Divider, Drawer, LinearProgress, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, Divider, Drawer, LinearProgress, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
 import Store from './Form/Store';
 import Update from './Form/Update';
@@ -10,9 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AlertModal } from '../../components';
 import moment from 'moment';
-import { Add, DisabledByDefault, KeyboardReturn } from '@mui/icons-material';
-import { fetchUsers } from '../../api/userApi';
-import { fetchTransactionByCollectionId } from '../../api/TransactionApi';
+import { KeyboardReturn } from '@mui/icons-material';
 
 
 function Details() {
@@ -23,21 +21,11 @@ function Details() {
     const [data, setData] = useState([]);
     const handleGetData = async () => {
         setIsLoading(true)
-        const [
-            {data: userData, error: userError},
-            {data: TransData, error: TransError},
-        ] = await Promise.all([
-            fetchUsers(),
-            fetchTransactionByCollectionId(id)
-        ])
-        if (userError || TransError) {
+        const {data, error} = await fetchItemByProjectId(id)
+        if (error) {
             toast.error(error)
         } else {
-            const combinedData = userData.map(user => ({
-                ...user,
-                transaction: TransData.find(trans => trans.userId == user._id)
-            }))
-            setData(combinedData)
+            setData(data)
         }
         setIsLoading(false)
     }
@@ -50,9 +38,9 @@ function Details() {
         <Master>
             <Stack spacing={2}>
                 <Stack direction={'row'} spacing={2} alignItems={'center'}>
-                    <Typography variant="h5" fontWeight="bold">Transaction List :</Typography>
-                    <Button variant="contained" onClick={() => navigate(-1)} startIcon={<KeyboardReturn/>}>Collection</Button>
-                    <Button variant="contained" onClick={() => setStoreModal(true)} endIcon={<Add/>}>Add Transaction</Button>
+                    <Typography variant="h5" fontWeight="bold">Item List :</Typography>
+                    <Button variant="contained" onClick={() => navigate(-1)} startIcon={<KeyboardReturn/>}>Projects</Button>
+                    <Button variant="contained" onClick={() => setStoreModal(true)}>Add Item</Button>
                 </Stack>
                 <Box>
                     <Divider/>
@@ -63,7 +51,7 @@ function Details() {
                 <DataGridList data={data} handleGetData={handleGetData}/>
             </Stack>
             <Drawer open={storeModal} anchor='right' onClose={() => setStoreModal(false)}>
-                <Store handleGetData={handleGetData} handleCloseModal={() => setStoreModal(false)} data={data}/>
+                <Store handleGetData={handleGetData} onClose={() => setStoreModal(false)}/>
             </Drawer>
         </Master>
     )
@@ -76,17 +64,7 @@ function DataGridList ({data, handleGetData}) {
     const [deleteModal, setDeleteModal] = useState(false);
     const handleMenuOpen = (event, item) => {
         setAnchorEl(event.currentTarget)
-        const {_id: userId} = item
-        const {_id: _id, collectionId, payment, amount, date} = item.transaction
-        const newForm = {
-            _id: _id,
-            userId: userId,
-            collectionId: collectionId,
-            payment: payment,
-            amount: amount,
-            date: date,
-        }
-        setSelected(newForm)
+        setSelected(item)
     }
     const handleMenuClose = (event, item) => {
         setAnchorEl(null)
@@ -111,42 +89,22 @@ function DataGridList ({data, handleGetData}) {
             headerAlign: 'center'
         },
         {
-            field: 'name',
-            headerName: 'Name',
+            field: 'item',
+            headerName: 'Item',
             flex: 1,
             headerAlign: 'center'
         },
         {
-            field: 'payment',
-            headerName: 'Payment',
+            field: 'quantity',
+            headerName: 'Quantity',
             flex: 1,
-            headerAlign: 'center',
-            renderCell: (params) => (
-                params.row.transaction?.payment ? (
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label={params.row.transaction.payment} color='success'/>
-                    </Box>
-                ) : 
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label='Unpaid' color='error'/>       
-                    </Box> 
-            )
+            headerAlign: 'center'
         },
         {
-            field: 'amount',
-            headerName: 'Amount',
+            field: 'price',
+            headerName: 'Price',
             flex: 1,
-            headerAlign: 'center',
-            renderCell: (params) => (
-                params.row.transaction?.amount ? (
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label={params.row.transaction.amount}/>
-                    </Box>
-                ) : 
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label='Unpaid' color='error'/>     
-                    </Box>
-            )
+            headerAlign: 'center'
         },
         {
             field: 'date',
@@ -158,15 +116,9 @@ function DataGridList ({data, handleGetData}) {
             field: 'setting',
             headerName: 'Setting',
             renderCell: (params) => (
-                params.row.transaction?._id ? (
-                    <Stack height={'100%'} justifyContent={'center'} alignItems={'center'}>
-                        <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{cursor: 'pointer'}}/>
-                    </Stack>
-                ) : (
-                    <Stack height={'100%'} justifyContent={'center'} alignItems={'center'}>
-                        <DisabledByDefault/>
-                    </Stack>
-                )
+                <Box sx={{textAlign: 'center'}}>
+                    <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{cursor: 'pointer'}}/>
+                </Box>
             ),
             headerAlign: 'center'
             
@@ -177,8 +129,7 @@ function DataGridList ({data, handleGetData}) {
         data.map((item) => ({
             ...item,
             id: item._id,
-            date: item.transaction?.date ? moment(item.transaction.date).format("MMMM DD YYYY") :
-            null
+            date: moment(item.date).format("MMMM DD YYYY")
         })),
         [data]
     );
@@ -218,7 +169,7 @@ function DataGridList ({data, handleGetData}) {
                 </MenuItem>
             </Menu>
             <Drawer open={updateModal} onClose={handleCloseModal} anchor='right'>
-                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} data={data}/>
+                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData}/>
             </Drawer>
             <AlertModal open={deleteModal} onClose={handleCloseModal} anchor='right'>
                 <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData}/>

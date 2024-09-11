@@ -1,0 +1,94 @@
+export const fetchCollections = async () => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return {data: data, error: null}
+        } else {
+            return {data: [], error: data.error}
+        }
+    } catch (error) {
+        return {data: [], error: error.message}
+    }
+}
+
+export const fetchCollectionById = async (id) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection/${id}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return {data: data, error: null}
+        } else {
+            return {data: [], error: data.error}
+        }
+    } catch (error) {
+        return {data: [], error: error.message}
+    }
+}
+
+export const storeCollection = async (formData) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return {data: data, error: null}
+        } else {
+            return {data: [], error: data.error}
+        }
+    } catch (error) {
+        return {data: [], error: error}
+    }
+}
+
+export const updateCollection = async (formData) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection/${formData._id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return {data: data, error: null}
+        } else {
+            return {data: [], error: data.error}
+        }
+    } catch (error) {
+        return {data: [], error: error.message}
+    }
+}
+
+export const deleteCollection = async (id) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return {data: data, error: null}
+        } else {
+            return {data: [], error: data.error}
+        }
+    } catch (error) {
+        return {data: [], error: error.message}
+    }
+}

@@ -8,8 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
-import { Folder, List, PanTool, WarningAmber } from '@mui/icons-material';
+import { AttachMoney, Folder, List, PanTool, WarningAmber } from '@mui/icons-material';
 
 function Navlist({ setopen }) {
   let location = useLocation();
@@ -100,6 +99,13 @@ function NavAdmin() {
           <BarChartIcon />
         </ListItemIcon>
         <ListItemText primary="Reports" />
+      </ListItemButton>
+
+      <ListItemButton component={Link} to={'/collection'} selected={location.pathname.startsWith('/collection')}>
+        <ListItemIcon>
+          <AttachMoney />
+        </ListItemIcon>
+        <ListItemText primary="Collection" />
       </ListItemButton>
 
       {/* <ListItemButton component={Link} to={'/transaction'} selected={location.pathname.startsWith('/transaction')}>

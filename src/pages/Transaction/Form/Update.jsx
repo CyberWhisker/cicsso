@@ -1,115 +1,113 @@
 import React, { useState } from 'react';
-import { Box, Button, Grid, MenuItem, Select, TextField, Typography } from '@mui/material';
-import { Form } from 'react-router-dom';
+import { Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { updateCollection } from '../../../api/CollectionApi';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import moment from 'moment';
+import { updateTransaction } from '../../../api/TransactionApi';
 
-function Update() {
-    const [formData, setFormData] = useState({
-        name: '',
-        am_in: '',
-        am_out: '',
-        pm_in: '',
-        pm_out: ''
-    });
+function Update({selected, onClose, handleGetData, data}) {
+    const [formData, setFormData] = useState(selected);
     const [submitted, setSubmitted] = useState(false);
 
     const handleChange = (e) => 
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const handleSubmit = (e) => {
+    const handleDateChange = (name, value) => 
+        setFormData({ ...formData, [name]: value });
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
-
-        const { name, am_in, am_out, pm_in, pm_out } = formData;
-        if (!name || !am_in || !am_out || pm_in || pm_out) {
+        const { userId, payment, amount, date } = formData;
+        if (!userId || !payment || !amount || !date) {
             toast.error("All fields are required");
             return;
         }
 
-        console.log("Event submitted:", formData);
-        toast.success("Event added successfully");
-        setFormData({ name: '', am_in: '', am_out: '', pm_in: '', pm_out: '' });
+        const {data, error} = await updateTransaction(formData)
+        if (error) {
+            toast.error(error)
+        } else {
+            onClose();
+            handleGetData();
+            toast.success("Transaction added successfully");
+        }
         setSubmitted(false);
     };
 
     return (
-        <Box sx={{ width: '60vh', p: 2 }}>
-            <Typography variant='h4' fontWeight='bold'>Update Event</Typography>
-            <Box mt={2}>
-                <Form onSubmit={handleSubmit}>
-                    <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
-                        <Typography>Select Student</Typography>
-                        <Select
-                            name='name'
-                            id="demo-simple-select"
-                            value={formData.event}
-                            onChange={handleChange}
-                        >
-                            <MenuItem value={10}>Student 1</MenuItem>
-                            <MenuItem value={20}>Student 2</MenuItem>
-                        </Select>
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <Typography>AM IN</Typography>
-                                <TextField
-                                    name='am_in'
-                                    variant="outlined"
-                                    sx={{ width: '100%'}}
-                                    value={formData.event}
-                                    onChange={handleChange}
-                                    error={submitted && !formData.event}
-                                    helperText={submitted && !formData.event ? "Required" : ""}
-                                    type='time'
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography>AM OUT</Typography>
-                                <TextField
-                                    name='am_out'
-                                    variant="outlined"
-                                    sx={{ width: '100%'}}
-                                    value={formData.event}
-                                    onChange={handleChange}
-                                    error={submitted && !formData.event}
-                                    helperText={submitted && !formData.event ? "Required" : ""}
-                                    type='time'
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography>PM IN</Typography>
-                                <TextField
-                                    name='pm_in'
-                                    variant="outlined"
-                                    sx={{ width: '100%'}}
-                                    value={formData.startDate}
-                                    onChange={handleChange}
-                                    error={submitted && !formData.startDate}
-                                    helperText={submitted && !formData.startDate ? "Required" : ""}
-                                    type='time'
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography>PM OUT</Typography>
-                                <TextField
-                                    name='pm_out'
-                                    variant="outlined"
-                                    sx={{ width: '100%'}}
-                                    value={formData.endDate}
-                                    onChange={handleChange}
-                                    error={submitted && !formData.endDate}
-                                    helperText={submitted && !formData.endDate ? "Required" : ""}
-                                    type='time'
-                                />
-                            </Grid>
-                        </Grid>
-                        
-                        <Button type='submit' variant='contained' color='warning' sx={{ mt: 2 ,width: '100%'}}>
-                            Submit
-                        </Button>
-                    </Box>
-                </Form>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+            <Box sx={{ width: '60vh', p: 2 }}>
+                <Typography variant='h4' fontWeight='bold'>Update Collection</Typography>
+                <Box mt={2}>
+                <form onSubmit={handleSubmit}>
+                        <Stack spacing={2}>
+                            <TextField
+                                label='Select Student'
+                                name='userId'
+                                variant="outlined"
+                                sx={{ width: '100%'}}
+                                value={formData.userId}
+                                onChange={handleChange}
+                                error={submitted && !formData.userId}
+                                helperText={submitted && !formData.userId ? "Required" : ""}
+                                select
+                                disabled
+                            >
+                                {data.map((user, index) => {
+                                        return (
+                                            <MenuItem value={user._id} key={index}>{user.name}</MenuItem>
+                                        )
+                                })}
+                            </TextField>
+                            <TextField
+                                label='Payment Type'
+                                name='payment'
+                                variant="outlined"
+                                sx={{ width: '100%'}}
+                                value={formData.payment}
+                                onChange={handleChange}
+                                error={submitted && !formData.payment}
+                                helperText={submitted && !formData.payment ? "Required" : ""}
+                                select
+                            >
+                                <MenuItem value='Cash'>Cash</MenuItem>
+                                <MenuItem value='GCash'>GCash</MenuItem>
+                            </TextField>
+                            <TextField
+                                label='Enter Amount'
+                                name='amount'
+                                variant="outlined"
+                                sx={{ width: '100%'}}
+                                value={formData.amount}
+                                onChange={handleChange}
+                                error={submitted && !formData.amount}
+                                helperText={submitted && !formData.amount ? "Required" : ""}
+                            />
+                            <DatePicker
+                                label='Date'
+                                name='date'
+                                variant="outlined"
+                                sx={{ width: '100%'}}
+                                value={moment(formData.date)}
+                                onChange={(value) => handleDateChange("date", value)}
+                                slotProps={{
+                                    textField: {
+                                        error: submitted && !formData.date,
+                                        helperText: submitted && !formData.date ? "Required" : "",
+                                    },
+                                }}
+                            />
+                            <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
+                                Submit
+                            </Button>
+                        </Stack>
+                    </form>
+                </Box>
             </Box>
-        </Box>
+        </LocalizationProvider>
     );
 }
 

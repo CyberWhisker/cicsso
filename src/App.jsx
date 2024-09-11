@@ -1,13 +1,14 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { 
   Attendance, 
+  Collection, 
   Dashboard, 
   Events, 
+  Item, 
   Landing, 
   Login, 
   Penalties, 
-  ProjectDetails, 
   ProjectPage, 
   Register, 
   Schedule, 
@@ -30,9 +31,10 @@ function App() {
         <Route path="/schedule/:id" element={<Schedule />} />
         <Route path="/attendance/:id" element={<Attendance />} />
         <Route path="/penalties" element={<Penalties />} />
-        <Route path="/transaction" element={<Transaction />} />
+        <Route path="/transaction/:id" element={<Transaction />} />
         <Route path="/projects" element={<ProjectPage />} />
-        <Route path="/projects/:projectId" element={<ProjectDetails />} />
+        <Route path="/item/:id" element={<Item />} />
+        <Route path="/collection" element={<Collection />} />
       </Routes>
     </BrowserRouter>
   );
