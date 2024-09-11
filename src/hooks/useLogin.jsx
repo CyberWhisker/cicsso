@@ -28,7 +28,7 @@ export const useLogin = () => {
 
         if (response.ok) {
             setLoading(false)
-            localStorage.setItem('user', JSON.stringify(json))
+            localStorage.setItem('auth', JSON.stringify(json))
             dispatch({type: 'LOGIN', payload: json})
             navigate('/')
         }

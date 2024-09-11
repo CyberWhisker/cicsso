@@ -5,14 +5,14 @@ import { Link } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 function AuthButton() {
-  const {user} = useAuthContext();
+  const {auth} = useAuthContext();
   const { logout } = useLogout()
   const handleLogout = () => {
     logout()
   }
   return (
     <React.Fragment>
-      {!user &&
+      {!auth &&
         <Button
         variant='contained'
         size='small'
@@ -21,7 +21,7 @@ function AuthButton() {
           Log In
         </Button>
       }
-      {user && 
+      {auth && 
         <Button
         variant='contained'
         color='error'

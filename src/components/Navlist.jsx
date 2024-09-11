@@ -8,18 +8,22 @@ import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import { AttachMoney, Folder, List, PanTool, WarningAmber } from '@mui/icons-material';
+import { AttachMoney, CreditCard, Folder, List, PanTool, WarningAmber, WavingHand } from '@mui/icons-material';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 function Navlist({ setopen }) {
   let location = useLocation();
-  const userRole = ('admin');
+  const {auth} = useAuthContext()
   return (
     <React.Fragment>
       {location.pathname == '/' && (
         <NavLanding setopen={setopen} />
       )}
-      {(userRole == 'admin' && location.pathname != '/') && (
+      {(auth && auth.user.role == 'admin' && location.pathname != '/') && (
         <NavAdmin/>
+      )}
+      {(auth && auth.user.role  == 'user' && location.pathname != '/') && (
+        <NavUser/>
       )}
     </React.Fragment>
   );
@@ -107,13 +111,41 @@ function NavAdmin() {
         </ListItemIcon>
         <ListItemText primary="Collection" />
       </ListItemButton>
+    </React.Fragment>
+  )
+}
 
-      {/* <ListItemButton component={Link} to={'/transaction'} selected={location.pathname.startsWith('/transaction')}>
+function NavUser() {
+  const location = useLocation();
+  return (
+    <React.Fragment>
+      <ListItemButton component={Link} to={'/dashboard'} selected={location.pathname == '/dashboard'}>
         <ListItemIcon>
-          <LayersIcon />
+          <DashboardIcon />
+        </ListItemIcon>
+        <ListItemText primary="Dashboard" />
+      </ListItemButton>
+
+      <ListItemButton component={Link} to={'/attendance'} selected={location.pathname.startsWith('/attendance')}>
+        <ListItemIcon>
+          <WavingHand />
+        </ListItemIcon>
+        <ListItemText primary="Attendance" />
+      </ListItemButton>
+
+      <ListItemButton component={Link} to={'/collection'} selected={location.pathname.startsWith('/collection')}>
+        <ListItemIcon>
+          <AttachMoney />
+        </ListItemIcon>
+        <ListItemText primary="Collection" />
+      </ListItemButton>
+
+      <ListItemButton component={Link} to={'/transaction'} selected={location.pathname.startsWith('/transaction')}>
+        <ListItemIcon>
+          <CreditCard />
         </ListItemIcon>
         <ListItemText primary="Transaction" />
-      </ListItemButton> */}
+      </ListItemButton>
     </React.Fragment>
   )
 }

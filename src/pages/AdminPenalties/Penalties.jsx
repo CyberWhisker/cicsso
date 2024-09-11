@@ -206,10 +206,10 @@ function AttendanceList({selectedUserData}) {
                             >
                                 {eventItem.event}
                             </AccordionSummary>
-                                <DataTable 
-                                    columns={columns}
-                                    rows={getRows(eventItem.schedules)} // Pass rows based on current eventItem's schedule
-                                />
+                            <DataTable 
+                                columns={columns}
+                                rows={getRows(eventItem.schedules)} // Pass rows based on current eventItem's schedule
+                            />
                         </Accordion>
                     ))}
                 </Box>

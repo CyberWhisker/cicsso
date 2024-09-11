@@ -33,3 +33,21 @@ export const fetchSchedule = async () =>
         return { data: [], error };
     }
 }
+
+export const fetchScheduleByEventId = async (id) => 
+{
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/schedule/event/${id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch schedule');
+        }
+        const data = await response.json();
+        return { data, error: null };
+    } catch (error) {
+        return { data: [], error };
+    }
+}

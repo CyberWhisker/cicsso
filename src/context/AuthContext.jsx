@@ -5,9 +5,9 @@ export const AuthContext = createContext();
 export const AuthReducer = (state, action) => {
     switch (action.type) {
         case 'LOGIN':
-            return { user: action.payload };
+            return { auth: action.payload };
         case 'LOGOUT':
-            return { user: null };
+            return { auth: null };
         default: 
             return state;
     }
@@ -15,14 +15,14 @@ export const AuthReducer = (state, action) => {
 
 export const AuthContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(AuthReducer, {
-        user: null
+        auth: null
     });
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-            dispatch({ type: 'LOGIN', payload: user });
+        const auth = JSON.parse(localStorage.getItem('auth'));
+        if (auth) {
+            dispatch({ type: 'LOGIN', payload: auth });
         }
         setIsLoading(false); // Set loading to false after checking localStorage
     }, []);

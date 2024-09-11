@@ -1,40 +1,54 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { 
-  Attendance, 
-  Collection, 
-  Dashboard, 
-  Events, 
-  Item, 
+  AdminAttendance, 
+  AdminCollection, 
+  AdminDashboard, 
+  AdminEvents, 
+  AdminItem, 
   Landing, 
   Login, 
-  Penalties, 
-  ProjectPage, 
+  AdminPenalties, 
+  AdminProject, 
   Register, 
-  Schedule, 
-  Transaction, 
-  Users 
+  AdminSchedule, 
+  AdminTransaction, 
+  AdminUsers, 
+  UserDashboard,
+  UserAttendance
 } from './pages';
 import { useAuthContext } from './hooks/useAuthContext';
+import PrivateRoute from './hooks/privateRoute';
 
 function App() {
-  const {user} = useAuthContext();
+  const {auth} = useAuthContext();
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/schedule/:id" element={<Schedule />} />
-        <Route path="/attendance/:id" element={<Attendance />} />
-        <Route path="/penalties" element={<Penalties />} />
-        <Route path="/transaction/:id" element={<Transaction />} />
-        <Route path="/projects" element={<ProjectPage />} />
-        <Route path="/item/:id" element={<Item />} />
-        <Route path="/collection" element={<Collection />} />
+        {/* Admin */}
+        <Route path="/dashboard" element={
+          <PrivateRoute>
+            {auth && auth.user.role == 'admin' ? (
+              <AdminDashboard />
+            ) : (
+              <UserDashboard />
+            )}
+          </PrivateRoute>
+        } />
+        <Route path="/users" element={<AdminUsers />} />
+        <Route path="/events" element={<AdminEvents />} />
+        <Route path="/schedule/:id" element={<AdminSchedule />} />
+        <Route path="/attendance/:id" element={<AdminAttendance />} />
+        <Route path="/penalties" element={<AdminPenalties />} />
+        <Route path="/transaction/:id" element={<AdminTransaction />} />
+        <Route path="/projects" element={<AdminProject />} />
+        <Route path="/item/:id" element={<AdminItem />} />
+        <Route path="/collection" element={<AdminCollection />} />
+        
+        <Route path="/attendance" element={<UserAttendance />} />
       </Routes>
     </BrowserRouter>
   );
