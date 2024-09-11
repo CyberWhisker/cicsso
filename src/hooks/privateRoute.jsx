@@ -4,7 +4,6 @@ import { useAuthContext } from './useAuthContext';
 
 const PrivateRoute = ({ children }) => {
   const { auth } = useAuthContext();
-  console.log(auth)
   // If not authenticated, redirect to login
   if (!auth) {
     return <Navigate to="/login" replace />;

@@ -3,11 +3,12 @@ import { Accordion, AccordionDetails, AccordionSummary, Badge, Box, Card, Chip, 
 import Master from '../../layouts/Master';
 import { toast } from 'react-toastify';
 import { ExpandMore } from '@mui/icons-material';
-import { fetchScheduleByEventId } from '../../api/ScheduleApi';
+import { fetchSchedule, fetchScheduleByEventId } from '../../api/ScheduleApi';
 import { fetchEvent } from '../../api/EventApi';
 import moment from 'moment';
 import { DataGrid } from '@mui/x-data-grid';
-import { fetchAttendanceBySchedule } from '../../api/AttendanceApi';
+import { fetchAttendanceBySchedule, fetchAttendanceByUserId } from '../../api/AttendanceApi';
+import { useAuthContext } from '../../hooks/useAuthContext';
 
 function Attendance() {
     const [isLoading, setIsLoading] = useState(false);
@@ -19,58 +20,56 @@ function Attendance() {
                     <Divider/>
                     {isLoading && <LinearProgress/>}
                 </Box>
-                <EventList/>
+                <EventList setIsLoading={setIsLoading}/>
             </Stack>
         </Master>
     )
 }
 
-function EventList() {
-    const [eventData, setEventData] = useState([]);
-    const [schedAttend, setSchedAttend] = useState([]);
+function EventList({setIsLoading}) {
+    const [data, setData] = useState([]);
+    const { auth } = useAuthContext();
 
-    const handleGetEvent = async () => {
-        const {data, error} = await fetchEvent();
-        if (error) {
-            toast.error(error)
-        } else {
-            setEventData(data);
-        }
-    }
-    const handleGetSchedAttend = async (eventId) => {
+    const handleGetData = async () => {
+        setIsLoading(true)
         try {
-            const { data: schedData, error: schedError } = await fetchScheduleByEventId(eventId);
+            // Fetch data concurrently
+            const [{ data: eventData, error: eventError }, { data: schedData, error: schedError }, { data: attendData, error: attendError }] = await Promise.all([
+                fetchEvent(),
+                fetchSchedule(),
+                fetchAttendanceByUserId(auth.user._id)
+            ]);
     
-        if (schedError) {
-            toast.error(schedError);
-            return;
-        }
-    
-        // Fetch attendance for each schedule asynchronously
-        const combinedData = await Promise.all(
-            schedData.map(async (event) => {
-            const { data: attendData, error: attendError } = await fetchAttendanceBySchedule(event._id);
-    
-            if (attendError) {
-                toast.error(attendError);
-                return { ...event, attendData: null }; // Return event with empty attendance in case of error
+            // Handle errors
+            if (eventError || schedError || attendError) {
+                console.error('Errors:', { eventError, schedError, attendError });
+                return;
             }
+            // Create a map of attendance by scheduleId
+            const attendanceMap = attendData.reduce((map, { scheduleId, ...attend }) => {
+                map[scheduleId] = attend || {};
+                return map;
+            }, {});
     
-            return {
+            // Map events to schedules and attach attendance
+            const currentDate = moment()
+            const eventSched = eventData.map(event => ({
                 ...event,
-                attendance: attendData[0],
-            };
-            })
-        );
-        console.log(combinedData)
-            setSchedAttend(combinedData);
-        } catch (err) {
-            toast.error("An unexpected error occurred");
-            console.error(err);
+                schedules: schedData
+                    .filter(schedule => schedule.eventId === event._id && moment(schedule.date).isSameOrBefore(currentDate))
+                    .map(schedule => ({
+                        ...schedule,
+                        attendance: attendanceMap[schedule._id] || []
+                    }))
+            }));
+            setData(eventSched)
+        } catch (error) {
+            console.error('Unexpected error:', error);
         }
+        setIsLoading(false)
     };
     useEffect(() => {
-        handleGetEvent()
+        handleGetData()
     },[])
 
     const columns = [
@@ -100,7 +99,17 @@ function EventList() {
             field: 'amOut',
             headerName: 'Am Out',
             flex: 1,
-            headerAlign: 'center'
+            headerAlign: 'center',
+            renderCell: (params) => (
+                params.row.attendance?.amOut ? (
+                    <Box sx={{textAlign: 'center'}}>
+                        <Chip label={params.row.attendance.amOut}/>
+                    </Box>
+                ) : 
+                    <Box sx={{textAlign: 'center'}}>
+                        <Chip label='Absent' color='error'/>     
+                    </Box>
+            )
         },
         {
             field: 'pmIn',
@@ -116,27 +125,29 @@ function EventList() {
         },
     ]
 
-    const rows = useMemo(() => 
-        schedAttend.map((item) => ({
-            id: item._id,
-            date: moment(item.date).format("MMMM DD, YYYY"),
-        })),
-        [schedAttend]
-    );
     return(
         <Stack spacing={2}>
-            {eventData.map((item, index) => (
-                <Accordion key={index} sx={{ boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.5)' }}>
-                    <AccordionSummary
-                        expandIcon={<ExpandMore />}
-                        onClick={() => handleGetSchedAttend(item._id)}
-                    >{item.event} </AccordionSummary>
-                    <DataGrid
-                    columns={columns}
-                    rows={rows}
-                    />
-                </Accordion>
-            ))}
+            {data.map((item, index) => {
+                console.log(item.schedules)
+                
+                const rows = useMemo(() => 
+                    item.schedules.map((sched) => ({
+                        id: sched._id,
+                        date: moment(sched.date).format("MMMM DD, YYYY"),
+                    })),[]
+                );
+                return (
+                    <Accordion key={index} sx={{ boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.5)' }}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMore />}
+                        >{item.event} </AccordionSummary>
+                        <DataGrid
+                        columns={columns}
+                        rows={[]}
+                        />
+                    </Accordion>
+                )
+            })}
         </Stack>
     )
 }

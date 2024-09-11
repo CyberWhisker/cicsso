@@ -43,7 +43,6 @@ export const fetchAttendanceByUserId = async (id) => {
             throw new Error('Failed to fetch attendance');
         }
         const data = await response.json();
-        console.log(data)
         return { data, error: null };
     } catch (error) {
         return { data: [], error: error };
