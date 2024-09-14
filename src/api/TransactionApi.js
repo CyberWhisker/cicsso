@@ -36,12 +36,15 @@ export const fetchTransactionByCollectionId = async (id) => {
 
 export const storeTransaction = async (formData) => {
     try {
+        const formDataObject = new FormData();
+        for (const key in formData) {
+            if (formData.hasOwnProperty(key)) {
+                formDataObject.append(key, formData[key]);
+            }
+        }
         const response = await fetch(`${import.meta.env.VITE_API}/api/transaction`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
+            body: formDataObject
         })
         const data = await response.json()
         if (response.ok) {
@@ -56,12 +59,15 @@ export const storeTransaction = async (formData) => {
 
 export const updateTransaction = async (formData) => {
     try {
+        const formDataObject = new FormData();
+        for (const key in formData) {
+            if (formData.hasOwnProperty(key)) {
+                formDataObject.append(key, formData[key]);
+            }
+        }
         const response = await fetch(`${import.meta.env.VITE_API}/api/transaction/${formData._id}`, {
             method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
+            body: formDataObject
         })
         const data = await response.json()
         if (response.ok) {
@@ -78,6 +84,24 @@ export const deleteTransaction = async (id) => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API}/api/transaction/${id}`, {
             method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return {data: data, error: null}
+        } else {
+            return {data: [], error: data.error}
+        }
+    } catch (error) {
+        return {data: [], error: error.message}
+    }
+}
+
+export const fetchTransactionByUserId = async (id) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/transaction/user/${id}`, {
             headers: {
                 'Content-Type': 'application/json'
             },

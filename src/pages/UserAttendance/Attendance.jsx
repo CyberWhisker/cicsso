@@ -11,7 +11,7 @@ import { fetchAttendanceBySchedule, fetchAttendanceByUserId } from '../../api/At
 import { useAuthContext } from '../../hooks/useAuthContext';
 
 function Attendance() {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     return (
         <Master>
             <Stack spacing={2}>
@@ -31,7 +31,6 @@ function EventList({setIsLoading}) {
     const { auth } = useAuthContext();
 
     const handleGetData = async () => {
-        setIsLoading(true)
         try {
             // Fetch data concurrently
             const [{ data: eventData, error: eventError }, { data: schedData, error: schedError }, { data: attendData, error: attendError }] = await Promise.all([
@@ -85,9 +84,9 @@ function EventList({setIsLoading}) {
             flex: 1,
             headerAlign: 'center',
             renderCell: (params) => (
-                params.row.attendance?.amIn ? (
+                params.row?.amIn ? (
                     <Box sx={{textAlign: 'center'}}>
-                        <Chip label={params.row.attendance.amIn}/>
+                        <Chip color='success' label={moment(params.row.amIn).format('hh:mm A')}/>
                     </Box>
                 ) : 
                     <Box sx={{textAlign: 'center'}}>
@@ -101,9 +100,9 @@ function EventList({setIsLoading}) {
             flex: 1,
             headerAlign: 'center',
             renderCell: (params) => (
-                params.row.attendance?.amOut ? (
+                params.row?.amOut ? (
                     <Box sx={{textAlign: 'center'}}>
-                        <Chip label={params.row.attendance.amOut}/>
+                        <Chip color='success' label={moment(params.row.amOut).format('hh:mm A')}/>
                     </Box>
                 ) : 
                     <Box sx={{textAlign: 'center'}}>
@@ -115,39 +114,59 @@ function EventList({setIsLoading}) {
             field: 'pmIn',
             headerName: 'Pm In',
             flex: 1,
-            headerAlign: 'center'
+            headerAlign: 'center',
+            renderCell: (params) => (
+                params.row?.pmIn ? (
+                    <Box sx={{textAlign: 'center'}}>
+                        <Chip color='success' label={moment(params.row.pmIn).format('hh:mm A')}/>
+                    </Box>
+                ) : 
+                    <Box sx={{textAlign: 'center'}}>
+                        <Chip label='Absent' color='error'/>     
+                    </Box>
+            )
         },
         {
             field: 'pmOut',
             headerName: 'Pm Out',
             flex: 1,
-            headerAlign: 'center'
+            headerAlign: 'center',
+            renderCell: (params) => (
+                params.row?.pmOut ? (
+                    <Box sx={{textAlign: 'center'}}>
+                        <Chip color='success' label={moment(params.row.pmOut).format('hh:mm A')}/>
+                    </Box>
+                ) : 
+                    <Box sx={{textAlign: 'center'}}>
+                        <Chip label='Absent' color='error'/>     
+                    </Box>
+            )
         },
     ]
-
+    const getRows = (schedules) => 
+        schedules.map((sched) => ({
+            id: sched._id,
+            date: moment(sched.date).format('MMM DD, YYYY'),
+            amIn: sched.attendance.amIn,
+            amOut: sched.attendance.amOut,
+            pmIn: sched.attendance.pmIn,
+            pmOut: sched.attendance.pmOut,
+        })) 
+    
     return(
         <Stack spacing={2}>
-            {data.map((item, index) => {
-                console.log(item.schedules)
-                
-                const rows = useMemo(() => 
-                    item.schedules.map((sched) => ({
-                        id: sched._id,
-                        date: moment(sched.date).format("MMMM DD, YYYY"),
-                    })),[]
-                );
-                return (
+            {data.map((item, index) => (
                     <Accordion key={index} sx={{ boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.5)' }}>
                         <AccordionSummary
                             expandIcon={<ExpandMore />}
                         >{item.event} </AccordionSummary>
                         <DataGrid
                         columns={columns}
-                        rows={[]}
+                        rows={getRows(item.schedules)}
                         />
                     </Accordion>
                 )
-            })}
+            )}
         </Stack>
     )
 }

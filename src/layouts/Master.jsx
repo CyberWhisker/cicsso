@@ -54,7 +54,7 @@ const Master = ({ children }) => {
           backgroundRepeat: 'no-repeat',
         })}
       >
-        <NavSideBar mode={themeMode} toggleColorMode={toggleColorMode} >
+        <NavSideBar themeMode={themeMode} toggleColorMode={toggleColorMode} >
           <NavTopBar toggleColorMode={toggleColorMode} themeMode={themeMode}/>
           <Container sx={{ mt: 2 }}>
               {children}

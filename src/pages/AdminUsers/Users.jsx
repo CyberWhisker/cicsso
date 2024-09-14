@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Box, Button, Card, Divider, Grid, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
-import { CustomCard } from '../../components';
+import { AlertModal, CustomCard } from '../../components';
 import { Person } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { deleteUser, fetchUserById, fetchUsers, updateUser } from '../../api/userApi';
+import Delete from './Form/Delete';
 
 
 function Users() {
@@ -90,12 +91,20 @@ function UsersList({usersData, setIsLoading, setUserData}) {
 
 function UserDetails({userData, setUserData, getUsers}) {
     const [toggleUpdate, setToggleUpdate] = useState(true)
+    const [deleteModal, setDeleteModal] = useState(false)
+
     const handleUpdate = () => {
         setToggleUpdate(false);
     }
+
     const handleChange = (e) => {
         setUserData({...userData, [e.target.name]: e.target.value})
     }
+
+    const handleCloseModal = () => {
+        setDeleteModal(false);
+    }
+
     const handleUpdateSubmit = async () => {
         const {data, error} = await updateUser(userData)
         if (error) {
@@ -106,15 +115,9 @@ function UserDetails({userData, setUserData, getUsers}) {
         }
         setToggleUpdate(true)
     }
+
     const handleDeleteSubmit = async () => {
-        const {data, error} = await deleteUser(userData)
-        if (error) {
-            toast.error(error)
-        } else {
-            getUsers()
-            toast.success('Successfully Deleted')
-        }
-        setToggleUpdate(true)
+        setDeleteModal(true)
     }
     if (!userData) {
       return(
@@ -135,15 +138,16 @@ function UserDetails({userData, setUserData, getUsers}) {
       )  
     }
     return(
-        <Card sx={{p: 2, height: '75vh', overflow: 'auto'}} elevation={5}>
-            <Stack direction={'column'} spacing={1}>
-                <Typography fontWeight={'bold'}>User Details</Typography>
-                <Divider/>
-                <Grid container spacing={2} px={2}>
+        <>
+            <Card sx={{p: 2, height: '75vh', overflow: 'auto'}} elevation={5}>
+                <Stack direction={'column'} spacing={1}>
+                    <Typography fontWeight={'bold'}>User Details</Typography>
+                    <Divider/>
+                    <Grid container spacing={2} px={2}>
                         <Grid item xs={4}>
                             <Stack spacing={2}>
                                 <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                                    <Avatar alt='user' src={userData.picture} sx={{
+                                    <Avatar alt={userData.name} src={userData.image} sx={{
                                         height: 150,
                                         width: 150,
                                     }}/>
@@ -226,9 +230,13 @@ function UserDetails({userData, setUserData, getUsers}) {
                                 </Box>
                             </Stack>
                         </Grid>
-                </Grid>
-            </Stack>
-        </Card>
+                    </Grid>
+                </Stack>
+            </Card>
+            <AlertModal open={deleteModal} onClose={handleCloseModal}>
+                <Delete selected={userData} onClose={handleCloseModal} handleGetData={getUsers}/>
+            </AlertModal>
+        </>
     )
 }
 

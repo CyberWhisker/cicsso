@@ -19,10 +19,9 @@ function Details() {
     const navigate = useNavigate();
     const {id} = useParams();
     const [storeModal, setStoreModal] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState([]);
     const handleGetData = async () => {
-        setIsLoading(true)
         const [
             {data: userData, error: userError},
             {data: TransData, error: TransError},
@@ -77,7 +76,7 @@ function DataGridList ({data, handleGetData}) {
     const handleMenuOpen = (event, item) => {
         setAnchorEl(event.currentTarget)
         const {_id: userId} = item
-        const {_id: _id, collectionId, payment, amount, date} = item.transaction
+        const {_id: _id, collectionId, payment, amount, date, status, image} = item.transaction
         const newForm = {
             _id: _id,
             userId: userId,
@@ -85,6 +84,8 @@ function DataGridList ({data, handleGetData}) {
             payment: payment,
             amount: amount,
             date: date,
+            status: status,
+            image: image
         }
         setSelected(newForm)
     }
@@ -149,6 +150,22 @@ function DataGridList ({data, handleGetData}) {
             )
         },
         {
+            field: 'status',
+            headerName: 'Status',
+            flex: 1,
+            headerAlign: 'center',
+            renderCell: (params) => (
+                params.row.transaction?.status ? (
+                    <Box sx={{textAlign: 'center'}}>
+                        <StatusChip status={params.row.transaction.status}/>
+                    </Box>
+                ) : 
+                    <Box sx={{textAlign: 'center'}}>
+                        <Chip label='Unpaid' color='error'/>     
+                    </Box>
+            )
+        },
+        {
             field: 'date',
             headerName: 'Date',
             flex: 1,
@@ -178,7 +195,10 @@ function DataGridList ({data, handleGetData}) {
             ...item,
             id: item._id,
             date: item.transaction?.date ? moment(item.transaction.date).format("MMMM DD YYYY") :
-            null
+            null,
+            payment: item.transaction?.payment,
+            amount: item.transaction?.amount,
+            status: item.transaction?.status
         })),
         [data]
     );
@@ -225,5 +245,15 @@ function DataGridList ({data, handleGetData}) {
             </AlertModal>
         </>
     )
+}
+
+function StatusChip ({status}) {
+    if (status == 'pending') {
+        return <Chip color='warning' label='Pending'/>
+    } else if (status == 'confirm') {
+        return <Chip color='success' label='Confirm'/>
+    } else {
+        return <Chip color='error' label='Decline'/>
+    }
 }
 export default Details

@@ -98,12 +98,12 @@ function NavAdmin() {
         <ListItemText primary="Projects" />
       </ListItemButton>
 
-      <ListItemButton>
+      {/* <ListItemButton>
         <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
         <ListItemText primary="Reports" />
-      </ListItemButton>
+      </ListItemButton> */}
 
       <ListItemButton component={Link} to={'/collection'} selected={location.pathname.startsWith('/collection')}>
         <ListItemIcon>

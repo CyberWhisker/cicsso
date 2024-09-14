@@ -13,7 +13,7 @@ function NavTopBar({toggleColorMode, themeMode}) {
     <AppBar
     sx={{
       padding: 2,
-      backgroundColor: themeMode == 'light' ? 'white' : '#111936ff',
+      backgroundColor: themeMode == 'light' ? '#9ad29c' : '#111936ff',
       position: location.pathname == '/' ? 'fixed' : 'relative',
     }}
     >

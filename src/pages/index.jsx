@@ -16,3 +16,5 @@ export { default as AdminCollection } from './AdminCollection/Collection'
 // User
 export { default as UserDashboard } from './UserDashboard/Dashboard'
 export { default as UserAttendance } from './UserAttendance/Attendance'
+export { default as UserCollection } from './UserCollection/Collection'
+export { default as UserTransaction } from './UserTransaction/Transaction'

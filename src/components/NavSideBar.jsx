@@ -12,7 +12,18 @@ import { ChevronLeft } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+
+
+function NavSideBar({children, themeMode}) {
+  const [open, setOpen] = React.useState(localStorage.getItem('sideMode') === 'true' ? true : false);
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+    localStorage.setItem('sideMode', !open);
+  };
+  const rotate = !open ? 'rotate(180deg)' : 'rotate(0deg)';
+
+  const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
       '& .MuiDrawer-paper': {
         position: 'relative',
@@ -23,6 +34,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
           duration: theme.transitions.duration.enteringScreen,
         }),
         boxSizing: 'border-box',
+        backgroundColor: themeMode == 'light' && '#9ad29c',
         ...(!open && {
           overflowX: 'hidden',
           transition: theme.transitions.create('width', {
@@ -37,15 +49,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
       },
     }),
 );
-
-function NavSideBar({children}) {
-  const [open, setOpen] = React.useState(localStorage.getItem('sideMode') === 'true' ? true : false);
-
-  const toggleDrawer = () => {
-    setOpen(!open);
-    localStorage.setItem('sideMode', !open);
-  };
-  const rotate = !open ? 'rotate(180deg)' : 'rotate(0deg)';
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh'}}>
       <CssBaseline />
