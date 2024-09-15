@@ -297,45 +297,50 @@ function PendingTable({pendingData, handleGetData, userData}) {
     )
 }
 
-function EventList({allData}) {
+function EventList({ allData }) {
     const currentData = moment();
     return (
         <Paper
             sx={{
-            p: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            height: 500,
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                height: 500,
             }}
         >
             <Typography fontWeight="bold">Events List:</Typography>
-            <Divider/>
+            <Divider />
             {allData.map((item, index) => {
                 let status;
                 if (currentData.isSameOrAfter(moment(item.startDate)) && currentData.isSameOrBefore(moment(item.endDate))) {
-                    status = 'active'
+                    status = 'active';
                 } else if (currentData.isBefore(moment(item.startDate))) {
-                    status = 'pending'
+                    status = 'pending';
                 } else {
-                    status = 'expired'
+                    status = 'expired';
                 }
                 return (
-                    <MenuItem sx={{display: 'flex', justifyContent: 'space-between'}} key={index}>
-                        <Typography>{item.event}</Typography>
-                        {status == 'active' && (
-                            <Chip color='success' label='Active'/>
+                    <MenuItem sx={{ display: 'flex', justifyContent: 'space-between' }} key={index}>
+                        <Typography 
+                            sx={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} 
+                            noWrap
+                        >
+                            {item.event}
+                        </Typography>
+                        {status === 'active' && (
+                            <Chip color="success" label="Active" />
                         )}
-                        {status == 'pending' && (
-                            <Chip color='warning' label='Pending'/>
+                        {status === 'pending' && (
+                            <Chip color="warning" label="Pending" />
                         )}
-                        {status == 'expired' && (
-                            <Chip color='error' label='Expired'/>
+                        {status === 'expired' && (
+                            <Chip color="error" label="Expired" />
                         )}
                     </MenuItem>
-                )
+                );
             })}
         </Paper>
-    )
-} 
+    );
+}
 
 export default Dashboard
