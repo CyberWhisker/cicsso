@@ -149,7 +149,7 @@ function AttendanceTable({combinedData, handleGetData, id}) {
     const getEndTime = (time) => time.clone().add(timeLimit, 'hours');
   
     // Check if currentTime falls within any of the adjusted time ranges
-    console.log(currentTime.format('dd hh:mm:ss a'), getEndTime(pmOut).format('dd hh:mm:ss a'))
+    console.log(currentTime.format('MMM DD hh:mm:ss a'), getEndTime(amIn).format('MMM DD hh:mm:ss a'))
     if (currentTime.isSameOrAfter(amIn) && currentTime.isSameOrBefore(getEndTime(amIn))) {
       setActive({...active, amInChip: true})
     } 
