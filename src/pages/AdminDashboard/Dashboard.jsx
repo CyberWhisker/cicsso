@@ -47,8 +47,25 @@ function Dashboard() {
             setTotalUsers(totalUsers)  
 
             // count total Penalties
-            const totalAtttendance = (schedData.length * 4) * totalUsers
-            const totalUserAttendance = atttendData.length
+            const filterSched = atttendData.filter(attend => moment(attend.data).isSameOrBefore(moment()))
+            const totalAtttendance = (filterSched.length * 4) * totalUsers
+
+            let totalUserAttendance = 0;
+            atttendData.map((attend) => {
+                console.log(attend)
+                if (attend.amIn) {
+                    totalUserAttendance++
+                }
+                if (attend.amOut) {
+                    totalUserAttendance++
+                }
+                if (attend.pmIn) {
+                    totalUserAttendance++
+                }
+                if (attend.pmOut) {
+                    totalUserAttendance++
+                }
+            })
             setTotalPenalties(totalAtttendance - totalUserAttendance);
 
             //count total Pending Transaction

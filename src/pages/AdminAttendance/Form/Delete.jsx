@@ -20,7 +20,7 @@ const footerStyle = {
 function Delete({selected, onClose, handleGetData}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const id = selected._id
+    const id = selected.attendances[0]._id
     const {data, error} = await deleteAttendance(id);
     if (error) {
       onClose();

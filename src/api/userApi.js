@@ -114,3 +114,38 @@ export const deleteUser = async (formData) => {
         return {data: [], error: error.message}
     }
 }
+
+export const fetchUsersWithAttendanceBySchedId = async (id) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/user/getUsersWithAttendanceBySchedId/${id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch Users with Attendace');
+        }
+        const data = await response.json();
+        return { data, error: null };
+    } catch (error) {
+        return { data: [], error };
+    }
+};
+
+export const fetchUsersWithAttendance = async () => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/user/getUsersWithAttendance`, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            return { data: [], error: data.error };
+        } else {
+            return { data: data, error: null };
+        }
+    } catch (error) {
+        return { data: [], error };
+    }
+};

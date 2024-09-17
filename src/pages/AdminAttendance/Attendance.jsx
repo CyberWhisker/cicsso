@@ -7,12 +7,11 @@ import Update from './Form/Update';
 import Delete from './Form/Delete';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Add, KeyboardReturn } from '@mui/icons-material';
-import { fetchAttendanceBySchedule } from '../../api/AttendanceApi';
 import { toast } from 'react-toastify';
 import moment from 'moment';
 import AlertModal from '../../components/AlertModal';
 import { fetchScheduleById } from '../../api/ScheduleApi';
-import { fetchUsers } from '../../api/userApi';
+import { fetchUsersWithAttendanceBySchedId } from '../../api/userApi';
 
 function Attendance() {
   const {id} = useParams();
@@ -25,25 +24,11 @@ function Attendance() {
     setIsLoading(true);
   
     try {
-      // Fetch both users and attendance
-      const [{ data: userData, error: userError }, { data: attendanceData, error: attendanceError }] = await Promise.all([
-        fetchUsers(),
-        fetchAttendanceBySchedule(id)
-      ]);
-  
-      if (userError || attendanceError) {
-        console.log(userError || attendanceError);
-        toast.error("Opss... Something went wrong");
+      const { data, error } = await fetchUsersWithAttendanceBySchedId(id);
+      if (error) {
+        console.log(error)
       } else {
-        // Combine the data after both are fetched
-        const combined = userData.map(user => {
-          const userAttendance = attendanceData.find(att => att.userId === user._id);
-          return {
-            ...user,
-            attendance: userAttendance || {}
-          };
-        });
-        setCombinedData(combined);  // Set the combined data
+        setCombinedData(data)
       }
     } catch (error) {
       console.error(error);
@@ -149,7 +134,6 @@ function AttendanceTable({combinedData, handleGetData, id}) {
     const getEndTime = (time) => time.clone().add(timeLimit, 'hours');
   
     // Check if currentTime falls within any of the adjusted time ranges
-    console.log(currentTime.format('MMM DD hh:mm:ss a'), getEndTime(amIn).format('MMM DD hh:mm:ss a'))
     if (currentTime.isSameOrAfter(amIn) && currentTime.isSameOrBefore(getEndTime(amIn))) {
       setActive({...active, amInChip: true})
     } 
@@ -186,47 +170,49 @@ function AttendanceTable({combinedData, handleGetData, id}) {
     { id: 'pmOutFormat', label: <Chip color={active.pmOutChip ? 'success' : 'error'} label='PM OUT'/> },
     { id: 'setting', label: 'Settings'},
   ];
-
   const rows = useMemo(() => 
-    combinedData.map((item) => ({
-      _id: item.attendance?._id ? item.attendance._id : null,  
-      pictureFormat: <Avatar src={item.picture} alt={item.picture} />, 
-      name: item.name,
-      amInFormat: item.attendance?.amIn ? 
-        <Chip color='success' label={moment(item.attendance.amIn).format('hh:mm A')}/> : 
-        <Chip color='error' label='Absent'/>,
-      amOutFormat: item.attendance?.amOut ? 
-        <Chip color='success' label={moment(item.attendance.amOut).format('hh:mm A')}/> : 
-        <Chip color='error' label='Absent'/>,
-      pmInFormat: item.attendance?.pmIn ? 
-        <Chip color='success' label={moment(item.attendance.pmIn).format('hh:mm A')}/> : 
-        <Chip color='error' label='Absent'/>,
-      pmOutFormat: item.attendance?.pmOut ? 
-        <Chip color='success' label={moment(item.attendance.pmOut).format('hh:mm A')}/> : 
-        <Chip color='error' label='Absent'/>,
-      picture: item.picture, 
-      amIn: item.attendance?.amIn ? item.attendance.amIn : null,
-      amOut: item.attendance?.amOut ? item.attendance.amOut : null,
-      pmIn: item.attendance?.pmIn ? item.attendance.pmIn : null,
-      pmOut: item.attendance?.pmOut ? item.attendance.pmOut : null,
-      setting: 
-        <DropDown>
-          {item.attendance._id ? (
-            <>
-              <MenuItem onClick={() => handleUpdateModal(item.attendance)}>
-                <Typography color="warning.main">Edit</Typography>
+    combinedData.map((item) => {
+      const attendance = item.attendances?.[0];
+      return {
+        _id: item._id,  
+        pictureFormat: <Avatar src={item.picture} alt={item.picture} />, 
+        name: item.name,
+        amInFormat: attendance?.amIn ? 
+          <Chip color='success' label={moment(attendance.amIn).format('hh:mm A')}/> : 
+          <Chip color='error' label='Absent'/>,
+        amOutFormat: attendance?.amOut ? 
+          <Chip color='success' label={moment(attendance.amOut).format('hh:mm A')}/> : 
+          <Chip color='error' label='Absent'/>,
+        pmInFormat: attendance?.pmIn ? 
+          <Chip color='success' label={moment(attendance.pmIn).format('hh:mm A')}/> : 
+          <Chip color='error' label='Absent'/>,
+        pmOutFormat: attendance?.pmOut ? 
+          <Chip color='success' label={moment(attendance.pmOut).format('hh:mm A')}/> : 
+          <Chip color='error' label='Absent'/>,
+        picture: item.picture, 
+        amIn: attendance?.amIn ? attendance.amIn : null,
+        amOut: attendance?.amOut ? attendance.amOut : null,
+        pmIn: attendance?.pmIn ? attendance.pmIn : null,
+        pmOut: attendance?.pmOut ? attendance.pmOut : null,
+        setting: 
+          <DropDown>
+            {attendance?._id ? (
+              <>
+                <MenuItem onClick={() => handleUpdateModal(item)}>
+                  <Typography color="warning.main">Edit</Typography>
+                </MenuItem>
+                <MenuItem onClick={(e) => handleDeleteModal(item)}>
+                  <Typography color="error.main">Delete</Typography>
+                </MenuItem>
+              </>
+            ) : (
+              <MenuItem disabled>
+                <Typography color="error.main">No Record</Typography>
               </MenuItem>
-              <MenuItem onClick={(e) => handleDeleteModal(item.attendance)}>
-                <Typography color="error.main">Delete</Typography>
-              </MenuItem>
-            </>
-          ) : (
-            <MenuItem disabled>
-              <Typography color="error.main">No Record</Typography>
-            </MenuItem>
-          )}
-        </DropDown> 
-    })),
+            )}
+          </DropDown> 
+      }
+    }),
     [combinedData]
   );
 

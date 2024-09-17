@@ -2,67 +2,66 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Accordion, AccordionSummary, Avatar, Badge, Box, Card, Chip, Divider,Grid,LinearProgress, Stack, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
 import { CustomCard, DataTable } from '../../components';
-import { fetchUsers, } from '../../api/userApi';
+import { fetchUsersWithAttendance, } from '../../api/userApi';
 import { CalendarMonth, ExpandMore } from '@mui/icons-material';
-import { fetchAttendanceByUserId, fetchAttendances } from '../../api/AttendanceApi';
 import { fetchSchedule } from '../../api/ScheduleApi';
-import { fetchEvent } from '../../api/EventApi';
+import { fetchEventsWithAttendanceByUserId } from '../../api/EventApi';
 import moment from 'moment';
+import { toast } from 'react-toastify';
 
 function Penalties() {
     const [isLoading, setIsLoading] = useState(true);
     const [usersData, setUsersData] = useState([]);
-    const [selectedUserData, setSelectedUserData] = useState([]);
-    const getData = async () => {
+    const [eventWithAttend, setEventWithAttend] = useState([]);
+    const handleGetUser = async () => {
         setIsLoading(true);
-        const [{ data: userData, error: userError }, { data: attendanceData, error: attendanceError }, {data: scheduleData, error : scheduleError}] = await Promise.all([
-            fetchUsers(),
-            fetchAttendances(),
+
+        const [{data:userData, error:userError}, {data:schedData, error: schedError}] = await Promise.all([
+            fetchUsersWithAttendance(),
             fetchSchedule(),
-          ]);
-        if (userError || attendanceError || scheduleError) {
-            console.log(userError, attendanceError, scheduleError);
+        ])
+
+        if (userError, schedError) {
+           toast.error('Something went wrong....');
         } else {
-            const currentDate = moment();
-            let countSchedule = 0;
-            scheduleData.map((item) => {
-                if (moment(item.date).isSameOrBefore(currentDate)) {
-                    countSchedule++;
+            let totalSchedule = 0;
+            schedData.map(sched => {
+                if (moment(sched.date).isSameOrBefore(moment())) {
+                    totalSchedule++
                 }
             })
-            const totalAttendance = countSchedule * 4;
-            // Combine the data after both are fetched
-            const combined = userData.map(user => {
-                let countAbsent = 0;
-                const userAttendance = attendanceData.filter(att => att.userId === user._id);
-                userAttendance.map((item) => {
-                    if (item.amIn) {
-                        countAbsent++;
-                    }
-                    if (item.amOut) {
-                        countAbsent++;
-                    }
-                    if (item.pmIn) {
-                        countAbsent++;
-                    }
-                    if (item.pmOut) {
-                        countAbsent++;
-                    }
-                })
+            totalSchedule = totalSchedule * 4
+            const newData = userData.map(user => {
+                let present = 0
+                if (user.attendances.length > 0) {
+                    user.attendances.map(attendance => {
+                        if (attendance.amIn) {
+                            present++
+                        }
+                        if (attendance.amOut) {
+                            present++
+                        }
+                        if (attendance.pmIn) {
+                            present++
+                        }
+                        if (attendance.pmOut) {
+                            present++
+                        }
+                    })
+                }
+                let absent = totalSchedule - present
                 return {
                     ...user,
-                    attendance: userAttendance || {},
-                    absent: totalAttendance - countAbsent
-                };
-            });
-            setUsersData(combined)
+                    absent: absent
+                }
+            })
+            setUsersData(newData)
         }
         setIsLoading(false);
     };
     useEffect(() => {
-        
-        getData();
-    }, []);
+        handleGetUser();
+    },[]);
     return (
         <Master>
             <Stack direction={'column'} spacing={2}>
@@ -76,51 +75,30 @@ function Penalties() {
             </Stack>
             <Grid container mt={1} spacing={2}>
                 <Grid item xs={4}>
-                    <UsersList usersData={usersData} setSelectedUserData={setSelectedUserData} setIsLoading={setIsLoading}/>
+                    <UsersList usersData={usersData} setEventWithAttend={setEventWithAttend} setIsLoading={setIsLoading}/>
                 </Grid>
                 <Grid item xs={8}>
-                    <AttendanceList selectedUserData={selectedUserData}/>
+                    <AttendanceList eventWithAttend={eventWithAttend}/>
                 </Grid>
             </Grid>
         </Master>
     )
 }
 
-function UsersList({usersData, setSelectedUserData, setIsLoading}) {
+function UsersList({usersData, setEventWithAttend, setIsLoading}) {
     const getUserAttendance = async (id) => {
         setIsLoading(true)
         try {
-            // Fetch data concurrently
-            const [{ data: eventData, error: eventError }, { data: schedData, error: schedError }, { data: attendData, error: attendError }] = await Promise.all([
-                fetchEvent(),
-                fetchSchedule(),
-                fetchAttendanceByUserId(id)
-            ]);
-    
-            // Handle errors
-            if (eventError || schedError || attendError) {
-                console.error('Errors:', { eventError, schedError, attendError });
-                return;
+            const {data, error} = await fetchEventsWithAttendanceByUserId(id)
+            if (error) {
+                toast.error(error.message)
+            } else {
+                const newData = data.map((event) => ({
+                    ...event,
+                    schedules: event.schedules.filter(sched => moment(sched.date).isSameOrBefore(moment()))
+                }))
+                setEventWithAttend(newData)
             }
-    
-            // Create a map of attendance by scheduleId
-            const attendanceMap = attendData.reduce((map, { scheduleId, ...attend }) => {
-                map[scheduleId] = attend || {};
-                return map;
-            }, {});
-    
-            // Map events to schedules and attach attendance
-            const currentDate = moment()
-            const eventSched = eventData.map(event => ({
-                ...event,
-                schedules: schedData
-                    .filter(schedule => schedule.eventId === event._id && moment(schedule.date).isSameOrBefore(currentDate))
-                    .map(schedule => ({
-                        ...schedule,
-                        attendance: attendanceMap[schedule._id] || []
-                    }))
-            }));
-            setSelectedUserData(eventSched)
         } catch (error) {
             console.error('Unexpected error:', error);
         }
@@ -157,7 +135,7 @@ function UsersList({usersData, setSelectedUserData, setIsLoading}) {
     );
 }
 
-function AttendanceList({selectedUserData}) {
+function AttendanceList({eventWithAttend}) {
     // Columns definition
     const columns = useMemo(() => [
         { id: 'date', label: 'Date' },
@@ -169,26 +147,28 @@ function AttendanceList({selectedUserData}) {
 
     // Function to get rows from schedules
     const getRows = (schedules) =>
-        schedules.map((item) => ({
-            date: moment(item.date).format('MMM - DD - YYYY ddd'),
-            amInFormat: item.attendance?.amIn ? 
-                <Chip color='success' label={moment(item.attendance.amIn).format('hh:mm A')} /> : 
-                <Chip color='error' label='Absent' />,
-            amOutFormat: item.attendance?.amOut ? 
-                <Chip color='success' label={moment(item.attendance.amOut).format('hh:mm A')} /> : 
-                <Chip color='error' label='Absent' />,
-            pmInFormat: item.attendance?.pmIn ? 
-                <Chip color='success' label={moment(item.attendance.pmIn).format('hh:mm A')} /> : 
-                <Chip color='error' label='Absent' />,
-            pmOutFormat: item.attendance?.pmOut ? 
-                <Chip color='success' label={moment(item.attendance.pmOut).format('hh:mm A')} /> : 
-                <Chip color='error' label='Absent' />,
-            picture: item.picture, 
-            amIn: item.attendance?.amIn || null,
-            amOut: item.attendance?.amOut || null,
-            pmIn: item.attendance?.pmIn || null,
-            pmOut: item.attendance?.pmOut || null,
-        }));
+        schedules.map((item) => {
+            const attendance = item.attendances?.[0];
+            return {
+                date: moment(item.date).format('MMM - DD - YYYY ddd'),
+                amInFormat: attendance?.amIn ? 
+                    <Chip color='success' label={moment(attendance.amIn).format('hh:mm A')} /> : 
+                    <Chip color='error' label='Absent' />,
+                amOutFormat: attendance?.amOut ? 
+                    <Chip color='success' label={moment(attendance.amOut).format('hh:mm A')} /> : 
+                    <Chip color='error' label='Absent' />,
+                pmInFormat: attendance?.pmIn ? 
+                    <Chip color='success' label={moment(attendance.pmIn).format('hh:mm A')} /> : 
+                    <Chip color='error' label='Absent' />,
+                pmOutFormat: attendance?.pmOut ? 
+                    <Chip color='success' label={moment(attendance.pmOut).format('hh:mm A')} /> : 
+                    <Chip color='error' label='Absent' />,
+                amIn: attendance?.amIn || null,
+                amOut: attendance?.amOut || null,
+                pmIn: attendance?.pmIn || null,
+                pmOut: attendance?.pmOut || null,
+            }
+        });
 
     return (
         <Card sx={{ p: 2, height: '75vh', overflow: 'auto' }} elevation={5}>
@@ -196,18 +176,18 @@ function AttendanceList({selectedUserData}) {
                 <Typography fontWeight={'bold'}>Attendance</Typography>
                 <Divider />
                 <Box>
-                    {selectedUserData.map((eventItem) => (
-                        <Accordion key={eventItem._id}>
+                    {eventWithAttend.map((event) => (
+                        <Accordion key={event._id}>
                             <AccordionSummary
                                 expandIcon={<ExpandMore />}
-                                aria-controls={`panel-${eventItem._id}-content`}
-                                id={`panel-${eventItem._id}-header`}
+                                aria-controls={`panel-${event._id}-content`}
+                                id={`panel-${event._id}-header`}
                             >
-                                {eventItem.event}
+                                {event.event}
                             </AccordionSummary>
                             <DataTable 
                                 columns={columns}
-                                rows={getRows(eventItem.schedules)} // Pass rows based on current eventItem's schedule
+                                rows={getRows(event.schedules)}
                             />
                         </Accordion>
                     ))}

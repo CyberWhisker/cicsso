@@ -12,10 +12,8 @@ function Store({onClose, handleGetData}) {
     const [submitted, setSubmitted] = useState(false);
     const [userDatas, setUserDatas] = useState([]);
     const [formData, setFormData] = useState({
-        scheduleId: id,
-        userId: '',
-        name: '',
-        picture: '',
+        schedule: id,
+        user: '',
         amIn: null,
         amOut: null,
         pmIn: null,
@@ -39,9 +37,7 @@ function Store({onClose, handleGetData}) {
         // Update formData with new values
         setFormData(prevState => ({
             ...prevState,
-            userId: e.target.value,
-            name: user ? user.name : prevState.name,
-            picture: user ? user.picture : prevState.picture
+            user: e.target.value,
         }));
     }
 
@@ -53,9 +49,9 @@ function Store({onClose, handleGetData}) {
         e.preventDefault();
         setSubmitted(true);
 
-        const { userId } = formData;
+        const { user } = formData;
         // Check if all fields are filled
-        if (!userId ) {
+        if (!user ) {
             toast.error("All fields, including times, are required");
             return;
         }
@@ -70,7 +66,7 @@ function Store({onClose, handleGetData}) {
             handleGetData()
             setSubmitted(false);
             setFormData({
-                userId: null,
+                user: null,
                 amIn: null,
                 amOut: null,
                 pmIn: null,
@@ -90,13 +86,13 @@ function Store({onClose, handleGetData}) {
                         <Stack direction={'column'} spacing={2}>
                             <TextField
                                 label='Enter Event'
-                                name='userId'
+                                name='user'
                                 variant="outlined"
                                 sx={{ width: '100%'}}
-                                value={formData.userId}
+                                value={formData.user}
                                 onChange={handleChange}
-                                error={submitted && !formData.userId}
-                                helperText={submitted && !formData.userId ? "Required" : ""}
+                                error={submitted && !formData.user}
+                                helperText={submitted && !formData.user ? "Required" : ""}
                                 select
                             >
                                 {!userDatas && (

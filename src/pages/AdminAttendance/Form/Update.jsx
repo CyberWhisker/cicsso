@@ -7,7 +7,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { updateAttendance } from '../../../api/AttendanceApi';
 
 function Update({selected, onClose, handleGetData}) {
-    const [formData, setFormData] = useState(selected);
+    const [formData, setFormData] = useState(selected.attendances[0]);
     const [submitted, setSubmitted] = useState(false);
 
     const handleTimeChange = (name, time) => {
@@ -28,7 +28,7 @@ function Update({selected, onClose, handleGetData}) {
             toast.success("Successfully updated")
             onClose();
         }
-        setFormData({ name: '', amIn: '', amOut: '', pmIn: '', pmOut: '' });
+        setFormData({...formData, amIn: '', amOut: '', pmIn: '', pmOut: '' });
         setSubmitted(false);
     };
 
@@ -42,7 +42,7 @@ function Update({selected, onClose, handleGetData}) {
                             <Typography>Select Student</Typography>
                             <TextField
                                 name='name'
-                                value={formData.name}
+                                value={selected.name}
                                 disabled
                             />
                             <Divider/>

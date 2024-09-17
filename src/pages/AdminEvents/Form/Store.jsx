@@ -14,7 +14,7 @@ function Store({setEvents, onClose}) {
     });
 
     const [formSchedule, setFormSchedule] = useState({
-        eventId: '',
+        event: '',
         date: null,
         amIn: null,
         amOut: null,
@@ -57,7 +57,7 @@ function Store({setEvents, onClose}) {
             image: ''
         });
         setFormSchedule({
-            eventId: '',
+            event: '',
             date: null,
             amIn: null,
             amOut: null,
@@ -85,7 +85,6 @@ function Store({setEvents, onClose}) {
             onClose()
             await handleSchedule(eventId);
         }
-        await handleSchedule(eventId);
     }
 
     const handleSchedule = async (eventId) => {
@@ -131,7 +130,7 @@ function Store({setEvents, onClose}) {
             }
     
             const currentSchedule = {
-                eventId: eventId,
+                event: eventId,
                 date: minDate, 
                 amIn: scheduleDateAmIn,
                 amOut: scheduleDateAmOut,

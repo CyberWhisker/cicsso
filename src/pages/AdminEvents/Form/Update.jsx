@@ -27,8 +27,8 @@ function Update({data, setEvents, events, onClose}) {
         const { event, startDate, endDate, amIn, amOut, pmIn, pmOut } = formData;
 
         // Check if all fields are filled
-        if (!event || !startDate || !endDate || !amIn || !amOut || !pmIn || !pmOut) {
-            toast.error("All fields, including times, are required");
+        if (!event || !startDate) {
+            toast.error("All fields are required");
             return;
         }
 
