@@ -119,7 +119,7 @@ function InfoSection({events, auth}) {
         } else {
             const totalFine = data.reduce((sum, item) => sum + item.fine, 0);
             const totalAmount = trans.reduce((sum, item) => {
-                return item.status === 'confirmed' ? sum + item.amount : sum;
+                return item.status === 'confirm' ? sum + item.amount : sum;
             }, 0);
             setCredit(totalFine - totalAmount);
         }

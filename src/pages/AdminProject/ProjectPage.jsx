@@ -41,23 +41,13 @@ function EventList({setIsLoading}) {
   
   const getProjects = async () => {
     setIsLoading(true)
-    const [
-      {data: projectData, error: projectError},
-      {data: itemData, error: itemError}
-    ] = await Promise.all([
-      fetchProjects(),
-      fetchItem()
-    ]);
-    if (projectError || itemError) {
+    const {data, error} = await fetchProjects();
+    if (error) {
       setIsLoading(false)
       toast.error(error)
     } else {
-      const combinedData = projectData.map(project => ({
-        ...project,
-        items: itemData.filter(item => item.projectId == project._id )
-      })) 
       setIsLoading(false)
-      setProjects(combinedData)
+      setProjects(data)
     }
   }
 
@@ -84,7 +74,7 @@ function EventList({setIsLoading}) {
   return (
     <Grid container spacing={2}>
       {projects.map((item, index) => {
-        const totalCost = item.items.reduce((sum, item) => sum + item.price, 0);
+        const totalCost = item.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
         return (
           <Grid 
             item 

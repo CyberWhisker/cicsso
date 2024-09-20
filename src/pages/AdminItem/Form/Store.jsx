@@ -10,7 +10,7 @@ function Store({onClose, handleGetData}) {
     const {id} = useParams();
     const [submitted, setSubmitted] = useState(false);
     const [formData, setFormData] = useState({
-        projectId: id,
+        project: id,
         item: '',
         quantity: '',
         price: '',
