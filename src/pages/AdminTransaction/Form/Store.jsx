@@ -49,7 +49,11 @@ function Store({handleGetData, handleCloseModal, data}) {
             toast.error("All fields are required");
             return;
         }
-        const {data, error} = await storeTransaction(formData)
+        const newForm = {
+            ...formData,
+            notification: 1
+        }
+        const {data, error} = await storeTransaction(newForm)
         if (error) {
             toast.error(error)
         } else {

@@ -12,8 +12,6 @@ import { ChevronLeft } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
-
-
 function NavSideBar({children, themeMode}) {
   const [open, setOpen] = React.useState(localStorage.getItem('sideMode') === 'true' ? true : false);
 

@@ -185,8 +185,8 @@ function PendingTable({pendingData, handleGetData, userData}) {
         const {_id: _id, collectionId, payment, amount, date, status, image, userId} = item
         const newForm = {
             _id: _id,
-            userId: userId,
-            collectionId: collectionId,
+            userId: userId._id,
+            collectionId: collectionId._id,
             payment: payment,
             amount: amount,
             date: date,

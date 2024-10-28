@@ -6,6 +6,7 @@ import Navlist from './Navlist'
 import { useLocation } from 'react-router-dom'
 import AppDrawer from './AppDrawer'
 import AuthButton from './AuthButton'
+import Notification from './Notification'
 
 function NavTopBar({toggleColorMode, themeMode}) {
   const location = useLocation();
@@ -36,6 +37,7 @@ function NavTopBar({toggleColorMode, themeMode}) {
         <Box sx={{display: {xs: 'none', md: 'flex'}, gap: 2, alignItems: 'center'}}>
             <AuthButton/>
             <ToggleColorMode themeMode={themeMode} toggleColorMode={toggleColorMode} />
+            <Notification/>
         </Box>
         <Box sx={{display: {xs: 'block', md: 'none'}, gap: 2, alignItems: 'center'}}>
           <AppDrawer themeMode={themeMode} toggleColorMode={toggleColorMode} />
@@ -44,5 +46,7 @@ function NavTopBar({toggleColorMode, themeMode}) {
     </AppBar>
   )
 }
+
+
 
 export default NavTopBar

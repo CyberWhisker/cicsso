@@ -21,7 +21,6 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 function Update({selected, onClose, handleGetData, data}) {
-    console.log(selected)
     const [formData, setFormData] = useState(selected);
     const [submitted, setSubmitted] = useState(false);
 
@@ -43,7 +42,12 @@ function Update({selected, onClose, handleGetData, data}) {
             return;
         }
 
-        const {data, error} = await updateTransaction(formData)
+        const newForm = {
+            ...formData,
+            notification: 1
+        }
+
+        const {data, error} = await updateTransaction(newForm)
         if (error) {
             toast.error(error)
         } else {

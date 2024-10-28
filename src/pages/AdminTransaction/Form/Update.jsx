@@ -42,8 +42,11 @@ function Update({selected, onClose, handleGetData, data}) {
             toast.error("All fields are required");
             return;
         }
-
-        const {data, error} = await updateTransaction(formData)
+        const newForm = {
+            ...formData,
+            notification: 1
+        }
+        const {data, error} = await updateTransaction(newForm)
         if (error) {
             toast.error(error)
         } else {

@@ -4,29 +4,19 @@ import { Box, Card, Chip, Divider, LinearProgress, Stack, Typography } from '@mu
 import { fetchTransactionByUserId } from '../../api/TransactionApi'
 import { useAuthContext } from '../../hooks/useAuthContext'
 import { toast } from 'react-toastify'
-import { fetchCollectionById, fetchCollections } from '../../api/CollectionApi'
 import { DataGrid } from '@mui/x-data-grid'
+import moment from 'moment'
 
 function Transaction() {
     const {auth} = useAuthContext();
     const [isLoading, setIsLoading] = useState(true)
     const [transData, setTransData] = useState([])
     const handleGetData = async () => {
-        const [
-            {data: transData, error: transError},
-            {data: colData, error: colError},
-        ] = await Promise.all([
-            fetchTransactionByUserId(auth.user._id),
-            fetchCollections()
-        ])
-        if (transError || colError) {
+        const {data, error}= await fetchTransactionByUserId(auth.user._id)
+        if (error) {
             toast.error("Something wen wrong")
         } else {
-            const combinedData = transData.map(trans => ({
-                ...trans,
-                collection: colData.find(collection => collection._id == trans.collectionId)
-            }))
-            setTransData(combinedData)
+            setTransData(data)
             setIsLoading(false)
         }
     }
@@ -129,7 +119,8 @@ function TableSection ({transData}) {
         transData.map(item => ({
             ...item,
             id: item._id,
-            collection: item.collection?.collectionName
+            collection: item.collectionId?.collectionName,
+            date: moment(item.date).format('MMMM DD YYYY')
         })),
         [transData]
     )

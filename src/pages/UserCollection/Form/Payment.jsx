@@ -26,10 +26,12 @@ function Payment({selected, handleGetData, handleCloseModal}) {
         setPaymentType(value == 'Cash' ? true : false)
         setDataForm({
             ...dataForm,
-            payment: value
+            payment: value,
+            notification: 1
         })
     }
     const handleSubmit = async () => {
+
         const {data, error} = await storeTransaction(dataForm)
         if (error) {
             toast.error(error)
