@@ -8,7 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import { AttachMoney, CreditCard, Folder, List, PanTool, WarningAmber, WavingHand } from '@mui/icons-material';
+import { AttachMoney, CreditCard, Folder, List, Notifications, PanTool, WarningAmber, WavingHand } from '@mui/icons-material';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 function Navlist({ setopen }) {
@@ -98,12 +98,12 @@ function NavAdmin() {
         <ListItemText primary="Projects" />
       </ListItemButton>
 
-      {/* <ListItemButton>
+      <ListItemButton component={Link} to={'/report'} selected={location.pathname.startsWith('/report')}>
         <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
         <ListItemText primary="Reports" />
-      </ListItemButton> */}
+      </ListItemButton>
 
       <ListItemButton component={Link} to={'/collection'} selected={location.pathname.startsWith('/collection')}>
         <ListItemIcon>
@@ -146,6 +146,7 @@ function NavUser() {
         </ListItemIcon>
         <ListItemText primary="Transaction" />
       </ListItemButton>
+
     </React.Fragment>
   )
 }

@@ -17,7 +17,8 @@ import {
   UserDashboard,
   UserAttendance,
   UserCollection,
-  UserTransaction
+  UserTransaction,
+  AdminReport
 } from './pages';
 import { useAuthContext } from './hooks/useAuthContext';
 import PrivateRoute from './hooks/privateRoute';
@@ -128,6 +129,12 @@ function App() {
             ) : (
             <UserCollection />
             )}
+          </PrivateRoute>
+        } />
+
+        <Route path="/report" element={
+          <PrivateRoute>
+            <AdminReport />
           </PrivateRoute>
         } />
         

@@ -1,10 +1,11 @@
-import { Alert, Avatar, Badge, Button, Divider, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Typography} from '@mui/material'
-import React, { useContext, useEffect, useState } from 'react'
-import { Check, Notifications, Pending, PersonAdd, Warning } from '@mui/icons-material'
+import { Badge, Button, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Typography} from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Check, Message, Notifications, Pending, Warning } from '@mui/icons-material'
 import { fetchTransactionByUserId, fetchTransactions } from '../api/TransactionApi';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { fetchNotification, fetchNotificationByUserId, updateNotification } from '../api/NotificationApi';
 
 
 function Notification () {
@@ -21,48 +22,63 @@ function Notification () {
       setAnchorEl(null);
     };
 
-    const handleClickNotification = (collectionId) => {
+    const handleUpdateNotificationUser = async (dataNotif) => {
+        const newData = {
+            _id: dataNotif._id,
+            userStatus: false,
+        }
+        const {notifData: data, error} = await updateNotification(newData)
+        if (error) {
+            toast.error(error)
+        }
+    }
+
+    const handleUpdateNotificationAdmin = async (dataNotif) => {
+        const newData = {
+            _id: dataNotif._id,
+            adminStatus: false,
+        }
+        const {notifData: data, error} = await updateNotification(newData)
+        if (error) {
+            toast.error(error)
+        }
+    }
+
+    const handleClickNotification = async (dataNotif) => {
+
         if (auth.user.role == 'user') {
+            await handleUpdateNotificationUser(dataNotif)
             navigate('/transaction')
         } else {
-            navigate(`/transaction/${collectionId}`)
+            await handleUpdateNotificationAdmin(dataNotif)
+            navigate(`/transaction/${dataNotif._id}`)
         }
 
     }
-    
-    const handleGetTransaction = async () => {
-        let count = 0;
+
+    const handleGetNotification = async () => {
         if (auth.user.role == 'user') {
-            const {data, error} = await fetchTransactionByUserId(auth.user._id);
+            const {data, error} = await fetchNotificationByUserId(auth.user._id);
             if (error) {
                 toast.error(error)
             } else {
                 setData(data)
-                data.map((item) => {
-                    if (item.status == 'decline') {
-                        count ++
-                    }
-                })
-                setDataCount(count)
+
+                setDataCount(data.filter(item => item.userStatus).length)
             }
         } else {
-            const {data, error} = await fetchTransactions();
+            const {data, error} = await fetchNotification();
             if (error) {
                 toast.error(error)
             } else {
                 setData(data)
-                data.map((item) => {
-                    if (item.status == 'pending') {
-                        count ++
-                    }
-                })
-                setDataCount(count)
+                setDataCount(data.filter(item => item.adminStatus).length)
             }
         }
     }
 
     useEffect(() => {
-        handleGetTransaction();
+        handleGetNotification();
     }, [])
 
     return (
@@ -114,31 +130,31 @@ function Notification () {
                     </ListItemText>
                 </MenuItem>
             )}
-            {data.map((item, index) => (
-                <MenuItem key={index} onClick={() => handleClickNotification(item.collectionId._id)}>
-                    <ListItemIcon>
-                        {item.status == "pending" && (
-                            <Pending /> 
-                        )}
-                        {item.status == "confirm" && (
-                            <Check /> 
-                        )}
-                        {item.status == "decline" && (
-                            <Warning /> 
-                        )}
-                    </ListItemIcon>
-                    <ListItemText>
-                        <Stack>
-                            <Typography variant='h6'>
-                                {item.collectionId.collectionName}
-                            </Typography>
-                            <Typography variant='caption'>
-                                {item.userId.name}
-                            </Typography>
-                        </Stack>
-                    </ListItemText>
-                </MenuItem>
-            ))}
+            {data.map((item, index) => {
+                let isActive;
+                if (auth.user.role == 'user') {
+                    isActive = item.userStatus
+                } else {
+                    isActive = item.adminStatus
+                }
+                return (
+                    <MenuItem key={index} onClick={() => handleClickNotification(item)} selected={isActive}>
+                        <ListItemIcon>
+                            <Message/>
+                        </ListItemIcon>
+                        <ListItemText>
+                            <Stack>
+                                <Typography variant='h6'>
+                                    {item.transactionId?.collectionId?.collectionName || 'Removed'}
+                                </Typography>
+                                <Typography variant='caption'>
+                                    {item.message}
+                                </Typography>
+                            </Stack>
+                        </ListItemText>
+                    </MenuItem>
+                )
+            })}
         </Menu>
       </>
     )

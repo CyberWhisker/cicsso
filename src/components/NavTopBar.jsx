@@ -1,5 +1,5 @@
 import { AppBar, Box, Container, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useContext } from 'react'
 import ToggleColorMode from './ToggleColorMode'
 import Logo from '/appImg/Logo.png'
 import Navlist from './Navlist'
@@ -7,8 +7,10 @@ import { useLocation } from 'react-router-dom'
 import AppDrawer from './AppDrawer'
 import AuthButton from './AuthButton'
 import Notification from './Notification'
+import { AuthContext } from '../context/AuthContext'
 
 function NavTopBar({toggleColorMode, themeMode}) {
+  const {auth} = useContext(AuthContext)
   const location = useLocation();
   return (
     <AppBar
@@ -37,7 +39,7 @@ function NavTopBar({toggleColorMode, themeMode}) {
         <Box sx={{display: {xs: 'none', md: 'flex'}, gap: 2, alignItems: 'center'}}>
             <AuthButton/>
             <ToggleColorMode themeMode={themeMode} toggleColorMode={toggleColorMode} />
-            <Notification/>
+            {auth && <Notification/>}
         </Box>
         <Box sx={{display: {xs: 'block', md: 'none'}, gap: 2, alignItems: 'center'}}>
           <AppDrawer themeMode={themeMode} toggleColorMode={toggleColorMode} />
