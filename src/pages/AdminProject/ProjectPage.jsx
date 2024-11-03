@@ -74,7 +74,7 @@ function EventList({setIsLoading}) {
   return (
     <Grid container spacing={2}>
       {projects.map((item, index) => {
-        const totalCost = item.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const totalCost = item.items.reduce((sum, item) => sum + item.amount * item.quantity, 0);
         return (
           <Grid 
             item 

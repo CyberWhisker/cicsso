@@ -54,7 +54,7 @@ function Payment({selected, handleGetData, handleCloseModal}) {
                 <TextField
                     label='Amount'
                     name='amount'
-                    value={selected.fine}
+                    value={selected.dataForm.amount}
                     disabled
                 />
                 <Typography>AY</Typography>
@@ -122,7 +122,7 @@ function GcashForm ({setDataForm, dataForm, handleSubmit, selected}) {
               />
             </Button>
             {error && <Typography color='error' textAlign={'center'}>{error}</Typography>}
-            <Button variant='contained' onClick={handleFormSubmit} disabled={selected.transaction}>Submit</Button>
+            <Button variant='contained' onClick={handleFormSubmit} disabled={selected.transaction.length != 0}>Submit</Button>
         </Stack>
     )
 } 

@@ -101,8 +101,8 @@ function DataGridList ({data, handleGetData}) {
             headerAlign: 'center'
         },
         {
-            field: 'price',
-            headerName: 'Price',
+            field: 'amount',
+            headerName: 'Amount',
             flex: 1,
             headerAlign: 'center'
         },

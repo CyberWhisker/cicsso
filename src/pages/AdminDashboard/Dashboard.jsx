@@ -15,6 +15,7 @@ import { DataGrid, GridMoreVertIcon } from '@mui/x-data-grid';
 import Update from './Form/Update';
 import Delete from './Form/Delete';
 import { AlertModal } from '../../components';
+import { fetchItem } from '../../api/ItemApi';
 
 function Dashboard() {
     const [isLoading, setIsLoading] = useState(true)
@@ -32,14 +33,16 @@ function Dashboard() {
             {data: schedData, error: schedError},
             {data: atttendData, error: attendError},
             {data: transacData, error: transacError},
+            {data: itemData, error: itemError},
         ] = await Promise.all([
             fetchUsers(),
             fetchEvent(),
             fetchSchedule(),
             fetchAttendances(),
             fetchTransactions(),
+            fetchItem()
         ])
-        if (userError, eventError, schedError, attendError, transacError) {
+        if (userError, eventError, schedError, attendError, transacError, itemError) {
             toast.error('Something Went Wrong');
         } else {
             // count total Users
@@ -52,7 +55,6 @@ function Dashboard() {
 
             let totalUserAttendance = 0;
             atttendData.map((attend) => {
-                console.log(attend)
                 if (attend.amIn) {
                     totalUserAttendance++
                 }
@@ -78,15 +80,11 @@ function Dashboard() {
             const totalFund = transacData.reduce((total, current) => {
                 return current.status === 'confirm' ? total + current.amount : total;
             }, 0);
-            setTotalFunds(totalFund)
+            setTotalFunds(totalFund - itemData.reduce((sum, item) => sum + item.amount, 0))
 
             // Pending Data
             const pendingTransaction = transacData.filter(trans => trans.status == 'pending');
-            const combinedTransUser = pendingTransaction.map(trans => ({
-                ...trans,
-                user: userData.find(item => item._id == trans.userId)
-            }))
-            setPendingData(combinedTransUser)
+            setPendingData(pendingTransaction)
             // User Data
             setUserData(userData)
 
@@ -274,7 +272,7 @@ function PendingTable({pendingData, handleGetData, userData}) {
         pendingData.map((item) => ({
             ...item,
             id: item._id,
-            name: item.user?.name,
+            name: item.userId?.name,
             date: moment(item.date).format('MMM DD, YYYY')
         })),
         [pendingData]

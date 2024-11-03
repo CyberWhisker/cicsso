@@ -57,12 +57,12 @@ function Update({selected, onClose, handleGetData}) {
                                 helperText={submitted && !formData.quantity ? "Required": ""}
                             />
                             <TextField
-                                label='Price'
-                                name='price'
-                                value={formData.price}
+                                label='Amount'
+                                name='amount'
+                                value={formData.amount}
                                 onChange={handleChange}
-                                error={submitted && !formData.price}
-                                helperText={submitted && !formData.price ? "Required": ""}
+                                error={submitted && !formData.amount}
+                                helperText={submitted && !formData.amount ? "Required": ""}
                             />
                             <DatePicker
                                 label='Date'
