@@ -13,6 +13,7 @@ export { default as AdminProject } from './AdminProject/ProjectPage'
 export { default as AdminItem } from './AdminItem/Item'
 export { default as AdminCollection } from './AdminCollection/Collection'
 export { default as AdminReport } from './AdminReport/AdminReport'
+export { default as AdminClearance } from './AdminClearance/Clearance'
 // User
 export { default as UserDashboard } from './UserDashboard/Dashboard'
 export { default as UserAttendance } from './UserAttendance/Attendance'
