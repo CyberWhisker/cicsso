@@ -1,5 +1,5 @@
 // Example of correct usage
-import { MenuItem, Typography } from '@mui/material';
+import { Divider, MenuItem, Typography } from '@mui/material';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -8,8 +8,9 @@ import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import { AttachMoney, CreditCard, Folder, GetAppRounded, List, Notifications, PanTool, WarningAmber, WavingHand } from '@mui/icons-material';
+import { AttachMoney, CreditCard, Folder, GetAppRounded, List, Notifications, PanTool, Settings, WarningAmber, WavingHand } from '@mui/icons-material';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { CalendarIcon } from '@mui/x-date-pickers';
 
 function Navlist({ setopen }) {
   let location = useLocation();
@@ -76,6 +77,8 @@ function NavAdmin() {
         </ListItemIcon>
         <ListItemText primary="Users" />
       </ListItemButton>
+      
+      <Divider/>
 
       <ListItemButton component={Link} to={'/events'} selected={location.pathname.startsWith('/events')}>
         <ListItemIcon>
@@ -112,11 +115,29 @@ function NavAdmin() {
         <ListItemText primary="Clearance" />
       </ListItemButton>
 
+      <Divider/>
+
       <ListItemButton component={Link} to={'/report'} selected={location.pathname.startsWith('/report')}>
         <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
         <ListItemText primary="Reports" />
+      </ListItemButton>
+
+      <Divider/>
+
+      <ListItemButton component={Link} to={'/schoolYear'} selected={location.pathname.startsWith('/schoolYear')}>
+        <ListItemIcon>
+          <CalendarIcon />
+        </ListItemIcon>
+        <ListItemText primary="School Year" />
+      </ListItemButton>
+
+      <ListItemButton component={Link} to={'/signatories'} selected={location.pathname.startsWith('/signatories')}>
+        <ListItemIcon>
+          <Settings />
+        </ListItemIcon>
+        <ListItemText primary="Signatories" />
       </ListItemButton>
     </React.Fragment>
 

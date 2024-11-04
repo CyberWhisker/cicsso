@@ -14,6 +14,8 @@ export { default as AdminItem } from './AdminItem/Item'
 export { default as AdminCollection } from './AdminCollection/Collection'
 export { default as AdminReport } from './AdminReport/AdminReport'
 export { default as AdminClearance } from './AdminClearance/Clearance'
+export { default as AdminSchoolYear } from './AdminSchoolYear/SchoolYear'
+export { default as AdminSignatories } from './AdminSignatories/Signatories'
 // User
 export { default as UserDashboard } from './UserDashboard/Dashboard'
 export { default as UserAttendance } from './UserAttendance/Attendance'

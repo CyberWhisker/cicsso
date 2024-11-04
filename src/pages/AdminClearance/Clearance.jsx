@@ -1,33 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Button, Card, Divider, Drawer, LinearProgress, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
-import Store from './SchoolYearForm/Store';
-import Update from './SchoolYearForm/Update';
-import Delete from './SchoolYearForm/Delete';
+import Store from './Form/Store';
+import Update from './Form/Update';
+import Delete from './Form/Delete';
 import { DataGrid, GridMoreVertIcon, GridToolbar } from '@mui/x-data-grid';
-import { fetchItemByProjectId } from '../../api/ItemApi';
-import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AlertModal } from '../../components';
 import moment from 'moment';
-import { KeyboardReturn } from '@mui/icons-material';
 
 
 function Clearance() {
-    const navigate = useNavigate();
-    const {id} = useParams();
     const [storeModal, setStoreModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState([]);
+
     const handleGetData = async () => {
-        setIsLoading(true)
-        const {data, error} = await fetchItemByProjectId(id)
-        if (error) {
-            toast.error(error)
-        } else {
-            setData(data)
-        }
-        setIsLoading(false)
+
     }
 
     useEffect(() => {
