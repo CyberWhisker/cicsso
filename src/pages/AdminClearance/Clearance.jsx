@@ -21,7 +21,7 @@ function Clearance() {
 
     useEffect(() => {
         handleGetData()
-    },[])
+    }, [])
 
     return (
         <Master>
@@ -31,40 +31,24 @@ function Clearance() {
                     <Button variant="contained" onClick={() => setStoreModal(true)}>Add Item</Button>
                 </Stack>
                 <Box>
-                    <Divider/>
+                    <Divider />
                     {isLoading &&
-                        <LinearProgress/>
+                        <LinearProgress />
                     }
                 </Box>
-                <DataGridList data={data} handleGetData={handleGetData}/>
+                <DataGridList data={data} handleGetData={handleGetData} />
             </Stack>
             <Drawer open={storeModal} anchor='right' onClose={() => setStoreModal(false)}>
-                <Store handleGetData={handleGetData} onClose={() => setStoreModal(false)}/>
+                <Store handleGetData={handleGetData} onClose={() => setStoreModal(false)} />
             </Drawer>
         </Master>
     )
 }
 
-function DataGridList ({data, handleGetData}) {
-    const [anchorEl, setAnchorEl] = useState(null);
+function DataGridList({ data, handleGetData }) {
     const [selected, setSelected] = useState(null);
     const [updateModal, setUpdateModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
-    const handleMenuOpen = (event, item) => {
-        setAnchorEl(event.currentTarget)
-        setSelected(item)
-    }
-    const handleMenuClose = (event, item) => {
-        setAnchorEl(null)
-    }
-    const handleUpdateModal = () => {
-        handleMenuClose();
-        setUpdateModal(true)
-    }
-    const handleDeleteModal = () => {
-        handleMenuClose();
-        setDeleteModal(true)
-    }
     const handleCloseModal = () => {
         setDeleteModal(false)
         setUpdateModal(false)
@@ -104,16 +88,16 @@ function DataGridList ({data, handleGetData}) {
             field: 'setting',
             headerName: 'Setting',
             renderCell: (params) => (
-                <Box sx={{textAlign: 'center'}}>
-                    <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{cursor: 'pointer'}}/>
+                <Box sx={{ textAlign: 'center' }}>
+                    <DropDownMenu params={params} setSelected={setSelected}/>
                 </Box>
             ),
             headerAlign: 'center'
-            
+
         },
     ]
 
-    const rows = useMemo(() => 
+    const rows = useMemo(() =>
         data.map((item) => ({
             ...item,
             id: item._id,
@@ -131,8 +115,8 @@ function DataGridList ({data, handleGetData}) {
                         ...rows.initialState,
                         filter: {
                             filterModel: {
-                            items: [],
-                            quickFilterValues: [],
+                                items: [],
+                                quickFilterValues: [],
                             },
                         },
                     }}
@@ -144,6 +128,37 @@ function DataGridList ({data, handleGetData}) {
                     }}
                 />
             </Card>
+            <Drawer open={updateModal} onClose={handleCloseModal} anchor='right'>
+                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
+            </Drawer>
+            <AlertModal open={deleteModal} onClose={handleCloseModal} anchor='right'>
+                <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
+            </AlertModal>
+        </>
+    )
+}
+
+function DropDownMenu({params, setSelected}) {
+    
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleMenuOpen = (event, item) => {
+        setAnchorEl(event.currentTarget)
+        setSelected(item)
+    }
+    const handleMenuClose = (event, item) => {
+        setAnchorEl(null)
+    }
+    const handleUpdateModal = () => {
+        handleMenuClose();
+        setUpdateModal(true)
+    }
+    const handleDeleteModal = () => {
+        handleMenuClose();
+        setDeleteModal(true)
+    }
+    return (
+        <>
+            <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{ cursor: 'pointer' }} />
             <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
@@ -156,12 +171,6 @@ function DataGridList ({data, handleGetData}) {
                     <Typography color="error.main">Delete</Typography>
                 </MenuItem>
             </Menu>
-            <Drawer open={updateModal} onClose={handleCloseModal} anchor='right'>
-                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData}/>
-            </Drawer>
-            <AlertModal open={deleteModal} onClose={handleCloseModal} anchor='right'>
-                <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData}/>
-            </AlertModal>
         </>
     )
 }

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Typography, Button, Divider } from '@mui/material';
 import { toast } from 'react-toastify';
-import { deleteItem } from '../../../api/ItemApi';
 import { deleteSchoolYear } from '../../../api/SchoolYearApi';
+import { deleteSignatories } from '../../../api/SignatoriesApi';
 
 const headerStyle = {
   p: 2,
@@ -21,8 +21,7 @@ const footerStyle = {
 function Delete({selected, onClose, handleGetData}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const id = selected._id
-    const {data, error} = await deleteSchoolYear(id);
+    const {data, error} = await deleteSignatories(selected);
     if (error) {
       onClose();
       toast.error("Something went wrong!")

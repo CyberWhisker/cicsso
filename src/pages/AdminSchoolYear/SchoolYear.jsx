@@ -50,7 +50,7 @@ function SchoolYear() {
             School Year List :
           </Typography>
           <Button variant="contained" onClick={() => setStoreModal(true)}>
-            Add Item
+            Add School Year
           </Button>
         </Stack>
         <Box>
