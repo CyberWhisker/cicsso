@@ -25,6 +25,7 @@ import {
 } from './pages';
 import { useAuthContext } from './hooks/useAuthContext';
 import PrivateRoute from './hooks/privateRoute';
+import StudentClearance from './layouts/PDF/StudentClearance';
 
 function App() {
   const {auth} = useAuthContext();
@@ -168,6 +169,12 @@ function App() {
         <Route path="/transaction" element={
           <PrivateRoute>
             <UserTransaction />
+          </PrivateRoute>
+        } />
+
+        <Route path="/ClearanceForm" element={
+          <PrivateRoute>
+            <StudentClearance />
           </PrivateRoute>
         } />
       </Routes>

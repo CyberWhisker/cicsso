@@ -5,9 +5,9 @@ import Store from './Form/Store';
 import Update from './Form/Update';
 import Delete from './Form/Delete';
 import { DataGrid, GridMoreVertIcon, GridToolbar } from '@mui/x-data-grid';
-import { toast } from 'react-toastify';
 import { AlertModal } from '../../components';
 import moment from 'moment';
+import StudentClearance from '../../layouts/PDF/StudentClearance';
 
 
 function Clearance() {
@@ -36,7 +36,8 @@ function Clearance() {
                         <LinearProgress />
                     }
                 </Box>
-                <DataGridList data={data} handleGetData={handleGetData} />
+                {/* <DataGridList data={data} handleGetData={handleGetData} /> */}
+                <Document/>
             </Stack>
             <Drawer open={storeModal} anchor='right' onClose={() => setStoreModal(false)}>
                 <Store handleGetData={handleGetData} onClose={() => setStoreModal(false)} />
@@ -174,5 +175,14 @@ function DropDownMenu({params, setSelected}) {
         </>
     )
 }
+
+function Document () {
+    return (
+      <Stack spacing={2}>
+        <StudentClearance/>
+        <Button variant='contained' color='error' disabled>Not Available</Button>
+      </Stack>
+    )
+  }
 
 export default Clearance
