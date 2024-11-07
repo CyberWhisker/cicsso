@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Master from '../../layouts/Master'
-import { Box, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, Typography } from '@mui/material'
+import { Box, Card, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, Typography } from '@mui/material'
 import { CustomCard, DropDown, AlertModal } from '../../components'
-import { Add } from '@mui/icons-material'
+import { Add, Error } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import Store from './Form/Store'
 import Update from './Form/Update'
@@ -10,6 +10,7 @@ import Delete from './Form/Delete'
 import { toast } from 'react-toastify'
 import moment from 'moment'
 import { fetchCollections } from '../../api/CollectionApi'
+import { fetchActiveSchoolYear } from '../../api/SchoolYearApi'
 
 function Collection() {
   const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +33,7 @@ function Collection() {
 }
 
 function CollectionList({setIsLoading}) {
+  const [schoolYearStatus, setSchoolYearStatus] = useState(false);
   const [storeModal, setStoreModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
@@ -47,6 +49,16 @@ function CollectionList({setIsLoading}) {
     } else {
       setIsLoading(false)
       setProjects(data)
+    }
+  }
+
+  const handleGetActiveSchoolYear = async () => {
+    const {data, error} = await fetchActiveSchoolYear();
+    if (error) {
+      toast.error("No Active School Year")
+      setSchoolYearStatus(false)
+    } else {
+      setSchoolYearStatus(true)
     }
   }
 
@@ -68,6 +80,7 @@ function CollectionList({setIsLoading}) {
 
   useEffect(() => {
     handleGetData()
+    handleGetActiveSchoolYear()
   },[])
   
   return (
@@ -106,20 +119,37 @@ function CollectionList({setIsLoading}) {
         xs={6} 
         md={4}
       >
-        <CustomCard>
-          <Box 
-          onClick={() => setStoreModal(true)}
-          sx={{
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            minHeight: '20vh'
-          }}>
-            <Typography fontWeight='bold'>Add Collection</Typography>
-            <Add sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>
-          </Box>
-        </CustomCard>
+        {schoolYearStatus && (
+          <CustomCard>
+            <Box 
+            onClick={() => setStoreModal(true)}
+            sx={{
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              minHeight: '20vh'
+            }}>
+              <Typography fontWeight='bold'>Add Collection</Typography>
+              <Add sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>
+            </Box>
+          </CustomCard>
+        )}
+        {!schoolYearStatus && (
+          <Card sx={{height: '100%'}}>
+            <Box 
+            sx={{
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              minHeight: '100%'
+            }}>
+              <Typography fontWeight='bold'>There is no Active School Year</Typography>
+              <Error color='error' sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>
+            </Box>
+          </Card>
+        )}
       </Grid>
 
       <Drawer open={storeModal} anchor='right' onClose={() => handleCloseModal()}>

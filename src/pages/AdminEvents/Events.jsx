@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import Master from '../../layouts/Master'
-import { Box, Chip, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, Typography } from '@mui/material'
+import { Box, Card, Chip, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, Typography } from '@mui/material'
 import { CustomCard, DeleteModal, DropDown } from '../../components'
-import { Add, Folder } from '@mui/icons-material'
+import { Add, Error, Folder } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import Store from './Form/Store'
 import Update from './Form/Update'
 import useFetch from 'react-fetch-hook'
 import moment from 'moment';
+import { fetchActiveSchoolYear } from '../../api/SchoolYearApi'
+import { toast } from 'react-toastify'
+import { fetchEvent } from '../../api/EventApi'
 
 function Events() {
-  const {isLoading, error, data} = useFetch(`${import.meta.env.VITE_API}/api/event`);
+  const [isLoading, setIsLoading] = useState(true);
   return (
     <Master>
       <Stack direction={'column'} spacing={2}>
@@ -22,14 +25,15 @@ function Events() {
           )}
         </Box>
         <Box>
-          <EventList isLoading={isLoading} data={data} error={error}/>
+          <EventList setIsLoading={setIsLoading} />
         </Box>
       </Stack>
     </Master>
   )
 }
 
-function EventList({isLoading, error, data}) {
+function EventList({setIsLoading}) {
+  const [schoolYearStatus, setSchoolYearStatus] = useState(false);
   const [events, setEvents] = useState([]);
   const [storeModal, setStoreModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
@@ -54,12 +58,30 @@ function EventList({isLoading, error, data}) {
     setDeleteApi(`${import.meta.env.VITE_API}/api/event/${id}`)
   }
 
+  const handleGetActiveSchoolYear = async () => {
+    const {data, error} = await fetchActiveSchoolYear();
+    if (error) {
+      toast.error("No Active School Year")
+      setSchoolYearStatus(false)
+    } else {
+      setSchoolYearStatus(true)
+    }
+  }
+
+  const handleGetEvent = async () => {
+    const {data, error} = await fetchEvent();
+    if (error) {
+      toast.error(error)
+    } else {
+      setEvents(data)
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
-    if (data && !isLoading && !error) {
-      setEvents(data);
-    }
-  }, [data, isLoading, error, setEvents]);
+    handleGetEvent();
+    handleGetActiveSchoolYear()
+  }, []);
   
   return (
     <Grid container spacing={2}>
@@ -68,20 +90,38 @@ function EventList({isLoading, error, data}) {
         xs={6} 
         md={4}
       >
-        <CustomCard>
-          <Box 
-          onClick={() => setStoreModal(true)}
-          sx={{
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            height: '23vh',
-          }}>
-            <Typography fontWeight='bold'>Add Event</Typography>
-            <Add sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>
-          </Box>
-        </CustomCard>
+        
+        {!schoolYearStatus && (
+          <Card sx={{height: '100%'}}>
+            <Box 
+            sx={{
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              minHeight: '100%'
+            }}>
+              <Typography fontWeight='bold'>There is no Active School Year</Typography>
+              <Error color='error' sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>
+            </Box>
+          </Card>
+        )}
+        {schoolYearStatus && (
+          <CustomCard>
+            <Box 
+            onClick={() => setStoreModal(true)}
+            sx={{
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              height: '23vh',
+            }}>
+              <Typography fontWeight='bold'>Add Event</Typography>
+              <Add sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>
+            </Box>
+          </CustomCard>
+        )}
       </Grid>
       {events.map((item, index) => {
         const startDate = moment(item.startDate);

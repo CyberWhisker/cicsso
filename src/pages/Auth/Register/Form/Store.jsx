@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { Button, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Button, Divider, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useSignup } from '../../../../hooks/useSignUp';
 
 function Store() {
   // State to hold form values
-  const {signup, error, loading} = useSignup()
+  const { signup, error, loading } = useSignup()
   const [formData, setFormData] = useState({
-    email: '',
-    name: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    extensionName: '',
+    program: '',
     year: '',
     section: '',
+    email: '',
     password: '',
     confirmPassword: ''
   });
@@ -26,12 +30,15 @@ function Store() {
   // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    const { email, name, year, section, password, confirmPassword } = formData;
+    const { firstName, lastName, middleName, program, email, year, section, password, confirmPassword } = formData;
     const newErrors = {};
 
     // Basic validation
     if (!email || !/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Valid email is required';
-    if (!name) newErrors.name = 'Name is required';
+    if (!firstName) newErrors.name = 'First Name is required';
+    if (!lastName) newErrors.name = 'Last Name is required';
+    if (!middleName) newErrors.name = 'Middle Name is required';
+    if (!program) newErrors.name = 'Program is required';
     if (!year) newErrors.year = 'Year is required';
     if (!section) newErrors.section = 'Section is required';
     if (!password || password.length < 6) newErrors.password = 'Password must be at least 6 characters';
@@ -47,6 +54,79 @@ function Store() {
   return (
     <form onSubmit={handleSubmit}>
       <Stack spacing={2}>
+        <Typography fontWeight={'bold'}>User Information</Typography>
+        <TextField
+          label="First Name"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          error={Boolean(errors.firstName)}
+          helperText={errors.firstName}
+        />
+        <TextField
+          label="Middle Name"
+          name="middleName"
+          value={formData.middleName}
+          onChange={handleChange}
+          error={Boolean(errors.middleName)}
+          helperText={errors.middleName}
+        />
+        <TextField
+          label="Last Name"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          error={Boolean(errors.lastName)}
+          helperText={errors.lastName}
+        />
+        <TextField
+          label="Extension Name (Optional)"
+          name="extensionName"
+          value={formData.extensionName}
+          onChange={handleChange}
+        />
+        <TextField
+          select
+          label="Select Program"
+          name="program"
+          value={formData.program}
+          onChange={handleChange}
+          error={Boolean(errors.program)}
+          helperText={errors.program}
+        >
+          <MenuItem value='BS Information Technology'>BS Information Technology</MenuItem>
+          <MenuItem value='BS Information System'>BS Information System</MenuItem>
+        </TextField>
+        <TextField
+          select
+          name="year"
+          label="Select Year"
+          value={formData.year}
+          onChange={handleChange}
+          displayEmpty
+          error={Boolean(errors.year)}
+        >
+          <MenuItem value="1st">1st</MenuItem>
+          <MenuItem value="2nd">2nd</MenuItem>
+          <MenuItem value="3rd">3rd</MenuItem>
+          <MenuItem value="4th">4th</MenuItem>
+        </TextField>
+        <TextField
+          select
+          label="Select Section"
+          name="section"
+          value={formData.section}
+          onChange={handleChange}
+          error={Boolean(errors.section)}
+          helperText={errors.section}
+        >
+          <MenuItem value="A">A</MenuItem>
+          <MenuItem value="B">B</MenuItem>
+          <MenuItem value="C">C</MenuItem>
+          <MenuItem value="D">D</MenuItem>
+        </TextField>
+        <Divider />
+        <Typography fontWeight={'bold'}>Account Information</Typography>
         <TextField
           label="Enter Email"
           name="email"
@@ -55,42 +135,6 @@ function Store() {
           error={Boolean(errors.email)}
           helperText={errors.email}
         />
-        <TextField
-          label="Name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          error={Boolean(errors.name)}
-          helperText={errors.name}
-        />
-        <Select
-          name="year"
-          value={formData.year}
-          onChange={handleChange}
-          displayEmpty
-          error={Boolean(errors.year)}
-        >
-          <MenuItem value="" disabled>Select Year</MenuItem>
-          <MenuItem value="1st Year">1st Year</MenuItem>
-          <MenuItem value="2nd Year">2nd Year</MenuItem>
-          <MenuItem value="3rd Year">3rd Year</MenuItem>
-          <MenuItem value="4th Year">4th Year</MenuItem>
-        </Select>
-        <TextField
-          select
-          label="Section"
-          name="section"
-          value={formData.section}
-          onChange={handleChange}
-          error={Boolean(errors.section)}
-          helperText={errors.section}
-        >
-          <MenuItem value="" disabled>Select Section</MenuItem>
-          <MenuItem value="A">A</MenuItem>
-          <MenuItem value="B">B</MenuItem>
-          <MenuItem value="C">C</MenuItem>
-          <MenuItem value="D">D</MenuItem>
-        </TextField>
         <TextField
           label="Enter Password"
           type="password"

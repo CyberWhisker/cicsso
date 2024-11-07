@@ -35,14 +35,14 @@ function Update({selected, onClose, handleGetData}) {
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
             <Box sx={{ width: '60vh', p: 2 }}>
-                <Typography variant='h4' fontWeight='bold'>Update Event</Typography>
+                <Typography variant='h4' fontWeight='bold'>Update Attendnace</Typography>
                 <Box mt={2}>
                     <form onSubmit={handleSubmit}>
                         <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
                             <Typography>Select Student</Typography>
                             <TextField
                                 name='name'
-                                value={selected.name}
+                                value={`${selected.lastName}, ${selected.firstName} ${selected.middleName[0]}.`}
                                 disabled
                             />
                             <Divider/>

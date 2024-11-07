@@ -80,12 +80,12 @@ function Store({onClose, handleGetData}) {
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
             <Box sx={{ width: '70vh', p: 2 }}>
-                <Typography variant='h4' fontWeight='bold'>Add Event</Typography>
+                <Typography variant='h4' fontWeight='bold'>Add Attendnace</Typography>
                 <Box mt={2}>
                     <form onSubmit={handleSubmit}>
                         <Stack direction={'column'} spacing={2}>
                             <TextField
-                                label='Enter Event'
+                                label='Select User'
                                 name='user'
                                 variant="outlined"
                                 sx={{ width: '100%'}}
@@ -99,7 +99,7 @@ function Store({onClose, handleGetData}) {
                                     <MenuItem value={0}>No Record Found</MenuItem>
                                 )}
                                 {userDatas && userDatas.map((item, index) => (
-                                    <MenuItem value={item._id} key={index}>{item.name}</MenuItem>
+                                    <MenuItem value={item._id} key={index}>{item.lastName}, {item.firstName} {item.middleName}</MenuItem>
                                 ))}
                             </TextField>
                             <Divider/>

@@ -16,6 +16,24 @@ export const fetchSchoolYear = async () => {
     }
 }
 
+export const fetchActiveSchoolYear = async () => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/schoolYear/activeSchoolYear`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return {data: data, error: null}
+        } else {
+            return {data: [], error: "Server Request Error"}
+        }
+    } catch (error) {
+        return {data: [], error: error.message}
+    }
+}
+
 export const storeSchoolYear = async (formData) => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API}/api/schoolYear`, {

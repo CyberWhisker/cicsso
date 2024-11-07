@@ -86,7 +86,7 @@ function Store({handleGetData, handleCloseModal, data}) {
                                 {data.map((user, index) => {
                                     if (!user.transaction) {
                                         return (
-                                            <MenuItem value={user._id} key={index}>{user.name}</MenuItem>
+                                            <MenuItem value={user._id} key={index}>{user.lastName}, {user.firstName} {user.middleName[0]}.</MenuItem>
                                         )
                                     }
                                 })}

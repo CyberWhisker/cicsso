@@ -159,9 +159,13 @@ function DisbursementReport({ reportType, selectedYear }) {
         default:
           filteredDataItem = { name: [], value: [] };
       }
-      const remain = filteredDataTrans.value.map((num, index) => num - filteredDataItem.value[index]);
-      console.log(remain)
-      setDataName(filteredDataItem.name);
+      let remain;
+      if (filteredDataItem.value.length > 0) {
+        remain = filteredDataTrans.value.map((num, index) => num - filteredDataItem.value[index]);
+      } else {
+        remain = filteredDataTrans.value
+      }
+      setDataName(filteredDataItem.name.lengt > 0 ? filteredDataItem.name : filteredDataTrans.name);
       setDataValue(filteredDataItem.value);
       setTransValue(filteredDataTrans.value);
       setDataRemaining(remain);
@@ -226,7 +230,6 @@ function filterQuarterly(data) {
       }
     });
   });
-
   return {
     name: totalAmount.map((_, index) => `Quarter ${index + 1}`),
     value: totalAmount
@@ -240,7 +243,6 @@ function filterAnnually(data) {
     const year = moment(item.date).format('YYYY');
     totalAmount[year] = (totalAmount[year] || 0) + item.amount;
   });
-
   return {
     name: Object.keys(totalAmount),
     value: Object.values(totalAmount)

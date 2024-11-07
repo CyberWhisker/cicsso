@@ -6,7 +6,7 @@ import Store from './Form/Store'
 function Register() {
   return (
     <MasterAuth>
-      <Box sx={{height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+      <Box sx={{minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', py: 2}}>
         <Card sx={{p:2, minWidth: {xs: '50vh', md: '60vh'}}} elevation={5}>
           <Stack spacing={1}>
             <Typography fontWeight={'bold'} variant='h4'>Register</Typography>
