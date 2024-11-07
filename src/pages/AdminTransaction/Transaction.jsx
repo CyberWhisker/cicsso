@@ -4,7 +4,7 @@ import Master from '../../layouts/Master';
 import Store from './Form/Store';
 import Update from './Form/Update';
 import Delete from './Form/Delete';
-import { DataGrid, GridMoreVertIcon, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridMoreVertIcon, GridToolbar, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { fetchItemByProjectId } from '../../api/ItemApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -66,6 +66,28 @@ function Details() {
             </Drawer>
         </Master>
     )
+}
+
+function QuickSearchToolbar() {
+    return (
+        <Box
+            sx={{
+                p: 0.5,
+                pb: 0,
+                display: 'flex',
+                justifyContent: 'end'
+            }}
+        >
+            <GridToolbarQuickFilter
+                quickFilterParser={(searchInput) =>
+                    searchInput
+                        .split(',')
+                        .map((value) => value.trim())
+                        .filter((value) => value !== '')
+                }
+            />
+        </Box>
+    );
 }
 
 function DataGridList ({data, handleGetData}) {
@@ -209,21 +231,7 @@ function DataGridList ({data, handleGetData}) {
                 <DataGrid
                     columns={columns}
                     rows={rows}
-                    initialState={{
-                        ...rows.initialState,
-                        filter: {
-                            filterModel: {
-                            items: [],
-                            quickFilterValues: [],
-                            },
-                        },
-                    }}
-                    slots={{ toolbar: GridToolbar }}
-                    slotProps={{
-                        toolbar: {
-                            showQuickFilter: true,
-                        },
-                    }}
+                    slots={{ toolbar: QuickSearchToolbar }}
                 />
             </Card>
             <Menu

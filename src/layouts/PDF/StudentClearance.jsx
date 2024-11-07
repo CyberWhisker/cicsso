@@ -1,22 +1,16 @@
 import { Box, Container, Divider, Grid, Stack, Typography } from '@mui/material';
-import React, { useRef } from 'react';
+import React from 'react';
 import { Check } from '@mui/icons-material';
-import { useReactToPrint } from 'react-to-print';
 
-function StudentClearance() {
-    const contentRef = useRef(null);
-    // Function to print using react-to-print
-    const handlePrint = useReactToPrint({contentRef});
-
+function StudentClearance({selected}) {
     return (
         <div>
-            <button onClick={handlePrint}>Print</button>
-            <div ref={contentRef} id="test" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
+            <div id="test" style={{ fontFamily: "'Times New Roman', Times, serif", color: 'black' }}>
                 <Container sx={{ fontFamily: "'Times New Roman', Times, serif", mt: 5 }}>
                     <Stack spacing={3}>
                         <HeaderContent />
                         <SemesterContent />
-                        <UserContent />
+                        <UserContent selected={selected}/>
                         <EventContent />
                         <Typography fontWeight={'bold'}
                             sx={{
@@ -119,7 +113,7 @@ function SemesterContent() {
     );
 }
 
-function UserContent() {
+function UserContent({selected}) {
     return (
         <Stack spacing={1}>
             <Grid container>
@@ -130,25 +124,25 @@ function UserContent() {
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        Lopez
+                        {selected?.lastName}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        Erick John
+                    {selected?.firstName}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        Orqueza
+                    {selected?.middleName}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
                 <Grid item xs={2}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        Jr
+                    {selected?.extensionName || 'N/A'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -184,7 +178,7 @@ function UserContent() {
                 </Grid>
                 <Grid item xs={5}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        BS Information Technology
+                    {selected?.program}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -195,7 +189,7 @@ function UserContent() {
                 </Grid>
                 <Grid item xs={2}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        4th
+                    {selected?.year}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -206,7 +200,7 @@ function UserContent() {
                 </Grid>
                 <Grid item xs={2}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        B
+                    {selected?.section}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>

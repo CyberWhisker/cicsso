@@ -19,30 +19,30 @@ function Collection() {
       <Stack spacing={2}>
         <Typography variant="h5" fontWeight='bold'>Collection List:</Typography>
         <Box>
-          <Divider/>
+          <Divider />
           {isLoading &&
-            <LinearProgress/>
+            <LinearProgress />
           }
         </Box>
         <Box>
-          <CollectionList setIsLoading={setIsLoading}/>
+          <CollectionList setIsLoading={setIsLoading} />
         </Box>
       </Stack>
     </Master>
   )
 }
 
-function CollectionList({setIsLoading}) {
+function CollectionList({ setIsLoading }) {
   const [schoolYearStatus, setSchoolYearStatus] = useState(false);
   const [storeModal, setStoreModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [selected, setSelected] = useState([]);
   const [projects, setProjects] = useState([]);
-  
+
   const handleGetData = async () => {
     setIsLoading(true)
-    const {data, error} = await fetchCollections();
+    const { data, error } = await fetchCollections();
     if (error) {
       setIsLoading(false)
       toast.error(error)
@@ -53,7 +53,7 @@ function CollectionList({setIsLoading}) {
   }
 
   const handleGetActiveSchoolYear = async () => {
-    const {data, error} = await fetchActiveSchoolYear();
+    const { data, error } = await fetchActiveSchoolYear();
     if (error) {
       toast.error("No Active School Year")
       setSchoolYearStatus(false)
@@ -81,85 +81,86 @@ function CollectionList({setIsLoading}) {
   useEffect(() => {
     handleGetData()
     handleGetActiveSchoolYear()
-  },[])
-  
+  }, [])
+
   return (
     <Grid container spacing={2}>
+
+      <Grid
+        item
+        xs={6}
+        md={4}
+      >
+        {schoolYearStatus && (
+          <CustomCard>
+            <Box
+              onClick={() => setStoreModal(true)}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '20vh'
+              }}>
+              <Typography fontWeight='bold'>Add Collection</Typography>
+              <Add sx={{ fontSize: { xs: '5vh', md: '8vh' } }} />
+            </Box>
+          </CustomCard>
+        )}
+        {!schoolYearStatus && (
+          <Card sx={{ height: '100%' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '27vh',
+              }}>
+              <Typography fontWeight='bold'>There is no Active School Year</Typography>
+              <Error color='error' sx={{ fontSize: { xs: '5vh', md: '8vh' } }} />
+            </Box>
+          </Card>
+        )}
+      </Grid>
       {projects.map((item, index) => (
-        <Grid 
-          item 
-          xs={6} 
+        <Grid
+          item
+          xs={6}
           md={4}
           key={index}
         >
           <CustomCard>
-            <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
-              <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary">{item.collectionName}</Typography>
                 <DropDown >
                   <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
                   <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
                 </DropDown>
               </Box>
-              <Box sx={{display: 'flex',flexDirection: 'column' ,justifyContent: 'center', textDecoration: 'none', minHeight: '15vh'}} 
+              <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
                 component={Link}
                 to={`/transaction/${item._id}`}
               >
                 <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {item.fine}</Typography>
               </Box>
-              <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography>AY: {moment(item.startDate).format('MMM DD, YYYY')} - {moment(item.endDate).format('MMM DD, YYYY')}</Typography>
               </Box>
             </Box>
           </CustomCard>
         </Grid>
       ))}
-      <Grid 
-        item 
-        xs={6} 
-        md={4}
-      >
-        {schoolYearStatus && (
-          <CustomCard>
-            <Box 
-            onClick={() => setStoreModal(true)}
-            sx={{
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              minHeight: '20vh'
-            }}>
-              <Typography fontWeight='bold'>Add Collection</Typography>
-              <Add sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>
-            </Box>
-          </CustomCard>
-        )}
-        {!schoolYearStatus && (
-          <Card sx={{height: '100%'}}>
-            <Box 
-            sx={{
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              minHeight: '100%'
-            }}>
-              <Typography fontWeight='bold'>There is no Active School Year</Typography>
-              <Error color='error' sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>
-            </Box>
-          </Card>
-        )}
-      </Grid>
 
       <Drawer open={storeModal} anchor='right' onClose={() => handleCloseModal()}>
-        <Store handleGetData={handleGetData} handleCloseModal={handleCloseModal}/>
+        <Store handleGetData={handleGetData} handleCloseModal={handleCloseModal} />
       </Drawer>
       <Drawer open={updateModal} anchor='right' onClose={() => handleCloseModal()}>
-        <Update selected={selected} handleCloseModal={handleCloseModal} handleGetData={handleGetData}/>
+        <Update selected={selected} handleCloseModal={handleCloseModal} handleGetData={handleGetData} />
       </Drawer>
       <AlertModal open={deleteModal} onClose={handleCloseModal}>
-        <Delete onClose={handleCloseModal} selected={selected} handleGetData={handleGetData}/>
+        <Delete onClose={handleCloseModal} selected={selected} handleGetData={handleGetData} />
       </AlertModal>
     </Grid>
   )

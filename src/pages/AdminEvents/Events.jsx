@@ -6,7 +6,6 @@ import { Add, Error, Folder } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import Store from './Form/Store'
 import Update from './Form/Update'
-import useFetch from 'react-fetch-hook'
 import moment from 'moment';
 import { fetchActiveSchoolYear } from '../../api/SchoolYearApi'
 import { toast } from 'react-toastify'
@@ -99,7 +98,7 @@ function EventList({setIsLoading}) {
               flexDirection: 'column', 
               alignItems: 'center', 
               justifyContent: 'center', 
-              minHeight: '100%'
+              minHeight: '27vh',
             }}>
               <Typography fontWeight='bold'>There is no Active School Year</Typography>
               <Error color='error' sx={{fontSize: {xs: '5vh', md: '8vh'}}}/>

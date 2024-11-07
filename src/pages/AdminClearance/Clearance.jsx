@@ -1,21 +1,51 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Avatar, Box, Button, Card, Chip, Divider, Drawer, LinearProgress, Menu, MenuItem, Stack, Typography } from '@mui/material';
+import React, { Component, useEffect, useMemo, useRef, useState } from 'react';
+import { Avatar, Box, Button, Card, Chip, Divider, Stack, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
-import Store from './Form/Store';
-import Update from './Form/Update';
-import Delete from './Form/Delete';
-import { DataGrid, GridMoreVertIcon, GridToolbar } from '@mui/x-data-grid';
-import { AlertModal } from '../../components';
+import { DataGrid, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import moment from 'moment';
 import StudentClearance from '../../layouts/PDF/StudentClearance';
 import { fetchUsers } from '../../api/userApi';
 import { toast } from 'react-toastify';
+import { fetchActiveSchoolYear, fetchSchoolYear } from '../../api/SchoolYearApi';
+import { useReactToPrint } from 'react-to-print/lib';
+
+function QuickSearchToolbar() {
+    return (
+        <Box
+            sx={{
+                p: 0.5,
+                pb: 0,
+                display: 'flex',
+                justifyContent: 'end'
+            }}
+        >
+            <GridToolbarQuickFilter
+                quickFilterParser={(searchInput) =>
+                    searchInput
+                        .split(',')
+                        .map((value) => value.trim())
+                        .filter((value) => value !== '')
+                }
+            />
+        </Box>
+    );
+}
 
 
 function Clearance() {
+    const [selected, setSelected] = useState({});
     const [userData, setUserData] = useState([])
-    const [storeModal, setStoreModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [schoolYearData, setSchoolYearData] = useState([]);
+
+    const handleGetSchoolYearData = async () => {
+        const { data, error } = await fetchActiveSchoolYear();
+        if (error) {
+            toast.error("No Active School Year Available")
+        } else {
+            setSchoolYearData(data)
+        }
+    }
 
     const handleGetData = async () => {
         setIsLoading(true)
@@ -30,7 +60,11 @@ function Clearance() {
 
     useEffect(() => {
         handleGetData()
+        handleGetSchoolYearData()
     }, [])
+
+    
+    const contentRef = useRef(null);
 
     return (
         <Master>
@@ -40,31 +74,24 @@ function Clearance() {
                 </Stack>
                 <Divider />
 
-                <DataGridList isLoading={isLoading} userData={userData} handleGetData={handleGetData} />
+                <DataGridList isLoading={isLoading} userData={userData} schoolYearData={schoolYearData} contentRef={contentRef} setSelected={setSelected}/>
 
-                {/* <Document/> */}
+                <div ref={contentRef}>
+                    <StudentClearance selected={selected}/>
+                </div>
             </Stack>
         </Master>
     )
 }
 
-function DataGridList({ userData, handleGetData, isLoading }) {
-    const [selected, setSelected] = useState(null);
-    const [updateModal, setUpdateModal] = useState(false);
-    const [deleteModal, setDeleteModal] = useState(false);
-
-    const handleCloseModal = () => {
-        setDeleteModal(false)
-        setUpdateModal(false)
-    }
-
+function DataGridList({ userData, isLoading, schoolYearData, contentRef, setSelected }) {
     const columns = [
         {
             field: 'pictureFormat',
             headerName: 'Avatar',
             flex: 1,
             headerAlign: 'center',
-            renderCell: ({params}) => (
+            renderCell: ({ params }) => (
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                     <Avatar src={params?.row.image} alt="Img" />
                 </Box>
@@ -77,38 +104,22 @@ function DataGridList({ userData, handleGetData, isLoading }) {
             headerAlign: 'center'
         },
         {
-            field: 'status',
-            headerName: 'Status',
+            field: 'semester',
+            headerName: 'Semester',
             flex: 1,
             headerAlign: 'center',
-            renderCell: (params) => (
-                <Box sx={{ textAlign: 'center' }}>
-                    <ChipCollection params={params}/>
-                </Box>
-            ),
         },
         {
             field: 'clearance',
             headerName: 'Clearance',
             flex: 1,
             headerAlign: 'center',
-            renderCell: ({params}) => (
-                <Box sx={{ textAlign: 'center' }}>
-                    <PdfButton/>
-                </Box>
-            ),
-        },
-        {
-            field: 'setting',
-            headerName: 'Setting',
             renderCell: (params) => (
                 <Box sx={{ textAlign: 'center' }}>
-                    <DropDownMenu params={params} setSelected={setSelected} />
+                    <PdfButton params={params} contentRef={contentRef} setSelected={setSelected}/>
                 </Box>
             ),
-            headerAlign: 'center'
-
-        },
+        }
     ]
 
     const rows = useMemo(() =>
@@ -116,6 +127,7 @@ function DataGridList({ userData, handleGetData, isLoading }) {
             ...item,
             name: `${item.lastName}, ${item.firstName} ${item.middleName[0]}.`,
             pictureFormat: item.image,
+            semester: schoolYearData.semester,
             date: moment(item.date).format("MMMM DD YYYY")
         })),
         [userData]
@@ -127,16 +139,7 @@ function DataGridList({ userData, handleGetData, isLoading }) {
                     loading={isLoading}
                     columns={columns}
                     rows={rows}
-                    initialState={{
-                        ...rows.initialState,
-                        filter: {
-                            filterModel: {
-                                items: [],
-                                quickFilterValues: [],
-                            },
-                        },
-                    }}
-                    slots={{ toolbar: GridToolbar }}
+                    slots={{ toolbar: QuickSearchToolbar }}
                     slotProps={{
                         toolbar: {
                             showQuickFilter: true,
@@ -144,72 +147,18 @@ function DataGridList({ userData, handleGetData, isLoading }) {
                     }}
                 />
             </Card>
-            <Drawer open={updateModal} onClose={handleCloseModal} anchor='right'>
-                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
-            </Drawer>
-            <AlertModal open={deleteModal} onClose={handleCloseModal} anchor='right'>
-                <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
-            </AlertModal>
         </>
     )
 }
 
-function PdfButton () {
+function PdfButton({ params, contentRef, setSelected }) {
+    const printFile = useReactToPrint({ contentRef })
+    const handlePrint = async () => {
+        await setSelected(params.row)
+        printFile()
+    };
     return (
-        <Button variant='contained' color='warning'>PDF FILE</Button>
-    )
-}
-
-function ChipCollection ({params}) {
-    console.log(params.row)
-    return (
-        <Chip label="Complete" color='success'/>
-    )
-}
-
-function DropDownMenu({ params, setSelected }) {
-
-    const [anchorEl, setAnchorEl] = useState(null);
-    const handleMenuOpen = (event, item) => {
-        setAnchorEl(event.currentTarget)
-        setSelected(item)
-    }
-    const handleMenuClose = (event, item) => {
-        setAnchorEl(null)
-    }
-    const handleUpdateModal = () => {
-        handleMenuClose();
-        setUpdateModal(true)
-    }
-    const handleDeleteModal = () => {
-        handleMenuClose();
-        setDeleteModal(true)
-    }
-    return (
-        <>
-            <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{ cursor: 'pointer' }} />
-            <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-            >
-                <MenuItem onClick={handleUpdateModal}>
-                    <Typography color="warning.main">Edit</Typography>
-                </MenuItem>
-                <MenuItem onClick={handleDeleteModal}>
-                    <Typography color="error.main">Delete</Typography>
-                </MenuItem>
-            </Menu>
-        </>
-    )
-}
-
-function Document() {
-    return (
-        <Stack spacing={2}>
-            <StudentClearance />
-            <Button variant='contained' color='error' disabled>Not Available</Button>
-        </Stack>
+        <Button variant='contained' color='warning' onClick={handlePrint}>PDF FILE</Button>
     )
 }
 
