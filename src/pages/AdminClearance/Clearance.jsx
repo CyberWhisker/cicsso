@@ -1,12 +1,12 @@
-import React, { Component, useEffect, useMemo, useRef, useState } from 'react';
-import { Avatar, Box, Button, Card, Chip, Divider, Stack, Typography } from '@mui/material';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Avatar, Box, Button, Card, Divider, Stack, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
 import { DataGrid, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import moment from 'moment';
 import StudentClearance from '../../layouts/PDF/StudentClearance';
 import { fetchUsers } from '../../api/userApi';
 import { toast } from 'react-toastify';
-import { fetchActiveSchoolYear, fetchSchoolYear } from '../../api/SchoolYearApi';
+import { fetchActiveSchoolYear } from '../../api/SchoolYearApi';
 import { useReactToPrint } from 'react-to-print/lib';
 
 function QuickSearchToolbar() {
@@ -161,5 +161,6 @@ function PdfButton({ params, contentRef, setSelected }) {
         <Button variant='contained' color='warning' onClick={handlePrint}>PDF FILE</Button>
     )
 }
+
 
 export default Clearance

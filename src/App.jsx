@@ -1,19 +1,19 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { 
-  AdminAttendance, 
-  AdminCollection, 
-  AdminDashboard, 
-  AdminEvents, 
-  AdminItem, 
-  Landing, 
-  Login, 
-  AdminPenalties, 
-  AdminProject, 
-  Register, 
-  AdminSchedule, 
-  AdminTransaction, 
-  AdminUsers, 
+import {
+  AdminAttendance,
+  AdminCollection,
+  AdminDashboard,
+  AdminEvents,
+  AdminItem,
+  Landing,
+  Login,
+  AdminPenalties,
+  AdminProject,
+  Register,
+  AdminSchedule,
+  AdminTransaction,
+  AdminUsers,
   UserDashboard,
   UserAttendance,
   UserCollection,
@@ -21,14 +21,15 @@ import {
   AdminReport,
   AdminClearance,
   AdminSchoolYear,
-  AdminSignatories
+  AdminSignatories,
+  UserClearance
 } from './pages';
 import { useAuthContext } from './hooks/useAuthContext';
 import PrivateRoute from './hooks/privateRoute';
 import StudentClearance from './layouts/PDF/StudentClearance';
 
 function App() {
-  const {auth} = useAuthContext();
+  const { auth } = useAuthContext();
   return (
     <BrowserRouter>
       <Routes>
@@ -125,13 +126,13 @@ function App() {
             )}
           </PrivateRoute>
         } />
-        
+
         <Route path="/collection" element={
           <PrivateRoute>
             {auth && auth.user.role == 'admin' ? (
               <AdminCollection />
             ) : (
-            <UserCollection />
+              <UserCollection />
             )}
           </PrivateRoute>
         } />
@@ -159,7 +160,7 @@ function App() {
             <AdminSignatories />
           </PrivateRoute>
         } />
-        
+
         <Route path="/attendance" element={
           <PrivateRoute>
             <UserAttendance />
@@ -175,6 +176,11 @@ function App() {
         <Route path="/ClearanceForm" element={
           <PrivateRoute>
             <StudentClearance />
+          </PrivateRoute>
+        } />
+        <Route path="/userClearance" element={
+          <PrivateRoute>
+            <UserClearance />
           </PrivateRoute>
         } />
       </Routes>

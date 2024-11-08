@@ -170,6 +170,13 @@ function NavUser() {
         <ListItemText primary="Collection" />
       </ListItemButton>
 
+      <ListItemButton component={Link} to={'/userClearance'} selected={location.pathname.startsWith('/userClearance')}>
+        <ListItemIcon>
+          <GetAppRounded />
+        </ListItemIcon>
+        <ListItemText primary="Clearance" />
+      </ListItemButton>
+
       <ListItemButton component={Link} to={'/transaction'} selected={location.pathname.startsWith('/transaction')}>
         <ListItemIcon>
           <CreditCard />

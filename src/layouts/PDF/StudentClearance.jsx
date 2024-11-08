@@ -1,16 +1,20 @@
 import { Box, Container, Divider, Grid, Stack, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Check } from '@mui/icons-material';
+import { fetchActiveSchoolYear } from '../../api/SchoolYearApi';
+import { toast } from 'react-toastify';
+import moment from 'moment';
+import { fetchCollections } from '../../api/CollectionApi';
 
-function StudentClearance({selected}) {
+function StudentClearance({ selected }) {
     return (
         <div>
-            <div id="test" style={{ fontFamily: "'Times New Roman', Times, serif", color: 'black' }}>
+            <div id="test" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
                 <Container sx={{ fontFamily: "'Times New Roman', Times, serif", mt: 5 }}>
                     <Stack spacing={3}>
                         <HeaderContent />
                         <SemesterContent />
-                        <UserContent selected={selected}/>
+                        <UserContent selected={selected} />
                         <EventContent />
                         <Typography fontWeight={'bold'}
                             sx={{
@@ -87,6 +91,18 @@ function HeaderContent() {
 }
 
 function SemesterContent() {
+    const [schoolYear, setSchoolYear] = useState({})
+    const handleGetSemester = async () => {
+        const { data, error } = await fetchActiveSchoolYear();
+        if (error) {
+            toast.error("No Active School Year")
+        } else {
+            setSchoolYear(data)
+        }
+    }
+    useEffect(() => {
+        handleGetSemester()
+    }, [])
     return (
         <Stack spacing={1}>
             <Typography
@@ -107,13 +123,13 @@ function SemesterContent() {
                     fontFamily: "'Times New Roman', Times, serif",
                 }}
             >
-                S.Y 2023 - 2024 2nd SEMESTER
+                S.Y {moment(schoolYear?.startDate).format("YYYY")} - {moment(schoolYear?.endDate).format("YYYY")} {schoolYear?.semester || 'Null'}
             </Typography>
         </Stack>
     );
 }
 
-function UserContent({selected}) {
+function UserContent({ selected }) {
     return (
         <Stack spacing={1}>
             <Grid container>
@@ -130,19 +146,19 @@ function UserContent({selected}) {
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                    {selected?.firstName}
+                        {selected?.firstName}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                    {selected?.middleName}
+                        {selected?.middleName}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
                 <Grid item xs={2}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                    {selected?.extensionName || 'N/A'}
+                        {selected?.extensionName || 'N/A'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -178,7 +194,7 @@ function UserContent({selected}) {
                 </Grid>
                 <Grid item xs={5}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                    {selected?.program}
+                        {selected?.program}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -189,7 +205,7 @@ function UserContent({selected}) {
                 </Grid>
                 <Grid item xs={2}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                    {selected?.year}
+                        {selected?.year}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -200,7 +216,7 @@ function UserContent({selected}) {
                 </Grid>
                 <Grid item xs={2}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                    {selected?.section}
+                        {selected?.section}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -208,10 +224,10 @@ function UserContent({selected}) {
 
             <Stack direction={'row'} spacing={1}>
                 <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
-                    (<Check />) Regular
+                    (_) Regular
                 </Typography>
                 <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
-                    (<Check />) Irregular
+                    (_) Irregular
                 </Typography>
                 <Typography fontWeight={'bold'} sx={{ alignItems: 'end', display: 'flex', fontFamily: "'Times New Roman', Times, serif" }}>
                     Student ID #:
@@ -235,6 +251,18 @@ function UserContent({selected}) {
 }
 
 function EventContent() {
+    const [data, setData] = useState([])
+
+    const handleGetCollection = async () => {
+        const { data, error } = await fetchCollections()
+        if (!error) {
+            setData(data)
+        }
+    }
+
+    useEffect(() => {
+        handleGetCollection()
+    }, [])
     return (
         <Box sx={{ px: 20, fontFamily: "'Times New Roman', Times, serif" }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid black' }}>
@@ -261,6 +289,16 @@ function EventContent() {
                             <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Example Status</Typography>
                         </td>
                     </tr>
+                    {data.map((item, index) => (
+                        <tr key={index}>
+                            <td style={{ border: '1px solid black', padding: '8px' }}>
+                                <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>{item.collectionName}</Typography>
+                            </td>
+                            <td style={{ border: '1px solid black', padding: '8px' }}>
+                                <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Example Status</Typography>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </Box>
