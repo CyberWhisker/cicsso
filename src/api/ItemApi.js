@@ -16,6 +16,24 @@ export const fetchItem = async () => {
     }
 }
 
+export const fetchItemWithProject = async () => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/item/getItemsWithProjects`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return {data: data, error: null}
+        } else {
+            return {data: [], error: data.error}
+        }
+    } catch (error) {
+        return {data: [], error: error.message}
+    }
+}
+
 export const fetchItemByProjectId = async (id) => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API}/api/item/project/${id}`, {

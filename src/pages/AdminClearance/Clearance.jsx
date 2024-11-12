@@ -74,7 +74,7 @@ function Clearance() {
             <Stack spacing={2}>
                 <Stack direction={'row'} spacing={2} alignItems={'center'}>
                     <Typography variant="h5" fontWeight="bold">Clearance Master List :</Typography>
-                    <Button variant='contained' endIcon={<Add/>} onClick={handleStoreModal}>Add Clearance</Button>
+                    <Button variant='contained' endIcon={<Add />} onClick={handleStoreModal}>Add Clearance</Button>
                 </Stack>
                 <Divider />
 
@@ -88,7 +88,7 @@ function Clearance() {
                 )}
             </Stack>
             <Drawer anchor='right' onClose={handleCloseModal} open={storeModal}>
-                <Store handleGetData={handleGetData} onClose={handleCloseModal}/>
+                <Store handleGetData={handleGetData} onClose={handleCloseModal} />
             </Drawer>
         </Master>
     )
@@ -229,8 +229,12 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
 function PdfButton({ params, contentRef, setSelected }) {
     const printFile = useReactToPrint({ contentRef })
     const handlePrint = async () => {
-        await setSelected(params.row)
-        printFile()
+        if (params.row.schoolYear.signatories.length == 0) {
+            toast.error(`Error: No assign Signatories on ${params.row.schoolYear.semester} S.Y (${moment(params.row.schoolYear.startDate).format('YYYY')} - ${moment(params.row.schoolYear.endDate).format('YYYY')})`)
+        } else {
+            await setSelected(params.row)
+            printFile()
+        }
     };
     return (
         <Button variant='contained' color='warning' onClick={handlePrint}>PDF FILE</Button>

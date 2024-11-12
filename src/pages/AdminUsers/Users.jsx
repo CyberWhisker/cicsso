@@ -185,6 +185,28 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                     disabled={toggleUpdate}
                                     onChange={handleChange}
                                 />
+                                <Typography fontWeight={'bold'}>Student Information</Typography>
+                                <Divider/>
+                                <Typography>Student ID</Typography>
+                                <TextField
+                                    name='studentId'
+                                    sx={{ width: '100%' }}
+                                    value={userData.studentId}
+                                    disabled={toggleUpdate}
+                                    onChange={handleChange}
+                                />
+                                <Typography>Type</Typography>
+                                <TextField
+                                    name='type'
+                                    sx={{ width: '100%' }}
+                                    value={userData.type}
+                                    disabled={toggleUpdate}
+                                    onChange={handleChange}
+                                    select
+                                >
+                                    <MenuItem value='Regular'>Regular</MenuItem>
+                                    <MenuItem value='Irregular'>Irregular</MenuItem>
+                                </TextField>
                                 <Typography>Program:</Typography>
                                 <TextField
                                     select

@@ -1,6 +1,7 @@
 import { Box, Checkbox, Container, Divider, Grid, Stack, Typography } from '@mui/material';
 import React from 'react';
 import moment from 'moment';
+import { Check } from '@mui/icons-material';
 
 function StudentClearance({ selected }) {
     return (
@@ -9,9 +10,9 @@ function StudentClearance({ selected }) {
                 <Container sx={{ fontFamily: "'Times New Roman', Times, serif", mt: 5 }}>
                     <Stack spacing={3}>
                         <HeaderContent />
-                        <SemesterContent selected={selected}/>
-                        <UserContent selected={selected}/>
-                        <EventContent selected={selected}/>
+                        <SemesterContent selected={selected} />
+                        <UserContent selected={selected} />
+                        <EventContent selected={selected} />
                         <Typography fontWeight={'bold'}
                             sx={{
                                 textIndent: '4em',
@@ -21,7 +22,7 @@ function StudentClearance({ selected }) {
                             This is to certify that the above-mentioned student has settled all the student organization dues for the
                             academic year and semester stated above.
                         </Typography>
-                        <SignatoryContent selected={selected}/>
+                        <SignatoryContent selected={selected} />
                     </Stack>
                 </Container>
                 {/* <Divider
@@ -86,7 +87,7 @@ function HeaderContent() {
     );
 }
 
-function SemesterContent({selected}) {
+function SemesterContent({ selected }) {
     return (
         <Stack spacing={1}>
             <Typography
@@ -130,13 +131,13 @@ function UserContent({ selected }) {
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        {selected?.user?.firstName  || 'Null'}
+                        {selected?.user?.firstName || 'Null'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        {selected?.user?.middleName  || 'Null'}
+                        {selected?.user?.middleName || 'Null'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -207,12 +208,26 @@ function UserContent({ selected }) {
             </Grid>
 
             <Stack direction={'row'} spacing={1}>
-                <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
-                    (_) Regular
-                </Typography>
-                <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
-                    (_) Irregular
-                </Typography>
+                {selected?.user?.type == "Regular" && (
+                    <Stack direction={'row'} spacing={2}>
+                        <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
+                            (<Check/>) Regular
+                        </Typography>
+                        <Typography display={'flex'} alignItems={'end'} fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
+                            (_) Irregular
+                        </Typography>
+                    </Stack>
+                )}
+                {selected?.user?.type != "Regular" && (
+                    <>
+                        <Typography display={'flex'} alignItems={'end'} fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
+                            (_) Regular
+                        </Typography>
+                        <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
+                            (<Check/>) Irregular
+                        </Typography>
+                    </>
+                )}
                 <Typography fontWeight={'bold'} sx={{ alignItems: 'end', display: 'flex', fontFamily: "'Times New Roman', Times, serif" }}>
                     Student ID #:
                 </Typography>
@@ -225,7 +240,7 @@ function UserContent({ selected }) {
                             fontFamily: "'Times New Roman', Times, serif",
                         }}
                     >
-                        4th
+                        {selected?.user?.studentId}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Stack>
@@ -234,7 +249,7 @@ function UserContent({ selected }) {
     );
 }
 
-function EventContent({selected}) {
+function EventContent({ selected }) {
     return (
         <Box sx={{ px: 20, fontFamily: "'Times New Roman', Times, serif" }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid black' }}>
@@ -272,7 +287,7 @@ function EventContent({selected}) {
                                                 <Stack direction={'row'} alignItems={'center'}>
                                                     <Checkbox defaultChecked />
                                                     <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>1st Semester</Typography>
-                                                    <Checkbox/>
+                                                    <Checkbox />
                                                     <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>2nd Semester</Typography>
                                                 </Stack>
                                             )}
@@ -299,13 +314,13 @@ function EventContent({selected}) {
     );
 }
 
-function SignatoryContent({selected}) {
+function SignatoryContent({ selected }) {
     return (
         <Box>
             <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Attested by:</Typography>
             <Box sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif", mt: 5 }}>
                 <Box sx={{ display: 'inline-block', textAlign: 'center' }}>
-                    <img alt='Signature' src={`/signatureImg/${selected?.schoolYear.signatories[0].image}`} style={{height: 100}}/>
+                    <img alt='Signature' src={`/signatureImg/${selected?.schoolYear.signatories[0].image}`} style={{ height: 100 }} />
                     <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
                         {selected?.schoolYear.signatories[0].name}
                     </Typography>

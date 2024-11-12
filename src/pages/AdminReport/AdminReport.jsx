@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Master from '../../layouts/Master';
-import { Box, Card, Divider, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, Chip, Divider, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { BarChart } from '@mui/x-charts';
-import { fetchTransactionByStatus } from '../../api/TransactionApi';
+import { fetchTransactionByStatus, fetchTransactions } from '../../api/TransactionApi';
 import { toast } from 'react-toastify';
 import moment from 'moment';
-import { fetchItem } from '../../api/ItemApi';
+import { fetchItem, fetchItemWithProject } from '../../api/ItemApi';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { useReactToPrint } from 'react-to-print';
 
 function AdminReport() {
   const [reportType, setReportType] = useState('annually');
@@ -19,11 +21,17 @@ function AdminReport() {
     setSelectedYear(e.target.value);
   };
 
+  const contentRef = useRef(null);
+  const printFile = useReactToPrint({ contentRef })
+
   return (
     <Master>
       <Stack spacing={1} pb={2}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant='h4' fontWeight={'bold'}>Reports</Typography>
+          <Stack spacing={2} direction={'row'}>
+            <Typography variant='h4' fontWeight={'bold'}>Reports</Typography>
+            <Button variant='contained' color='warning' onClick={printFile}>Print</Button>
+          </Stack>
           <TextField
             select
             size='small'
@@ -51,14 +59,17 @@ function AdminReport() {
           </TextField>
         </Box>
         <Divider />
-        <TransactionReport reportType={reportType} selectedYear={selectedYear} />
-        <DisbursementReport reportType={reportType} selectedYear={selectedYear} />
+        <Stack spacing={2} ref={contentRef} margin={2}>
+          <CollectionReport reportType={reportType} selectedYear={selectedYear} />
+          <ExpensesReport reportType={reportType} selectedYear={selectedYear} />
+          <DispursementReport />
+        </Stack>
       </Stack>
     </Master>
   );
 }
 
-function TransactionReport({ reportType, selectedYear }) {
+function CollectionReport({ reportType, selectedYear }) {
   const [dataValue, setDataValue] = useState([]);
   const [dataName, setDataName] = useState([]);
 
@@ -68,7 +79,7 @@ function TransactionReport({ reportType, selectedYear }) {
       const { data, error } = await fetchTransactionByStatus(transactionStatus);
       if (error) {
         toast.error(error);
-        return; 
+        return;
       }
 
       // Filter data by selected year
@@ -92,31 +103,32 @@ function TransactionReport({ reportType, selectedYear }) {
       setDataName(filteredData.name);
       setDataValue(filteredData.value);
     } catch (err) {
-      toast.error("Failed to fetch transactions."); 
+      toast.error("Failed to fetch transactions.");
     }
   };
 
   useEffect(() => {
     handleGetTransaction();
   }, [reportType, selectedYear]); // Run when reportType or selectedYear changes
-
   return (
     <Stack spacing={2}>
-      <Typography variant='h5' fontWeight={'bold'}>Transaction Report</Typography>
-      <Card sx={{ display: 'flex' }}>
-        <BarChart
-          xAxis={[{ scaleType: 'band', data: dataName }]}
-          series={[{ label: 'Amount', data: dataValue }]}
-          width={1000}
-          height={300}
-        />
+      <Card sx={{ display: 'flex', p: 1 }}>
+        <Stack spacing={2}>
+          <Typography variant='h5' fontWeight={'bold'}>Collection Report:</Typography>
+          <BarChart
+            xAxis={[{ scaleType: 'band', data: dataName }]}
+            series={[{ label: 'Amount', data: dataValue }]}
+            width={1000}
+            height={300}
+          />
+        </Stack>
       </Card>
-      <Divider/>
+      <Divider />
     </Stack>
   );
 }
 
-function DisbursementReport({ reportType, selectedYear }) {
+function ExpensesReport({ reportType, selectedYear }) {
   const [dataValue, setDataValue] = useState([]);
   const [dataName, setDataName] = useState([]);
   const [dataRemaining, setDataRemaining] = useState([]);
@@ -126,15 +138,15 @@ function DisbursementReport({ reportType, selectedYear }) {
     const transactionStatus = 'confirm'
     try {
       const [
-        {data: transData, error: transError},
-        {data: itemData, error: itemError},
+        { data: transData, error: transError },
+        { data: itemData, error: itemError },
       ] = await Promise.all([
         fetchTransactionByStatus(transactionStatus),
         fetchItem(),
       ]);
       if (itemError || transError) {
         toast.error("Something went Wrong");
-        return; 
+        return;
       }
 
       // Filter data by selected year
@@ -170,7 +182,7 @@ function DisbursementReport({ reportType, selectedYear }) {
       setTransValue(filteredDataTrans.value);
       setDataRemaining(remain);
     } catch (err) {
-      toast.error("Failed to fetch transactions."); 
+      toast.error("Failed to fetch transactions.");
     }
   };
 
@@ -180,19 +192,21 @@ function DisbursementReport({ reportType, selectedYear }) {
 
   return (
     <Stack spacing={2}>
-      <Typography variant='h5' fontWeight={'bold'}>Disbursement Report</Typography>
-      <Card sx={{ display: 'flex' }}>
-        <BarChart
-          xAxis={[{ scaleType: 'band', data: dataName }]}
-          // series={[{ label: 'Total Funds', data: transValue, color: 'green' }, { label: 'Project Cost', data: dataValue, color: 'red' }]}
-          series={[
-            { label: 'Total Funds', data: transValue, color: 'green' },
-            { data: dataRemaining, label: 'Remaining Funds', id: 'pvId', stack: 'total' },
-            { data: dataValue, label: 'Project Cost', id: 'uvId', stack: 'total', color: 'red' },
-          ]}
-          width={1000}
-          height={300}
-        />
+      <Card sx={{ display: 'flex', p: 1 }}>
+        <Stack spacing={2}>
+          <Typography variant='h5' fontWeight={'bold'}>Expenses Report:</Typography>
+          <BarChart
+            xAxis={[{ scaleType: 'band', data: dataName }]}
+            // series={[{ label: 'Total Funds', data: transValue, color: 'green' }, { label: 'Project Cost', data: dataValue, color: 'red' }]}
+            series={[
+              { label: 'Total Funds', data: transValue, color: 'green' },
+              { data: dataRemaining, label: 'Remaining Funds', id: 'pvId', stack: 'total' },
+              { data: dataValue, label: 'Project Cost', id: 'uvId', stack: 'total', color: 'red' },
+            ]}
+            width={1000}
+            height={300}
+          />
+        </Stack>
       </Card>
     </Stack>
   );
@@ -200,14 +214,14 @@ function DisbursementReport({ reportType, selectedYear }) {
 
 function filterMonthly(data) {
   const monthNames = moment.months();
-  let value = new Array(12).fill(0); 
+  let value = new Array(12).fill(0);
 
   data.forEach(item => {
-    const monthIndex = moment(item.date).month(); 
-    value[monthIndex] += item.amount; 
+    const monthIndex = moment(item.date).month();
+    value[monthIndex] += item.amount;
   });
 
-  return { name: monthNames, value }; 
+  return { name: monthNames, value };
 }
 
 function filterQuarterly(data) {
@@ -247,6 +261,113 @@ function filterAnnually(data) {
     name: Object.keys(totalAmount),
     value: Object.values(totalAmount)
   };
+}
+
+function DispursementReport() {
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleGetData = async () => {
+    const [
+      { data: transData, error: transError },
+      { data: itemData, error: itemError },
+    ] = await Promise.all([
+      fetchTransactions(),
+      fetchItemWithProject()
+    ]);
+
+    if (!transError && !itemError) {
+      // Combine transData and itemData
+      const combinedData = [...transData, ...itemData];
+
+      // Sort by createdAt in ascending order
+      combinedData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      // Set the combined and sorted data
+      setData(combinedData);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleGetData()
+  }, [])
+
+  const columns = [
+    {
+      field: 'id',
+      headerName: 'Id',
+      flex: 1,
+      headerAlign: 'center',
+    },
+    {
+      field: 'collectionProject',
+      headerName: 'Collection / Project',
+      flex: 1,
+      headerAlign: 'center'
+    },
+    {
+      field: 'group',
+      headerName: 'Group Folder',
+      flex: 1,
+      headerAlign: 'center'
+    },
+    {
+      field: 'itemName',
+      headerName: 'Item / Name',
+      flex: 1,
+      headerAlign: 'center',
+    },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      flex: 1,
+      headerAlign: 'center',
+    },
+    {
+      field: 'type',
+      headerName: 'Type',
+      flex: 1,
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Box sx={{ textAlign: 'center' }}>
+          {params.row.type == "Inflow" && (
+            <Chip label="Inflow" color='success' />
+          )}
+          {params.row.type == "Outflow" && (
+            <Chip label="Outflow" color='error' />
+          )}
+        </Box>
+      ),
+    },
+  ]
+
+  const rows = useMemo(() =>
+    data.map((item) => ({
+      ...item,
+      id: item._id,
+      collectionProject: item?.project ? 'Project' : 'Collection',
+      group: item?.project?.project || item?.collectionId?.collectionName,
+      itemName: item?.item || `${item?.userId?.lastName}, ${item?.userId?.firstName} ${item?.userId?.middleName}`,
+      type: item?.project ? 'Outflow' : 'Inflow'
+    })),
+    [data]
+  );
+  return (
+    <>
+      <Divider />
+      <Card sx={{ p: 1 }}>
+        <Stack spacing={2}>
+          <Typography variant='h5' fontWeight={'bold'}>Disbursement Report:</Typography>
+          <DataGrid
+            loading={isLoading}
+            columns={columns}
+            rows={rows}
+          />
+        </Stack>
+      </Card>
+    </>
+  )
 }
 
 export default AdminReport;
