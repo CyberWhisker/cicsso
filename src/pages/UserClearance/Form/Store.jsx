@@ -27,6 +27,8 @@ function Store({ handleGetData, handleCloseModal }) {
             toast.error(error)
         } else {
             toast.success("Successfully Inserted")
+            handleGetData()
+            handleCloseModal()
         }
     };
 

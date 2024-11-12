@@ -11,7 +11,9 @@ function Store() {
     middleName: '',
     lastName: '',
     extensionName: '',
+    studentId: '',
     program: '',
+    type: '',
     year: '',
     section: '',
     email: '',
@@ -30,17 +32,19 @@ function Store() {
   // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    const { firstName, lastName, middleName, program, email, year, section, password, confirmPassword } = formData;
+    const { firstName, lastName, middleName, program, email, year, studentId, type, section, password, confirmPassword } = formData;
     const newErrors = {};
 
     // Basic validation
     if (!email || !/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Valid email is required';
-    if (!firstName) newErrors.name = 'First Name is required';
-    if (!lastName) newErrors.name = 'Last Name is required';
-    if (!middleName) newErrors.name = 'Middle Name is required';
-    if (!program) newErrors.name = 'Program is required';
+    if (!firstName) newErrors.firstName = 'First Name is required';
+    if (!lastName) newErrors.lastName = 'Last Name is required';
+    if (!middleName) newErrors.middleName = 'Middle Name is required';
+    if (!program) newErrors.program = 'Program is required';
     if (!year) newErrors.year = 'Year is required';
     if (!section) newErrors.section = 'Section is required';
+    if (!studentId) newErrors.studentId = 'Student Id is required';
+    if (!type) newErrors.type = 'Type is required';
     if (!password || password.length < 6) newErrors.password = 'Password must be at least 6 characters';
     if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
 
@@ -85,6 +89,16 @@ function Store() {
           value={formData.extensionName}
           onChange={handleChange}
         />
+        <Divider />
+        <Typography fontWeight={'bold'}>Student Information</Typography>
+        <TextField
+          label="Student ID"
+          name="studentId"
+          value={formData.studentId}
+          onChange={handleChange}
+          error={Boolean(errors.studentId)}
+          helperText={errors.studentId}
+        />
         <TextField
           select
           label="Select Program"
@@ -99,12 +113,26 @@ function Store() {
         </TextField>
         <TextField
           select
+          name="type"
+          label="Type"
+          value={formData.type}
+          onChange={handleChange}
+          displayEmpty
+          error={Boolean(errors.type)}
+          helperText={errors.type}
+        >
+          <MenuItem value="Regular">Regular</MenuItem>
+          <MenuItem value="Irregular">Irregular</MenuItem>
+        </TextField>
+        <TextField
+          select
           name="year"
           label="Select Year"
           value={formData.year}
           onChange={handleChange}
           displayEmpty
           error={Boolean(errors.year)}
+          helperText={errors.year}
         >
           <MenuItem value="1st">1st</MenuItem>
           <MenuItem value="2nd">2nd</MenuItem>

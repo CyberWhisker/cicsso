@@ -16,6 +16,24 @@ export const fetchSignatories = async () => {
     }
 }
 
+export const fetchSignatoryBySchoolYear = async (schoolYear) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/signatories/getSignatoriesBySchoolYear/${schoolYear}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return {data: data, error: null}
+        } else {
+            return {data: [], error: "Server Error"}
+        }
+    } catch (error) {
+        return {data: [], error: error.message}
+    }
+}
+
 export const storeSignatorie = async (formData) => {
     try {
         const formDataObject = new FormData();

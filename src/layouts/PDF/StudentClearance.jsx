@@ -1,21 +1,17 @@
-import { Box, Container, Divider, Grid, Stack, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { Check } from '@mui/icons-material';
-import { fetchActiveSchoolYear } from '../../api/SchoolYearApi';
-import { toast } from 'react-toastify';
+import { Box, Checkbox, Container, Divider, Grid, Stack, Typography } from '@mui/material';
+import React from 'react';
 import moment from 'moment';
-import { fetchCollections } from '../../api/CollectionApi';
 
 function StudentClearance({ selected }) {
     return (
         <div>
-            <div id="test" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
+            <div id="test" style={{ fontFamily: "'Times New Roman', Times, serif", color: 'black' }}>
                 <Container sx={{ fontFamily: "'Times New Roman', Times, serif", mt: 5 }}>
                     <Stack spacing={3}>
                         <HeaderContent />
-                        <SemesterContent />
-                        <UserContent selected={selected} />
-                        <EventContent />
+                        <SemesterContent selected={selected}/>
+                        <UserContent selected={selected}/>
+                        <EventContent selected={selected}/>
                         <Typography fontWeight={'bold'}
                             sx={{
                                 textIndent: '4em',
@@ -25,16 +21,16 @@ function StudentClearance({ selected }) {
                             This is to certify that the above-mentioned student has settled all the student organization dues for the
                             academic year and semester stated above.
                         </Typography>
-                        <SignatoryContent />
+                        <SignatoryContent selected={selected}/>
                     </Stack>
                 </Container>
-                <Divider
+                {/* <Divider
                     sx={{
                         width: '100%',
                         borderBottom: '3px dashed rgba(0, 0, 0, 1)',
                         mt: 5,
                     }}
-                />
+                /> */}
             </div>
         </div>
     );
@@ -90,19 +86,7 @@ function HeaderContent() {
     );
 }
 
-function SemesterContent() {
-    const [schoolYear, setSchoolYear] = useState({})
-    const handleGetSemester = async () => {
-        const { data, error } = await fetchActiveSchoolYear();
-        if (error) {
-            toast.error("No Active School Year")
-        } else {
-            setSchoolYear(data)
-        }
-    }
-    useEffect(() => {
-        handleGetSemester()
-    }, [])
+function SemesterContent({selected}) {
     return (
         <Stack spacing={1}>
             <Typography
@@ -123,7 +107,7 @@ function SemesterContent() {
                     fontFamily: "'Times New Roman', Times, serif",
                 }}
             >
-                S.Y {moment(schoolYear?.startDate).format("YYYY")} - {moment(schoolYear?.endDate).format("YYYY")} {schoolYear?.semester || 'Null'}
+                S.Y {moment(selected?.schoolYear?.startDate).format("YYYY")} - {moment(selected?.schoolYear?.endDate).format("YYYY")} {selected?.schoolYear?.semester || 'Null'}
             </Typography>
         </Stack>
     );
@@ -140,25 +124,25 @@ function UserContent({ selected }) {
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        {selected?.lastName}
+                        {selected?.user?.lastName || 'Null'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        {selected?.firstName}
+                        {selected?.user?.firstName  || 'Null'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        {selected?.middleName}
+                        {selected?.user?.middleName  || 'Null'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
                 <Grid item xs={2}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        {selected?.extensionName || 'N/A'}
+                        {selected?.user?.extensionName || 'N/A'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -194,7 +178,7 @@ function UserContent({ selected }) {
                 </Grid>
                 <Grid item xs={5}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        {selected?.program}
+                        {selected?.user?.program || 'Null'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -205,7 +189,7 @@ function UserContent({ selected }) {
                 </Grid>
                 <Grid item xs={2}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        {selected?.year}
+                        {selected?.user?.year || 'Null'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -216,7 +200,7 @@ function UserContent({ selected }) {
                 </Grid>
                 <Grid item xs={2}>
                     <Typography sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif" }}>
-                        {selected?.section}
+                        {selected?.user?.section || 'Null'}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)' }} />
                 </Grid>
@@ -250,19 +234,7 @@ function UserContent({ selected }) {
     );
 }
 
-function EventContent() {
-    const [data, setData] = useState([])
-
-    const handleGetCollection = async () => {
-        const { data, error } = await fetchCollections()
-        if (!error) {
-            setData(data)
-        }
-    }
-
-    useEffect(() => {
-        handleGetCollection()
-    }, [])
+function EventContent({selected}) {
     return (
         <Box sx={{ px: 20, fontFamily: "'Times New Roman', Times, serif" }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid black' }}>
@@ -289,34 +261,57 @@ function EventContent() {
                             <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Example Status</Typography>
                         </td>
                     </tr>
-                    {data.map((item, index) => (
-                        <tr key={index}>
-                            <td style={{ border: '1px solid black', padding: '8px' }}>
-                                <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>{item.collectionName}</Typography>
-                            </td>
-                            <td style={{ border: '1px solid black', padding: '8px' }}>
-                                <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Example Status</Typography>
-                            </td>
-                        </tr>
-                    ))}
+                    {selected?.schoolYear.collection.map((item, index) => {
+                        return (
+                            <tr key={index}>
+                                <td style={{ border: '1px solid black', padding: '8px' }}>
+                                    <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>{item.collectionName}</Typography>
+                                    {item.indicator1 && (
+                                        <>
+                                            {selected.schoolYear.semester == '1st Semester' && (
+                                                <Stack direction={'row'} alignItems={'center'}>
+                                                    <Checkbox defaultChecked />
+                                                    <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>1st Semester</Typography>
+                                                    <Checkbox/>
+                                                    <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>2nd Semester</Typography>
+                                                </Stack>
+                                            )}
+                                            {selected.schoolYear.semester == '2nd Semester' && (
+                                                <Stack direction={'row'} alignItems={'center'}>
+                                                    <Checkbox defaultChecked />
+                                                    <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>1st Semester</Typography>
+                                                    <Checkbox defaultChecked />
+                                                    <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>2nd Semester</Typography>
+                                                </Stack>
+                                            )}
+                                        </>
+                                    )}
+                                </td>
+                                <td style={{ border: '1px solid black', padding: '8px' }}>
+                                    <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Example Status</Typography>
+                                </td>
+                            </tr>
+                        )
+                    })}
                 </tbody>
             </table>
         </Box>
     );
 }
 
-function SignatoryContent() {
+function SignatoryContent({selected}) {
     return (
         <Box>
             <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Attested by:</Typography>
             <Box sx={{ textAlign: 'center', fontFamily: "'Times New Roman', Times, serif", mt: 5 }}>
                 <Box sx={{ display: 'inline-block', textAlign: 'center' }}>
+                    <img alt='Signature' src={`/signatureImg/${selected?.schoolYear.signatories[0].image}`} style={{height: 100}}/>
                     <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
-                        JAMIE M. SOLINA
+                        {selected?.schoolYear.signatories[0].name}
                     </Typography>
                     <Divider sx={{ bgcolor: 'rgba(0, 0, 0, 1)', width: '100%' }} />
                 </Box>
-                <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>CICSSO Treasurer</Typography>
+                <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>{selected?.schoolYear.signatories[0].role}</Typography>
             </Box>
         </Box>
     );

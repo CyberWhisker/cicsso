@@ -1,34 +1,30 @@
-import React, { useState } from 'react';
-import { Box, Button, Stack, TextField, Typography } from '@mui/material';
-import { useParams } from 'react-router-dom';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import React, { useEffect, useState } from 'react';
+import { Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { storeItem } from '../../../api/ItemApi';
 import { toast } from 'react-toastify';
+import { fetchUsers } from '../../../api/userApi';
+import { fetchSchoolYear } from '../../../api/SchoolYearApi';
+import moment from 'moment';
+import { storeClearance } from '../../../api/ClearanceApi';
 
-function Store({onClose, handleGetData}) {
-    const {id} = useParams();
+function Store({ onClose, handleGetData }) {
     const [submitted, setSubmitted] = useState(false);
+    const [userData, setUserData] = useState([]);
+    const [semesterData, setSemesterData] = useState([]);
     const [formData, setFormData] = useState({
-        project: id,
-        item: '',
-        quantity: '',
-        amount: '',
-        date: null
+        user: '',
+        schoolYear: '',
+        status: '',
     });
 
     const handleChange = (e) => {
-        setFormData({...formData, [e.target.name]: e.target.value});
-    }
-
-    const handleDate = (name, value) => {
-        setFormData({...formData, [name]: value});
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
-        const {data, error} = await storeItem(formData);
+        const { data, error } = await storeClearance(formData);
         if (error) {
             toast.error(error)
         } else {
@@ -38,60 +34,76 @@ function Store({onClose, handleGetData}) {
         }
     };
 
-    
+    const handleGetUserData = async () => {
+        const { data, error } = await fetchUsers();
+        if (!error) {
+            setUserData(data)
+        }
+    }
+
+    const handleGetSemesterData = async () => {
+        const { data, error } = await fetchSchoolYear();
+        if (!error) {
+            setSemesterData(data)
+        }
+    }
+
+    useEffect(() => {
+        handleGetUserData()
+        handleGetSemesterData()
+    }, [])
+
     return (
-        <LocalizationProvider dateAdapter={AdapterMoment}>
-            <Box sx={{ width: '70vh', p: 2 }}>
-                <Typography variant='h4' fontWeight='bold'>Add Item</Typography>
-                <Box mt={2}>
-                    <form onSubmit={handleSubmit}>
-                        <Stack direction={'column'} spacing={2}>
-                            <TextField
-                                label='Enter Item'
-                                name='item'
-                                variant="outlined"
-                                sx={{ width: '100%'}}
-                                value={formData.item}
-                                onChange={handleChange}
-                                error={submitted && !formData.item}
-                                helperText={submitted && !formData.item ? "Required" : ""}
-                            />
-                            <TextField
-                                label='Qauntity'
-                                name='quantity'
-                                value={formData.quantity}
-                                onChange={handleChange}
-                                error={submitted && !formData.quantity}
-                                helperText={submitted && !formData.quantity ? "Required": ""}
-                            />
-                            <TextField
-                                label='Amount'
-                                name='amount'
-                                value={formData.amount}
-                                onChange={handleChange}
-                                error={submitted && !formData.amount}
-                                helperText={submitted && !formData.amount ? "Required": ""}
-                            />
-                            <DatePicker
-                                label='Date'
-                                name='date'
-                                value={formData.date}
-                                onChange={(value) => handleDate("date", value)}
-                                slotProps={{
-                                    textField: {
-                                        error: submitted && !formData.date,
-                                        helperText: submitted && !formData.date ? "Required" : "",
-                                    },
-                                }}
-                            />
-                            <Button type='submit' variant='contained' sx={{width: '100%'}}>
-                                Submit
-                            </Button>
-                        </Stack>
-                    </form>
-                </Box>
+        <Box sx={{ width: '70vh', p: 2 }}>
+            <Typography variant='h4' fontWeight='bold'>Add Item</Typography>
+            <Box mt={2}>
+                <form onSubmit={handleSubmit}>
+                    <Stack direction={'column'} spacing={2}>
+                        <TextField
+                            select
+                            label='Select User'
+                            name='user'
+                            variant="outlined"
+                            sx={{ width: '100%' }}
+                            value={formData.user}
+                            onChange={handleChange}
+                        >
+                            {userData.map((item, index) => (
+                                <MenuItem key={index} value={item._id}>{item.lastName},{item.firstName} {item.lastName[0]}.</MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            select
+                            label='Select Semester'
+                            name='schoolYear'
+                            variant="outlined"
+                            sx={{ width: '100%' }}
+                            value={formData.schoolYear}
+                            onChange={handleChange}
+                        >
+                            {semesterData.map((item, index) => (
+                                <MenuItem key={index} value={item._id}>{item.semester} S.Y ({moment(item.startDate).format('YYYY')} - {moment(item.endDate).format('YYYY')})</MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            select
+                            label='Status'
+                            name='status'
+                            variant="outlined"
+                            sx={{ width: '100%' }}
+                            value={formData.status}
+                            onChange={handleChange}
+                        >
+                            <MenuItem value='Pending'>Pending</MenuItem>
+                            <MenuItem value='Complete'>Complete</MenuItem>
+                        </TextField>
+                        <Button type='submit' variant='contained' sx={{ width: '100%' }}>
+                            Submit
+                        </Button>
+                    </Stack>
+                </form>
             </Box>
-        </LocalizationProvider>
+        </Box>
     );
 }
 

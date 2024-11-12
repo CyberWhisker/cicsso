@@ -110,3 +110,21 @@ export const fetchCollectionWithTransactionByUserId = async (id) => {
         return {data: [], error: error.message}
     }
 }
+
+export const fetchCollectionBySchoolYear = async (id) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection/getCollectionBySchoolYear/${id}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return {data: data, error: null}
+        } else {
+            return {data: [], error: data.error}
+        }
+    } catch (error) {
+        return {data: [], error: error.message}
+    }
+}
