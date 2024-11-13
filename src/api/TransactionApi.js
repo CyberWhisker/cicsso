@@ -98,13 +98,14 @@ export const updateTransaction = async (formData) => {
     }
 }
 
-export const deleteTransaction = async (id) => {
+export const deleteTransaction = async (formData) => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API}/api/transaction/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/transaction/${formData._id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             },
+            body: JSON.stringify(formData)
         })
         const data = await response.json()
         if (response.ok) {

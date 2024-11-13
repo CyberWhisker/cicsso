@@ -48,10 +48,10 @@ function Notification () {
 
         if (auth.user.role == 'user') {
             await handleUpdateNotificationUser(dataNotif)
-            navigate('/transaction')
+            navigate('/notification')
         } else {
             await handleUpdateNotificationAdmin(dataNotif)
-            navigate(`/transaction/${dataNotif._id}`)
+            navigate(`/notification`)
         }
 
     }

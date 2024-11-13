@@ -1,6 +1,7 @@
 export { default as Landing } from './Landing/Landing'
 export { default as Login } from './Auth/Login/Login'
 export { default as Register } from './Auth/Register/Register'
+export { default as Notification } from './Notification/Notification'
 // Admin
 export { default as AdminDashboard } from './AdminDashboard/Dashboard'
 export { default as AdminEvents } from './AdminEvents/Events'

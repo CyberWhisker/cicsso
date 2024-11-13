@@ -8,23 +8,23 @@ import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import { AttachMoney, CreditCard, Folder, GetAppRounded, List, Notifications, PanTool, Settings, WarningAmber, WavingHand } from '@mui/icons-material';
+import { AttachMoney, CreditCard, Folder, GetAppRounded, List, Message, Notifications, PanTool, Settings, WarningAmber, WavingHand } from '@mui/icons-material';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { CalendarIcon } from '@mui/x-date-pickers';
 
 function Navlist({ setopen }) {
   let location = useLocation();
-  const {auth} = useAuthContext()
+  const { auth } = useAuthContext()
   return (
     <React.Fragment>
       {location.pathname == '/' && (
         <NavLanding setopen={setopen} />
       )}
       {(auth && auth.user.role == 'admin' && location.pathname != '/') && (
-        <NavAdmin/>
+        <NavAdmin />
       )}
-      {(auth && auth.user.role  == 'user' && location.pathname != '/') && (
-        <NavUser/>
+      {(auth && auth.user.role == 'user' && location.pathname != '/') && (
+        <NavUser />
       )}
     </React.Fragment>
   );
@@ -77,8 +77,8 @@ function NavAdmin() {
         </ListItemIcon>
         <ListItemText primary="Users" />
       </ListItemButton>
-      
-      <Divider/>
+
+      <Divider />
 
       <ListItemButton component={Link} to={'/events'} selected={location.pathname.startsWith('/events')}>
         <ListItemIcon>
@@ -86,7 +86,7 @@ function NavAdmin() {
         </ListItemIcon>
         <ListItemText primary="Events" />
       </ListItemButton>
-      
+
       <ListItemButton component={Link} to={'/penalties'} selected={location.pathname.startsWith('/penalties')}>
         <ListItemIcon>
           <WarningAmber />
@@ -115,7 +115,7 @@ function NavAdmin() {
         <ListItemText primary="Clearance" />
       </ListItemButton>
 
-      <Divider/>
+      <Divider />
 
       <ListItemButton component={Link} to={'/report'} selected={location.pathname.startsWith('/report')}>
         <ListItemIcon>
@@ -124,7 +124,14 @@ function NavAdmin() {
         <ListItemText primary="Reports" />
       </ListItemButton>
 
-      <Divider/>
+      <ListItemButton component={Link} to={'/notification'} selected={location.pathname.startsWith('/notification')}>
+        <ListItemIcon>
+          <Message />
+        </ListItemIcon>
+        <ListItemText primary="Notification" />
+      </ListItemButton>
+
+      <Divider />
 
       <ListItemButton component={Link} to={'/schoolYear'} selected={location.pathname.startsWith('/schoolYear')}>
         <ListItemIcon>
@@ -141,7 +148,7 @@ function NavAdmin() {
       </ListItemButton>
     </React.Fragment>
 
-    
+
   )
 }
 
@@ -182,6 +189,13 @@ function NavUser() {
           <CreditCard />
         </ListItemIcon>
         <ListItemText primary="Transaction" />
+      </ListItemButton>
+
+      <ListItemButton component={Link} to={'/notification'} selected={location.pathname.startsWith('/notification')}>
+        <ListItemIcon>
+          <Message />
+        </ListItemIcon>
+        <ListItemText primary="Notification" />
       </ListItemButton>
 
     </React.Fragment>

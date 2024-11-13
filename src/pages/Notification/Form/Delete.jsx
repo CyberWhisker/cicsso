@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Box, Typography, Button, Divider, TextField, Stack } from '@mui/material';
+import React from 'react';
+import { Box, Typography, Button, Divider } from '@mui/material';
 import { toast } from 'react-toastify';
-import { deleteCollection } from '../../../api/CollectionApi';
-import { deleteTransaction } from '../../../api/TransactionApi';
+import { deleteNotification } from '../../../api/NotificationApi';
 
 const headerStyle = {
   p: 2,
@@ -19,21 +18,9 @@ const footerStyle = {
 };
 
 function Delete({selected, onClose, handleGetData}) {
-  const [formData, setFormData] = useState({
-    ...selected,
-    message: ""
-  })
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name] : e.target.value
-    })
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const {data, error} = await deleteTransaction(formData);
+    const {data, error} = await deleteNotification(selected);
     if (error) {
       onClose();
       toast.error("Something went wrong!")
@@ -51,12 +38,9 @@ function Delete({selected, onClose, handleGetData}) {
           Delete Confirmation
         </Typography>
       </Box>
-      <Stack sx={{ p:2}} spacing={2}>
-        <Typography id="delete-modal-description">
-          Are you sure you want to delete this item? This action cannot be undone.
-        </Typography>
-        <TextField label="Enter Message (Optional)" name='message' value={formData.message} onChange={handleChange} sx={{width: '100%'}}/>
-      </Stack>
+      <Typography id="delete-modal-description" sx={{ p:2}}>
+        Are you sure you want to delete this item? This action cannot be undone.
+      </Typography>
       <Divider/>
       <form onSubmit={handleSubmit}>
         <Box sx={footerStyle}>

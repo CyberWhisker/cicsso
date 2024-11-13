@@ -22,7 +22,8 @@ import {
   AdminClearance,
   AdminSchoolYear,
   AdminSignatories,
-  UserClearance
+  UserClearance,
+  Notification
 } from './pages';
 import { useAuthContext } from './hooks/useAuthContext';
 import PrivateRoute from './hooks/privateRoute';
@@ -178,9 +179,16 @@ function App() {
             <StudentClearance />
           </PrivateRoute>
         } />
+
         <Route path="/userClearance" element={
           <PrivateRoute>
             <UserClearance />
+          </PrivateRoute>
+        } />
+
+        <Route path="/notification" element={
+          <PrivateRoute>
+            <Notification />
           </PrivateRoute>
         } />
       </Routes>
