@@ -117,7 +117,6 @@ function Store() {
           label="Type"
           value={formData.type}
           onChange={handleChange}
-          displayEmpty
           error={Boolean(errors.type)}
           helperText={errors.type}
         >
@@ -130,7 +129,6 @@ function Store() {
           label="Select Year"
           value={formData.year}
           onChange={handleChange}
-          displayEmpty
           error={Boolean(errors.year)}
           helperText={errors.year}
         >

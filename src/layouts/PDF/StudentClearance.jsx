@@ -1,4 +1,4 @@
-import { Box, Checkbox, Container, Divider, Grid, Stack, Typography } from '@mui/material';
+import { Box, Checkbox, Chip, Container, Divider, Grid, Stack, Typography } from '@mui/material';
 import React from 'react';
 import moment from 'moment';
 import { Check } from '@mui/icons-material';
@@ -211,7 +211,7 @@ function UserContent({ selected }) {
                 {selected?.user?.type == "Regular" && (
                     <Stack direction={'row'} spacing={2}>
                         <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
-                            (<Check/>) Regular
+                            (<Check />) Regular
                         </Typography>
                         <Typography display={'flex'} alignItems={'end'} fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
                             (_) Irregular
@@ -224,7 +224,7 @@ function UserContent({ selected }) {
                             (_) Regular
                         </Typography>
                         <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>
-                            (<Check/>) Irregular
+                            (<Check />) Irregular
                         </Typography>
                     </>
                 )}
@@ -268,19 +268,15 @@ function EventContent({ selected }) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td style={{ border: '1px solid black', padding: '8px' }}>
-                            <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Example Due Date</Typography>
-                        </td>
-                        <td style={{ border: '1px solid black', padding: '8px' }}>
-                            <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Example Status</Typography>
-                        </td>
-                    </tr>
                     {selected?.schoolYear.collection.map((item, index) => {
                         return (
                             <tr key={index}>
                                 <td style={{ border: '1px solid black', padding: '8px' }}>
-                                    <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>{item.collectionName}</Typography>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>{item.collectionName}</Typography>
+
+                                        <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>₱ {item.fine.toFixed(2)}</Typography>
+                                    </Box>
                                     {item.indicator1 && (
                                         <>
                                             {selected.schoolYear.semester == '1st Semester' && (
@@ -302,8 +298,10 @@ function EventContent({ selected }) {
                                         </>
                                     )}
                                 </td>
-                                <td style={{ border: '1px solid black', padding: '8px' }}>
-                                    <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Example Status</Typography>
+                                <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>
+                                    <Chip color='success' label={
+                                        <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Paid</Typography>
+                                    } />
                                 </td>
                             </tr>
                         )

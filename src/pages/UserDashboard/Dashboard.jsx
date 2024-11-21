@@ -9,7 +9,7 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 import { fetchEventsWithAttendanceByUserId } from '../../api/EventApi';
 import moment from 'moment';
 import { fetchTransactionByUserId } from '../../api/TransactionApi';
-import { fetchCollections } from '../../api/CollectionApi';
+import { fetchCollections, fetchCollectionWithEventAndAttendance } from '../../api/CollectionApi';
 import { List, Search } from '@mui/icons-material';
 
 function Dashboard() {
@@ -54,7 +54,7 @@ function InfoSection({events, auth}) {
     const [transaction, setTransaction] = useState(0);
     const [credit, setCredit] = useState(0);
     
-    const handleAttendance = () => {
+    const handleAttendance = async () => {
         let totalAttend = 0;
         events.map(event => {
             event.schedules.map(sched => {
@@ -77,7 +77,7 @@ function InfoSection({events, auth}) {
         setAttendance(totalAttend)
     }
 
-    const handlePenalties = () => {
+    const handlePenalties = async () => {
         let totalAttend = 0;
         let totalSched = 0;
         events.map(event => {
@@ -100,27 +100,39 @@ function InfoSection({events, auth}) {
             })
         })
         setPenalties(totalSched * 4 - totalAttend)
+        await handleTransaction(totalAttend)
     }
 
-    const handleTransaction = async () => {
+    const handleTransaction = async (totalAttend) => {
         const {data, error} = await fetchTransactionByUserId(auth.user._id)
         if (error) {
             toast.error(error)
         } else {
             setTransaction(data.length)
-            await handleCredit(data)
+            await handleCredit(data, totalAttend)
         }
     }
 
-    const handleCredit = async (trans) => {
-        const {data, error} = await fetchCollections();
+    const handleCredit = async (trans, totalAttend) => {
+        const {data, error} = await fetchCollectionWithEventAndAttendance();
         if (error) {
             toast.error(error)
         } else {
-            const totalFine = data.reduce((sum, item) => sum + item.fine, 0);
+            let totalFine = 0;
+            let attend = 0;
+            data.map((item, index) => {
+                if (item.eventId) {
+                    attend = item.eventId.schedules.length * 4 - totalAttend
+                    totalFine +=  item.fine * attend
+                } else {
+                    totalFine += item.fine
+                }
+            })
+            // const totalFine = data.reduce((sum, item) => sum + item.fine, 0);
             const totalAmount = trans.reduce((sum, item) => {
                 return item.status === 'confirm' ? sum + item.amount : sum;
             }, 0);
+
             setCredit(totalFine - totalAmount);
         }
     }
@@ -128,7 +140,6 @@ function InfoSection({events, auth}) {
     useEffect(() => {
         handleAttendance()
         handlePenalties()
-        handleTransaction()
     },[events])
 
     return (

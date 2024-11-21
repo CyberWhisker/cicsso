@@ -80,7 +80,7 @@ function Dashboard() {
             const totalFund = transacData.reduce((total, current) => {
                 return current.status === 'confirm' ? total + current.amount : total;
             }, 0);
-            setTotalFunds(totalFund - itemData.reduce((sum, item) => sum + item.amount, 0))
+            setTotalFunds(totalFund - itemData.reduce((sum, item) => sum + item.amount * item.quantity, 0))
 
             // Pending Data
             const pendingTransaction = transacData.filter(trans => trans.status == 'pending');

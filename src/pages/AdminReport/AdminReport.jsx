@@ -217,8 +217,12 @@ function filterMonthly(data) {
   let value = new Array(12).fill(0);
 
   data.forEach(item => {
+    let amount = item.amount
     const monthIndex = moment(item.date).month();
-    value[monthIndex] += item.amount;
+    if (item.quantity) {
+      amount = item.amount * item.quantity
+    }
+    value[monthIndex] += amount;
   });
 
   return { name: monthNames, value };
@@ -236,7 +240,11 @@ function filterQuarterly(data) {
 
   data.forEach(item => {
     const month = moment(item.date).format('MMMM');
-    const amount = item.amount;
+    let amount = item.amount;
+
+    if (item.quantity) {
+      amount = item.amount * item.quantity
+    }
 
     Quarterly.forEach((quarter, index) => {
       if (quarter.includes(month)) {
@@ -254,8 +262,12 @@ function filterAnnually(data) {
   const totalAmount = {};
 
   data.forEach(item => {
+    let total = item.amount 
     const year = moment(item.date).format('YYYY');
-    totalAmount[year] = (totalAmount[year] || 0) + item.amount;
+    if (item.quantity) {
+      total = item.amount * item.quantity
+    }
+    totalAmount[year] = (totalAmount[year] || 0) + total;
   });
   return {
     name: Object.keys(totalAmount),
@@ -349,7 +361,8 @@ function DispursementReport() {
       collectionProject: item?.project ? 'Project' : 'Collection',
       group: item?.project?.project || item?.collectionId?.collectionName,
       itemName: item?.item || `${item?.userId?.lastName}, ${item?.userId?.firstName} ${item?.userId?.middleName}`,
-      type: item?.project ? 'Outflow' : 'Inflow'
+      type: item?.project ? 'Outflow' : 'Inflow',
+      amount: item.quantity ? item.amount * item.quantity : item.amount
     })),
     [data]
   );

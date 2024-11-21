@@ -11,8 +11,6 @@ function Store({ handleGetData, handleCloseModal }) {
     const [formData, setFormData] = useState({
         collectionName: '',
         fine: '',
-        indicator1: '',
-        indicator2: '',
         startDate: null,
         endDate: null
     });
@@ -135,7 +133,7 @@ function SelectIndicator({handleChange, formData}) {
                 label="Select Semester"
                 name='indicator1'
                 onChange={handleChange}
-                value={formData.indicator1}
+                value={formData.indicator1 || ''}
                 select
             >
                 {data.map((item, index) => (
@@ -146,7 +144,7 @@ function SelectIndicator({handleChange, formData}) {
                 label="Select Semester"
                 name='indicator2'
                 onChange={handleChange}
-                value={formData.indicator2}
+                value={formData.indicator2 || ''}
                 select
             >
                 {data.map((item, index) => (

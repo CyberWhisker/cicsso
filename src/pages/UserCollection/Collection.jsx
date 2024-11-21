@@ -7,7 +7,6 @@ import moment from 'moment'
 import { fetchCollectionWithTransactionByUserId } from '../../api/CollectionApi'
 import { useAuthContext } from '../../hooks/useAuthContext'
 import Payment from './Form/Payment'
-import { fetchEventsWithAttendanceByUserId } from '../../api/EventApi'
 
 function Collection() {
   const [isLoading, setIsLoading] = useState(true);
