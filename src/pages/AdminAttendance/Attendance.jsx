@@ -12,6 +12,29 @@ import moment from 'moment';
 import AlertModal from '../../components/AlertModal';
 import { fetchScheduleById } from '../../api/ScheduleApi';
 import { fetchUsersWithAttendanceBySchedId } from '../../api/userApi';
+import { DataGrid, GridToolbarQuickFilter, GridToolbar } from "@mui/x-data-grid";
+
+function QuickSearchToolbar() {
+  return (
+    <Box
+      sx={{
+        p: 0.5,
+        pb: 0,
+        display: 'flex',
+        justifyContent: 'end'
+      }}
+    >
+      <GridToolbarQuickFilter
+        quickFilterParser={(searchInput) =>
+          searchInput
+            .split(',')
+            .map((value) => value.trim())
+            .filter((value) => value !== '')
+        }
+      />
+    </Box>
+  );
+}
 
 function Attendance() {
   const { id } = useParams();
@@ -58,18 +81,6 @@ function Attendance() {
             <Button variant="contained" onClick={handleGoBack} startIcon={<KeyboardReturn />}>Schedule List</Button>
             <Button variant="contained" color='success' endIcon={<Add />} onClick={() => setStoreModal(true)}>Attendance</Button>
           </Stack>
-          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%', justifyContent: 'end' }}>
-              <Typography sx={{ display: { xs: 'none', md: 'block' } }}>Search: </Typography>
-              <TextField
-                variant="outlined"
-                name="student_search"
-                label="Enter Student Name"
-                size="small"
-                sx={{ width: { xs: '100%', md: 'auto' } }}
-              />
-            </Box>
-          </Box>
         </Box>
         <Box>
           <Divider />
@@ -161,43 +172,160 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
   }, []);
 
   const columns = [
-    { id: 'pictureFormat', label: 'Avatar' },
-    { id: 'name', label: 'Name' },
-    { id: 'amInFormat', label: <Chip color={active.amInChip ? 'success' : 'error'} label="AM IN" /> },
-    { id: 'amOutFormat', label: <Chip color={active.amOutChip ? 'success' : 'error'} label='AM OUT' /> },
-    { id: 'pmInFormat', label: <Chip color={active.pmINChip ? 'success' : 'error'} label='PM IN' /> },
-    { id: 'pmOutFormat', label: <Chip color={active.pmOutChip ? 'success' : 'error'} label='PM OUT' /> },
-    { id: 'setting', label: 'Settings' },
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 1,
+      headerAlign: "center",
+    },
+    {
+      field: "name",
+      headerName: "Name",
+      flex: 1,
+      headerAlign: "center",
+    },
+    {
+      field: "year",
+      headerName: "Year",
+      flex: 1,
+      headerAlign: "center",
+    },
+    {
+      field: "section",
+      headerName: "Section",
+      flex: 1,
+      headerAlign: "center",
+    },
+    {
+      field: "amInFormat",
+      headerName: "Am In",
+      flex: 1,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Box sx={{ textAlign: "center" }}>
+          {params.row.amInFormat}
+        </Box>
+      ),
+    },
+    {
+      field: "amOutFormat",
+      headerName: "Am Out",
+      flex: 1,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Box sx={{ textAlign: "center" }}>
+          {params.row.amOutFormat}
+        </Box>
+      ),
+    },
+    {
+      field: "pmInFormat",
+      headerName: "Pm In",
+      flex: 1,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Box sx={{ textAlign: "center" }}>
+          {params.row.pmInFormat}
+        </Box>
+      ),
+    },
+    {
+      field: "pmOutFormat",
+      headerName: "Pm Out",
+      flex: 1,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Box sx={{ textAlign: "center" }}>
+          {params.row.pmOutFormat}
+        </Box>
+      ),
+    },
+    {
+      field: "setting",
+      headerName: "Setting",
+      renderCell: (params) => (
+        <Box sx={{ textAlign: "center" }}>
+          {params.row.setting}
+        </Box>
+      ),
+      headerAlign: "center",
+    },
   ];
-  const rows = useMemo(() =>
-    combinedData.map((item) => {
-      const attendance = item.attendances?.[0];
-      return {
-        _id: item._id,
-        pictureFormat: <Box sx={{display: 'flex', justifyContent: 'center'}}>
-          <Avatar src={item.picture} alt={item.picture} />
-        </Box>,
+
+  // const rows = useMemo(() =>
+  //   combinedData.map((item) => {
+  //     const attendance = item.attendances?.[0];
+  //     return {
+  //       _id: item._id,
+  //       pictureFormat: <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+  //         <Avatar src={item.picture} alt={item.picture} />
+  //       </Box>,
+  //       name: `${item.lastName}, ${item.firstName} ${item.middleName[0]}.`,
+  //       amInFormat: attendance?.amIn ?
+  //         <Chip color='success' label={moment(attendance.amIn).format('hh:mm A')} /> :
+  //         <Chip color='error' label='Absent' />,
+  //       amOutFormat: attendance?.amOut ?
+  //         <Chip color='success' label={moment(attendance.amOut).format('hh:mm A')} /> :
+  //         <Chip color='error' label='Absent' />,
+  //       pmInFormat: attendance?.pmIn ?
+  //         <Chip color='success' label={moment(attendance.pmIn).format('hh:mm A')} /> :
+  //         <Chip color='error' label='Absent' />,
+  //       pmOutFormat: attendance?.pmOut ?
+  //         <Chip color='success' label={moment(attendance.pmOut).format('hh:mm A')} /> :
+  //         <Chip color='error' label='Absent' />,
+  //       picture: item.picture,
+  //       amIn: attendance?.amIn ? attendance.amIn : null,
+  //       amOut: attendance?.amOut ? attendance.amOut : null,
+  //       pmIn: attendance?.pmIn ? attendance.pmIn : null,
+  //       pmOut: attendance?.pmOut ? attendance.pmOut : null,
+  //       setting:
+  //         <DropDown>
+  //           {attendance?._id ? (
+  //             <>
+  //               <MenuItem onClick={() => handleUpdateModal(item)}>
+  //                 <Typography color="warning.main">Edit</Typography>
+  //               </MenuItem>
+  //               <MenuItem onClick={(e) => handleDeleteModal(item)}>
+  //                 <Typography color="error.main">Delete</Typography>
+  //               </MenuItem>
+  //             </>
+  //           ) : (
+  //             <MenuItem disabled>
+  //               <Typography color="error.main">No Record</Typography>
+  //             </MenuItem>
+  //           )}
+  //         </DropDown>
+  //     }
+  //   }),
+  //   [combinedData]
+  // );
+
+  const rows = useMemo(
+    () =>
+      combinedData.map((item) => ({
+        ...item,
+        id: item._id,
         name: `${item.lastName}, ${item.firstName} ${item.middleName[0]}.`,
-        amInFormat: attendance?.amIn ?
-          <Chip color='success' label={moment(attendance.amIn).format('hh:mm A')} /> :
+        amInFormat: item?.attendances[0]?.amIn ?
+          <Chip color='success' label={moment(item?.attendances[0]?.amIn).format('hh:mm A')} /> :
           <Chip color='error' label='Absent' />,
-        amOutFormat: attendance?.amOut ?
-          <Chip color='success' label={moment(attendance.amOut).format('hh:mm A')} /> :
+        amOutFormat: item?.attendances[0]?.amOut != null ?
+          <Chip color='success' label={moment(item?.attendances[0]?.amOut).format('hh:mm A')} /> :
           <Chip color='error' label='Absent' />,
-        pmInFormat: attendance?.pmIn ?
-          <Chip color='success' label={moment(attendance.pmIn).format('hh:mm A')} /> :
+        pmInFormat: item?.attendances[0]?.pmIn != null ?
+          <Chip color='success' label={moment(item?.attendances[0]?.pmIn).format('hh:mm A')} /> :
           <Chip color='error' label='Absent' />,
-        pmOutFormat: attendance?.pmOut ?
-          <Chip color='success' label={moment(attendance.pmOut).format('hh:mm A')} /> :
+        pmOutFormat: item?.attendances[0]?.pmOut != null ?
+          <Chip color='success' label={moment(item?.attendances[0]?.pmOut).format('hh:mm A')} /> :
           <Chip color='error' label='Absent' />,
         picture: item.picture,
-        amIn: attendance?.amIn ? attendance.amIn : null,
-        amOut: attendance?.amOut ? attendance.amOut : null,
-        pmIn: attendance?.pmIn ? attendance.pmIn : null,
-        pmOut: attendance?.pmOut ? attendance.pmOut : null,
+        amIn: item?.attendances[0]?.amIn ? item?.attendances[0]?.amIn : null,
+        amOut: item?.attendances[0]?.amOut ? item?.attendances[0]?.amOut : null,
+        pmIn: item?.attendances[0]?.pmIn ? item?.attendances[0]?.pmIn : null,
+        pmOut: item?.attendances[0]?.pmOut ? item?.attendances[0]?.pmOut : null,
         setting:
           <DropDown>
-            {attendance?._id ? (
+            {item?.attendances[0]?._id ? (
               <>
                 <MenuItem onClick={() => handleUpdateModal(item)}>
                   <Typography color="warning.main">Edit</Typography>
@@ -212,16 +340,21 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
               </MenuItem>
             )}
           </DropDown>
-      }
-    }),
+      })),
     [combinedData]
   );
 
   return (
     <Box>
-      <DataTable
-        rows={rows}
+      <DataGrid
         columns={columns}
+        rows={rows}
+        slots={{ toolbar: QuickSearchToolbar }}
+        slotProps={{
+            toolbar: {
+                showQuickFilter: true,
+            },
+        }}
       />
       <Drawer anchor='right' open={updateModal} onClose={handleCloseModal}>
         <Update onClose={handleCloseModal} selected={selected} handleGetData={handleGetData} />
