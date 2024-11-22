@@ -90,6 +90,7 @@ function UsersList({ usersData, setIsLoading, setUserData }) {
 }
 
 function UserDetails({ userData, setUserData, getUsers }) {
+    const [errors, setErrors] = useState({});
     const [toggleUpdate, setToggleUpdate] = useState(true)
     const [deleteModal, setDeleteModal] = useState(false)
 
@@ -106,14 +107,23 @@ function UserDetails({ userData, setUserData, getUsers }) {
     }
 
     const handleUpdateSubmit = async () => {
-        const { data, error } = await updateUser(userData)
-        if (error) {
-            toast.error(error)
-        } else {
-            getUsers()
-            toast.success('Successfully Updated')
+        const newErrors = {};
+        if (userData.newPassword) {
+            if (userData.newPassword.length < 6) newErrors.newPassword = 'Password must be at least 6 characters';
+            toast.error(newErrors.newPassword)
         }
-        setToggleUpdate(true)
+
+        setErrors(newErrors);
+        if (Object.keys(newErrors).length === 0) {
+            const { data, error } = await updateUser(userData)
+            if (error) {
+                toast.error(error)
+            } else {
+                getUsers()
+                toast.success('Successfully Updated')
+            }
+            setToggleUpdate(true)
+        }
     }
 
     const handleDeleteSubmit = async () => {
@@ -186,7 +196,7 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                     onChange={handleChange}
                                 />
                                 <Typography fontWeight={'bold'}>Student Information</Typography>
-                                <Divider/>
+                                <Divider />
                                 <Typography>Student ID</Typography>
                                 <TextField
                                     name='studentId'
@@ -275,6 +285,17 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                     <MenuItem value='admin'>Admin</MenuItem>
                                     <MenuItem value='user'>User</MenuItem>
                                 </TextField>
+                                <Typography fontWeight={'bold'}>Reset Password</Typography>
+                                <Divider />
+                                <TextField
+                                    name='newPassword'
+                                    label='Enter New Password'
+                                    sx={{ width: '100%' }}
+                                    disabled={toggleUpdate}
+                                    onChange={handleChange}
+                                    error={Boolean(errors.newPassword)}
+                                    helperText={errors.newPassword}
+                                />
                             </Stack>
                         </Grid>
                     </Grid>
