@@ -267,12 +267,11 @@ function PendingTable({pendingData, handleGetData, userData}) {
             
         },
     ]
-
     const rows = useMemo(() => 
         pendingData.map((item) => ({
             ...item,
             id: item._id,
-            name: item.userId?.name,
+            name: `${item.userId?.lastName}, ${item.userId?.firstName} ${item.userId?.lastName[0]}.`,
             date: moment(item.date).format('MMM DD, YYYY')
         })),
         [pendingData]
