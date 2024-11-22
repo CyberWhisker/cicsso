@@ -250,7 +250,7 @@ function Store({setEvents, onClose}) {
                                     }}
                                 />
                             </Stack>
-                            <Divider/>
+                            {/* <Divider/>
                             <Typography>Insert Banner</Typography>
                             <TextField
                                 name='image'
@@ -259,7 +259,7 @@ function Store({setEvents, onClose}) {
                                 value={formData.image}
                                 onChange={handleChange}
                                 type='file'
-                            />
+                            /> */}
                             <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
                                 Submit
                             </Button>

@@ -97,7 +97,7 @@ function Update({data, setEvents, events, onClose}) {
                                 }}
                             />
                             <Divider/>
-                            <Typography>Insert Banner</Typography>
+                            {/* <Typography>Insert Banner</Typography>
                             <TextField
                                 name='image'
                                 variant="outlined"
@@ -105,7 +105,7 @@ function Update({data, setEvents, events, onClose}) {
                                 value={formData.image}
                                 onChange={handleChange}
                                 type='file'
-                            />
+                            /> */}
                             <Button type='submit' variant='contained' color='warning' sx={{ mt: 2 ,width: '100%'}}>
                                 Submit
                             </Button>

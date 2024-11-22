@@ -64,13 +64,13 @@ function UsersList({ usersData, setIsLoading, setUserData }) {
         setIsLoading(false)
     }
     return (
-        <Card sx={{ p: 2, height: '75vh', overflow: 'auto' }} elevation={5}>
+        <Card sx={{ p: 2, minHeight: '75vh', overflow: 'auto' }} elevation={5}>
             <Stack direction={'column'} spacing={2}>
                 <Typography fontWeight={'bold'}>User List:</Typography>
                 <Divider />
                 {usersData.map((item, index) => (
                     <CustomCard key={index} >
-                        <Box sx={{ height: 50 }} onClick={() => handleUserData(item._id)}>
+                        <Box sx={{ minHeight: 50 }} onClick={() => handleUserData(item._id)}>
                             <Stack direction={'row'} spacing={2}>
                                 <Avatar alt='img' src={item.picture} sx={{
                                     height: 50,
