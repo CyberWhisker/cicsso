@@ -27,7 +27,7 @@ export default function Procedure() {
             <Typography variant="h6" component="span">
                 Biometrics
             </Typography>
-            <Typography>Lorem ipsum dolor sit amet consectetur adipisicing elit. </Typography>
+            <Typography>Securely verify identities using advanced biometric technology for accurate and reliable access.</Typography>
             </TimelineContent>
         </TimelineItem>
         <TimelineItem>
@@ -41,7 +41,7 @@ export default function Procedure() {
             <Typography variant="h6" component="span">
                 Attendance
             </Typography>
-            <Typography>Lorem ipsum dolor sit amet consectetur adipisicing elit. </Typography>
+            <Typography>Easily log and verify attendance through a user-friendly interface for efficient record-keeping.</Typography>
             </TimelineContent>
         </TimelineItem>
         <TimelineItem>
@@ -55,7 +55,7 @@ export default function Procedure() {
             <Typography variant="h6" component="span">
                 Payment
             </Typography>
-            <Typography>Lorem ipsum dolor sit amet consectetur adipisicing elit. </Typography>
+            <Typography>Quickly settle contributions and fees through a seamless and secure payment platform.</Typography>
             </TimelineContent>
         </TimelineItem>
         <TimelineItem>
@@ -70,7 +70,7 @@ export default function Procedure() {
             <Typography variant="h6" component="span">
                 Clearance
             </Typography>
-            <Typography>Download Clearance in PDF file with Signature</Typography>
+            <Typography>Generate and download clearance forms instantly, complete with a validated signature.</Typography>
             </TimelineContent>
         </TimelineItem>
         </Timeline>

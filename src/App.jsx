@@ -40,7 +40,7 @@ function App() {
 
         <Route path="/dashboard" element={
           <PrivateRoute>
-            {auth && auth.user.role == 'admin' ? (
+            {auth && auth.user.role != 'user' ? (
               <AdminDashboard />
             ) : (
               <UserDashboard />
@@ -50,7 +50,7 @@ function App() {
 
         <Route path="/users" element={
           <PrivateRoute>
-            {auth && auth.user.role == 'admin' ? (
+            {auth && auth.user.role != 'user' ? (
               <AdminUsers />
             ) : (
               <Login />
@@ -60,7 +60,7 @@ function App() {
 
         <Route path="/events" element={
           <PrivateRoute>
-            {auth && auth.user.role == 'admin' ? (
+            {auth && auth.user.role != 'user' ? (
               <AdminEvents />
             ) : (
               <Login />
@@ -70,7 +70,7 @@ function App() {
 
         <Route path="/schedule/:id" element={
           <PrivateRoute>
-            {auth && auth.user.role == 'admin' ? (
+            {auth && auth.user.role != 'user' ? (
               <AdminSchedule />
             ) : (
               <Login />
@@ -80,7 +80,7 @@ function App() {
 
         <Route path="/attendance/:id" element={
           <PrivateRoute>
-            {auth && auth.user.role == 'admin' ? (
+            {auth && auth.user.role != 'user' ? (
               <AdminAttendance />
             ) : (
               <Login />
@@ -90,7 +90,7 @@ function App() {
 
         <Route path="/penalties" element={
           <PrivateRoute>
-            {auth && auth.user.role == 'admin' ? (
+            {auth && auth.user.role != 'user' ? (
               <AdminPenalties />
             ) : (
               <Login />
@@ -100,7 +100,7 @@ function App() {
 
         <Route path="/transaction/:id" element={
           <PrivateRoute>
-            {auth && auth.user.role == 'admin' ? (
+            {auth && auth.user.role != 'user' ? (
               <AdminTransaction />
             ) : (
               <Login />
@@ -110,7 +110,7 @@ function App() {
 
         <Route path="/projects" element={
           <PrivateRoute>
-            {auth && auth.user.role == 'admin' ? (
+            {auth && auth.user.role != 'user' ? (
               <AdminProject />
             ) : (
               <Login />
@@ -120,7 +120,7 @@ function App() {
 
         <Route path="/item/:id" element={
           <PrivateRoute>
-            {auth && auth.user.role == 'admin' ? (
+            {auth && auth.user.role != 'user' ? (
               <AdminItem />
             ) : (
               <Login />
@@ -130,7 +130,7 @@ function App() {
 
         <Route path="/collection" element={
           <PrivateRoute>
-            {auth && auth.user.role == 'admin' ? (
+            {auth && auth.user.role != 'user' ? (
               <AdminCollection />
             ) : (
               <UserCollection />

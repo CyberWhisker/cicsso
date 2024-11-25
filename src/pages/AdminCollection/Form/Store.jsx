@@ -76,7 +76,7 @@ function Store({ handleGetData, handleCloseModal }) {
                                 name='label'
                                 variant="outlined"
                                 sx={{ width: '100%' }}
-                                value={formData.label}
+                                value={formData?.label || ""}
                                 onChange={handleChange}
                                 error={submitted && !formData.label}
                                 helperText={submitted && !formData.label ? "Required" : ""}

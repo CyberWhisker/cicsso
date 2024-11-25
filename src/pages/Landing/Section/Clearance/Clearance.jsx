@@ -28,13 +28,10 @@ function Clearance() {
       </Box>
       <Box sx={{ width: '50%', textAlign: { xs: 'center', sm: 'left' } }}>
         <Typography variant="h3" fontWeight="bold">
-            Clearance
+          Clearance
         </Typography>
         <Typography variant="h6" sx={{ mt: 2, width: '100%' }}>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Itaque similique corporis
-          exercitationem suscipit, odit rerum inventore architecto aspernatur aliquam alias
-          possimus adipisci, repellendus veritatis, nemo necessitatibus aut dolores corrupti
-          eligendi!
+          Simplify the clearance process with automated features. Users can download their clearance forms in a PDF format, complete with digital signatures for authentication and convenience.
         </Typography>
       </Box>
     </Stack>

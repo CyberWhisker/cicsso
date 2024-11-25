@@ -220,14 +220,14 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                 <Typography>Program:</Typography>
                                 <TextField
                                     select
-                                    name='lastName'
+                                    name='program'
                                     sx={{ width: '100%' }}
                                     value={userData.program}
                                     disabled={toggleUpdate}
                                     onChange={handleChange}
                                 >
                                     <MenuItem value='BS Information Technology'>BS Information Technology</MenuItem>
-                                    <MenuItem value='BS Information System'>BS Information System</MenuItem>
+                                    <MenuItem value='BS Information System'>BS Information Systems</MenuItem>
                                 </TextField>
                                 <Stack direction={'row'} spacing={2}>
                                     <Box sx={{ width: '100%' }}>
@@ -284,6 +284,7 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                 >
                                     <MenuItem value='admin'>Admin</MenuItem>
                                     <MenuItem value='user'>User</MenuItem>
+                                    <MenuItem value='superAdmin'>Super Admin</MenuItem>
                                 </TextField>
                                 <Typography fontWeight={'bold'}>Reset Password</Typography>
                                 <Divider />

@@ -17,6 +17,8 @@ import Delete from './Form/Delete';
 import { AlertModal } from '../../components';
 import { fetchItem } from '../../api/ItemApi';
 import { fetchCollections, fetchCollectionWithTransaction } from '../../api/CollectionApi';
+import { fetchProjects } from '../../api/ProjectApi';
+import { PieChart } from '@mui/x-charts';
 
 function Dashboard() {
     const [isLoading, setIsLoading] = useState(true)
@@ -116,6 +118,12 @@ function Dashboard() {
                     </Grid>
                     <Grid item xs={6} md={3}>
                         <EventList allData={allData} />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={3} pb={2}>
+                    {/* Chart */}
+                    <Grid item xs={12} md={8} lg={9}>
+                        <ProjectList />
                     </Grid>
                 </Grid>
             </Stack>
@@ -362,6 +370,74 @@ function EventList({ allData }) {
             })}
         </Paper>
     );
+}
+
+function ProjectList() {
+    const [data, setData] = useState([])
+
+    const handleGetData = async () => {
+        const { data, error } = await fetchProjects()
+        if (!error) {
+            const filteredData = data.filter((item) => item.status == "Complete")
+            setData(filteredData)
+        }
+    }
+
+    useEffect(() => {
+        handleGetData()
+    }, [])
+
+    return (
+        <Card sx={{ p: 2 }}>
+            <Stack spacing={1}>
+                <Typography fontWeight={'bold'}>Project List: Completed</Typography>
+                <Divider />
+                {data.map((item, index) => {
+
+                    const totalCost = item.items
+                        .reduce((sum, item) => sum + item.amount * item.quantity, 0);
+                    const totalTransaction = item.collectionId.transaction
+                        .filter((transaction) => transaction.status === "confirm")
+                        .reduce((sum, item) => sum + item.amount, 0)
+                    const remainingFund = totalTransaction - totalCost
+
+                    const graphData = item.items.map((item) => ({
+                        id: item._id,
+                        label: item.item,
+                        value: item.amount * item.quantity
+                    }))
+                    return (
+                        <Grid container key={index}>
+                            <Grid item xs={5} justifyContent={'space-between'}>
+                                <Stack spacing={2}>
+                                    <Typography fontWeight={'bold'}>{item.project}</Typography>
+                                    <Stack>
+                                        <Typography >Funds: {item.collectionId.collectionName}</Typography>
+                                        <Typography >Total Funds: ₱ {totalTransaction}</Typography>
+                                        <Typography >Project Cost: ₱ {totalCost}</Typography>
+                                        <Typography >Remaining Funds: ₱ {remainingFund}</Typography>
+                                        <Typography color={'green'}>Status: {item.status}</Typography>
+                                    </Stack>
+                                </Stack>
+                                <Typography fontWeight={'bold'}>Completed At: {moment(item.updatedAt).format('MMMM DD, YYYY')}</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <PieChart
+                                    series={[
+                                        {
+                                            data: graphData,
+                                        },
+                                    ]}
+                                    width={400}
+                                    height={200}
+                                />
+                            </Grid>
+                        </Grid>
+                    )
+                })}
+            </Stack>
+        </Card>
+    )
 }
 
 export default Dashboard

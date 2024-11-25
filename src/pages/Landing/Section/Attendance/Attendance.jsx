@@ -29,13 +29,10 @@ function Attendance() {
         </Box>
         <Box sx={{ width: '50%', textAlign: { xs: 'center', sm: 'left' } }}>
           <Typography variant="h3" fontWeight="bold" textAlign='center'>
-              Attendance
+            Attendance
           </Typography>
           <Typography variant="h6" sx={{ mt: 2, width: '100%' }}>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Itaque similique corporis
-            exercitationem suscipit, odit rerum inventore architecto aspernatur aliquam alias
-            possimus adipisci, repellendus veritatis, nemo necessitatibus aut dolores corrupti
-            eligendi!
+            Monitor and manage attendance records effortlessly. The system provides a comprehensive overview of attendance data, reducing manual processes and enhancing accuracy.
           </Typography>
         </Box>
       </Stack>

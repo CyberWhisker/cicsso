@@ -28,13 +28,10 @@ function Payment() {
       </Box>
       <Box sx={{ width: '50%', textAlign: { xs: 'center', sm: 'left' } }}>
         <Typography variant="h3" fontWeight="bold">
-            Payment
+          Payment
         </Typography>
         <Typography variant="h6" sx={{ mt: 2, width: '100%' }}>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Itaque similique corporis
-          exercitationem suscipit, odit rerum inventore architecto aspernatur aliquam alias
-          possimus adipisci, repellendus veritatis, nemo necessitatibus aut dolores corrupti
-          eligendi!
+          Facilitate secure and efficient payment processing for contributions, fees, and fines. The system ensures transparency and provides real-time payment status updates for users.
         </Typography>
       </Box>
     </Stack>

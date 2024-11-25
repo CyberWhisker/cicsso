@@ -80,7 +80,7 @@ function Clearance() {
 
                 <DataGridList isLoading={isLoading} clearanceData={clearanceData} contentRef={contentRef} setSelected={setSelected} selected={selected} handleGetData={handleGetData} />
                 {selected && (
-                    <div style={{display: 'none'}}>
+                    <div style={{ display: 'none' }}>
                         <div ref={contentRef}>
                             <StudentClearance selected={selected} />
                         </div>
@@ -98,46 +98,33 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
     const [anchorEl, setAnchorEl] = useState(null);
     const [updateModal, setUpdateModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
+    const [selectedRows, setSelectedRows] = useState([]); // State for selected rows
 
     const handleMenuOpen = (event, item) => {
-        setAnchorEl(event.currentTarget)
-        setSelected(item)
-    }
-    const handleMenuClose = (event, item) => {
-        setAnchorEl(null)
-    }
+        setAnchorEl(event.currentTarget);
+        setSelected(item);
+    };
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
 
     const handleUpdateModal = () => {
         handleMenuClose();
-        setUpdateModal(true)
-    }
+        setUpdateModal(true);
+    };
     const handleDeleteModal = () => {
         handleMenuClose();
-        setDeleteModal(true)
-    }
+        setDeleteModal(true);
+    };
     const handleCloseModal = () => {
-        setDeleteModal(false)
-        setUpdateModal(false)
-    }
+        setDeleteModal(false);
+        setUpdateModal(false);
+    };
+
     const columns = [
-        {
-            field: 'id',
-            headerName: 'Id',
-            flex: 1,
-            headerAlign: 'center',
-        },
-        {
-            field: 'name',
-            headerName: 'Name',
-            flex: 1,
-            headerAlign: 'center'
-        },
-        {
-            field: 'semester',
-            headerName: 'Semester',
-            flex: 1,
-            headerAlign: 'center',
-        },
+        { field: 'id', headerName: 'Id', flex: 1, headerAlign: 'center' },
+        { field: 'name', headerName: 'Name', flex: 1, headerAlign: 'center' },
+        { field: 'semester', headerName: 'Semester', flex: 1, headerAlign: 'center' },
         {
             field: 'clearance',
             headerName: 'Clearance',
@@ -156,12 +143,8 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
             headerAlign: 'center',
             renderCell: (params) => (
                 <Box sx={{ textAlign: 'center' }}>
-                    {params.row.status == "Complete" && (
-                        <Chip label="Complete" color='success' />
-                    )}
-                    {params.row.status == "Pending" && (
-                        <Chip label="Pending" color='warning' />
-                    )}
+                    {params.row.status === 'Complete' && <Chip label="Complete" color="success" />}
+                    {params.row.status === 'Pending' && <Chip label="Pending" color="warning" />}
                 </Box>
             ),
         },
@@ -173,40 +156,42 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
                     <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{ cursor: 'pointer' }} />
                 </Box>
             ),
-            headerAlign: 'center'
-
+            headerAlign: 'center',
         },
-    ]
+    ];
 
-    const rows = useMemo(() =>
-        clearanceData.map((item) => ({
-            ...item,
-            id: item._id,
-            name: `${item.user.lastName}, ${item.user.firstName} ${item.user.middleName[0]}.`,
-            semester: item.schoolYear.semester
-        })),
+    const rows = useMemo(
+        () =>
+            clearanceData.map((item) => ({
+                ...item,
+                id: item._id, // Ensure this matches the `selectionModel` IDs
+                name: `${item.user.lastName}, ${item.user.firstName} ${item.user.middleName[0]}.`,
+                semester: item.schoolYear.semester,
+            })),
         [clearanceData]
     );
+
+    // Filter selected data based on the IDs in selectedRows
+    const selectedData = rows.filter((row) => selectedRows.includes(row.id));
+
     return (
         <>
+            <PrintCheckedPdfButton selectedData={selectedData} />
             <Card sx={{ width: '100%', height: 550 }} elevation={5}>
                 <DataGrid
                     loading={isLoading}
                     columns={columns}
                     rows={rows}
                     slots={{ toolbar: QuickSearchToolbar }}
-                    slotProps={{
-                        toolbar: {
-                            showQuickFilter: true,
-                        },
+                    checkboxSelection
+                    disableRowSelectionOnClick
+                    onRowSelectionModelChange={(newSelectionModel) => {
+                        setSelectedRows(newSelectionModel); // Update the selected rows
                     }}
+                    rowSelectionModel={selectedRows}
                 />
 
-                <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                >
+                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
                     <MenuItem onClick={handleUpdateModal}>
                         <Typography color="warning.main">Edit</Typography>
                     </MenuItem>
@@ -216,12 +201,38 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
                 </Menu>
             </Card>
 
-            <Drawer open={updateModal} onClose={handleCloseModal} anchor='right'>
+            <Drawer open={updateModal} onClose={handleCloseModal} anchor="right">
                 <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
             </Drawer>
-            <AlertModal open={deleteModal} onClose={handleCloseModal} anchor='right'>
+            <AlertModal open={deleteModal} onClose={handleCloseModal} anchor="right">
                 <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
             </AlertModal>
+        </>
+    );
+}
+
+function PrintCheckedPdfButton({ selectedData }) {
+    const handlePrint = async () => {
+        printFile()
+    };
+    const contentRef = useRef(null);
+    const printFile = useReactToPrint({ contentRef })
+    return (
+        <>
+            {selectedData.length > 0 && <Button variant='contained' onClick={() => handlePrint()}>PDF FILE Selected ({selectedData.length}) </Button>}
+
+
+            {selectedData.length > 0 && (
+                <div style={{ display: 'none' }}>
+                    <div ref={contentRef}>
+                        {selectedData.map((item, index) => (
+                            <div key={index} style={{ pageBreakAfter: 'always' }}>
+                                <StudentClearance selected={item} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </>
     )
 }

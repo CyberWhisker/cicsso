@@ -1,6 +1,6 @@
 // Example of correct usage
 import { Divider, MenuItem, Typography } from '@mui/material';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -11,6 +11,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import { AttachMoney, CreditCard, Folder, GetAppRounded, List, Message, Notifications, PanTool, Settings, WarningAmber, WavingHand } from '@mui/icons-material';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { CalendarIcon } from '@mui/x-date-pickers';
+import { AuthContext } from '../context/AuthContext';
 
 function Navlist({ setopen }) {
   let location = useLocation();
@@ -20,7 +21,7 @@ function Navlist({ setopen }) {
       {location.pathname == '/' && (
         <NavLanding setopen={setopen} />
       )}
-      {(auth && auth.user.role == 'admin' && location.pathname != '/') && (
+      {(auth && auth.user.role != 'user' && location.pathname != '/') && (
         <NavAdmin />
       )}
       {(auth && auth.user.role == 'user' && location.pathname != '/') && (
@@ -61,6 +62,7 @@ function NavLanding({ setopen }) {
 }
 
 function NavAdmin() {
+  const {auth} = useContext(AuthContext)
   const location = useLocation();
   return (
     <React.Fragment>
@@ -84,7 +86,7 @@ function NavAdmin() {
         <ListItemIcon>
           <List />
         </ListItemIcon>
-        <ListItemText primary="Events" />
+        <ListItemText primary="Attendance" />
       </ListItemButton>
 
       <ListItemButton component={Link} to={'/penalties'} selected={location.pathname.startsWith('/penalties')}>
@@ -132,13 +134,14 @@ function NavAdmin() {
       </ListItemButton>
 
       <Divider />
-
-      <ListItemButton component={Link} to={'/schoolYear'} selected={location.pathname.startsWith('/schoolYear')}>
-        <ListItemIcon>
-          <CalendarIcon />
-        </ListItemIcon>
-        <ListItemText primary="School Year" />
-      </ListItemButton>
+      {auth.user.role == "superAdmin" && (
+        <ListItemButton component={Link} to={'/schoolYear'} selected={location.pathname.startsWith('/schoolYear')}>
+          <ListItemIcon>
+            <CalendarIcon />
+          </ListItemIcon>
+          <ListItemText primary="School Year" />
+        </ListItemButton>
+      )}
 
       <ListItemButton component={Link} to={'/signatories'} selected={location.pathname.startsWith('/signatories')}>
         <ListItemIcon>

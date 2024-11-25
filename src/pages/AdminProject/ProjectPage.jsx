@@ -89,11 +89,15 @@ function EventList({ setIsLoading }) {
             <CustomCard>
               <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary">{item.project}</Typography>
-                  <DropDown >
-                    <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
-                    <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
-                  </DropDown>
+                  <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{item.project}</Typography>
+                  <Stack direction={'row'}>
+                    {item.status == "Ongoing" && <Chip label={item.status} color='warning'/>}
+                    {item.status == "Complete" && <Chip label={item.status} color='success'/>}
+                    <DropDown >
+                      <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
+                      <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
+                    </DropDown>
+                  </Stack>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
                   component={Link}

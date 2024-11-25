@@ -62,7 +62,7 @@ function NavSideBar({ children, themeMode }) {
               <Stack>
                 <Typography>CICSSO</Typography>
                 <Divider/>
-                <Typography>{auth.user.role == "admin" ? "Admin" : "Student"}</Typography>
+                <Typography>{auth.user.role != "user" ? "Admin" : "Student"}</Typography>
               </Stack>
             </ListItemText>
             <ChevronLeft />
