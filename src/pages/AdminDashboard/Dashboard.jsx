@@ -16,6 +16,7 @@ import Update from './Form/Update';
 import Delete from './Form/Delete';
 import { AlertModal } from '../../components';
 import { fetchItem } from '../../api/ItemApi';
+import { fetchCollections, fetchCollectionWithTransaction } from '../../api/CollectionApi';
 
 function Dashboard() {
     const [isLoading, setIsLoading] = useState(true)
@@ -28,12 +29,12 @@ function Dashboard() {
     const [userData, setUserData] = useState([]);
     const handleGetData = async () => {
         const [
-            {data: userData, error: userError},
-            {data: eventData, error: eventError},
-            {data: schedData, error: schedError},
-            {data: atttendData, error: attendError},
-            {data: transacData, error: transacError},
-            {data: itemData, error: itemError},
+            { data: userData, error: userError },
+            { data: eventData, error: eventError },
+            { data: schedData, error: schedError },
+            { data: atttendData, error: attendError },
+            { data: transacData, error: transacError },
+            { data: itemData, error: itemError },
         ] = await Promise.all([
             fetchUsers(),
             fetchEvent(),
@@ -47,7 +48,7 @@ function Dashboard() {
         } else {
             // count total Users
             const totalUsers = userData.length
-            setTotalUsers(totalUsers)  
+            setTotalUsers(totalUsers)
 
             // count total Penalties
             const filterSched = atttendData.filter(attend => moment(attend.data).isSameOrBefore(moment()))
@@ -73,8 +74,8 @@ function Dashboard() {
             //count total Pending Transaction
             const totalPendingTransaction = transacData.reduce((count, current) => {
                 return current.status === 'pending' ? count + 1 : count;
-              }, 0);
-              setTotalPending(totalPendingTransaction)
+            }, 0);
+            setTotalPending(totalPendingTransaction)
 
             // count total Transaction
             const totalFund = transacData.reduce((total, current) => {
@@ -92,29 +93,29 @@ function Dashboard() {
                 ...event,
                 schedules: schedData.filter(sched => sched.eventId == event._id)
             }))
-            
+
             setAllData(combinedEventSched)
             setIsLoading(false)
         }
     }
     useEffect(() => {
         handleGetData();
-    },[])
+    }, [])
     return (
         <Master>
             <Stack gap={2}>
                 {isLoading && (
-                    <LinearProgress/>
+                    <LinearProgress />
                 )}
-                <InfoSection totalUsers={totalUsers} totalPenalties={totalPenalties} totalFunds={totalFunds} totalPending={totalPending}/>
-                
+                <InfoSection totalUsers={totalUsers} totalPenalties={totalPenalties} totalFunds={totalFunds} totalPending={totalPending} />
+
                 <Grid container spacing={3}>
                     {/* Chart */}
                     <Grid item xs={12} md={8} lg={9}>
-                        <PendingTable pendingData={pendingData} handleGetData={handleGetData} userData={userData}/>
+                        <PendingTable pendingData={pendingData} handleGetData={handleGetData} userData={userData} />
                     </Grid>
                     <Grid item xs={6} md={3}>
-                        <EventList allData={allData}/>
+                        <EventList allData={allData} />
                     </Grid>
                 </Grid>
             </Stack>
@@ -122,30 +123,30 @@ function Dashboard() {
     )
 }
 
-function InfoSection({totalUsers, totalPenalties, totalFunds, totalPending}) {
+function InfoSection({ totalUsers, totalPenalties, totalFunds, totalPending }) {
     const theme = useTheme();
     return (
         <Grid container spacing={2}>
             <Grid item xs={6} md={3}>
-                <Card sx={{p:2, backgroundColor: theme.palette.primary.main}}>
+                <Card sx={{ p: 2, backgroundColor: theme.palette.primary.main }}>
                     <Typography>Users:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">{totalUsers}</Typography>
                 </Card>
             </Grid>
             <Grid item xs={6} md={3}>
-                <Card sx={{p:2, backgroundColor: theme.palette.error.main}}>
+                <Card sx={{ p: 2, backgroundColor: theme.palette.error.main }}>
                     <Typography>Penalty:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">{totalPenalties}</Typography>
                 </Card>
             </Grid>
             <Grid item xs={6} md={3}>
-                <Card sx={{p:2, backgroundColor: theme.palette.warning.main}}>
+                <Card sx={{ p: 2, backgroundColor: theme.palette.warning.main }}>
                     <Typography>Pending Transaction:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">{totalPending}</Typography>
                 </Card>
             </Grid>
             <Grid item xs={6} md={3}>
-                <Card sx={{p:2, backgroundColor: theme.palette.success.main}}>
+                <Card sx={{ p: 2, backgroundColor: theme.palette.success.main }}>
                     <Typography>Funds:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">{totalFunds}</Typography>
                 </Card>
@@ -154,7 +155,7 @@ function InfoSection({totalUsers, totalPenalties, totalFunds, totalPending}) {
     )
 }
 
-function PendingTable({pendingData, handleGetData, userData}) {
+function PendingTable({ pendingData, handleGetData, userData }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selected, setSelected] = useState(null);
     const [updateModal, setUpdateModal] = useState(false);
@@ -180,7 +181,7 @@ function PendingTable({pendingData, handleGetData, userData}) {
     }
     const handleMenuOpen = (event, item) => {
         setAnchorEl(event.currentTarget)
-        const {_id: _id, collectionId, payment, amount, date, status, image, userId} = item
+        const { _id: _id, collectionId, payment, amount, date, status, image, userId } = item
         const newForm = {
             _id: _id,
             userId: userId._id,
@@ -213,13 +214,13 @@ function PendingTable({pendingData, handleGetData, userData}) {
             headerAlign: 'center',
             renderCell: (params) => (
                 params.row.payment ? (
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label={params.row.payment} color='success'/>
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Chip label={params.row.payment} color='success' />
                     </Box>
-                ) : 
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label='Unpaid' color='error'/>       
-                    </Box> 
+                ) :
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Chip label='Unpaid' color='error' />
+                    </Box>
             )
         },
         {
@@ -229,12 +230,12 @@ function PendingTable({pendingData, handleGetData, userData}) {
             headerAlign: 'center',
             renderCell: (params) => (
                 params.row.amount ? (
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label={params.row.amount}/>
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Chip label={params.row.amount} />
                     </Box>
-                ) : 
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label='Unpaid' color='error'/>     
+                ) :
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Chip label='Unpaid' color='error' />
                     </Box>
             )
         },
@@ -244,8 +245,8 @@ function PendingTable({pendingData, handleGetData, userData}) {
             flex: 1,
             headerAlign: 'center',
             renderCell: () => (
-                <Box sx={{textAlign: 'center'}}>
-                    <Chip label='Pending' color='warning'/>     
+                <Box sx={{ textAlign: 'center' }}>
+                    <Chip label='Pending' color='warning' />
                 </Box>
             )
         },
@@ -260,14 +261,14 @@ function PendingTable({pendingData, handleGetData, userData}) {
             headerName: 'Setting',
             renderCell: (params) => (
                 <Stack height={'100%'} justifyContent={'center'} alignItems={'center'}>
-                    <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{cursor: 'pointer'}}/>
+                    <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{ cursor: 'pointer' }} />
                 </Stack>
             ),
             headerAlign: 'center'
-            
+
         },
     ]
-    const rows = useMemo(() => 
+    const rows = useMemo(() =>
         pendingData.map((item) => ({
             ...item,
             id: item._id,
@@ -279,15 +280,15 @@ function PendingTable({pendingData, handleGetData, userData}) {
     return (
         <Paper
             sx={{
-            p: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            height: 500,
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                height: 500,
             }}
         >
             <DataGrid
-            columns={columns}
-            rows={rows}
+                columns={columns}
+                rows={rows}
             />
             <Menu
                 anchorEl={anchorEl}
@@ -298,20 +299,33 @@ function PendingTable({pendingData, handleGetData, userData}) {
                     <Typography color="warning.main">Edit</Typography>
                 </MenuItem>
                 <MenuItem onClick={handleDeleteModal}>
-                    <Typography color="error.main">Delete</Typography>
+                    <Typography color="error.main">Decline</Typography>
                 </MenuItem>
             </Menu>
             <Drawer open={updateModal} onClose={handleCloseModal} anchor='right'>
-                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} data={userData}/>
+                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} data={userData} />
             </Drawer>
             <AlertModal open={deleteModal} onClose={handleCloseModal} anchor='right'>
-                <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData}/>
+                <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
             </AlertModal>
         </Paper>
     )
 }
 
 function EventList({ allData }) {
+    const [collectionData, setCollectionData] = useState([])
+
+    const handleGetCollection = async () => {
+        const { data, error } = await fetchCollectionWithTransaction()
+        if (!error) {
+            setCollectionData(data)
+        }
+    }
+
+    useEffect(() => {
+        handleGetCollection()
+    }, [])
+
     const currentData = moment();
     return (
         <Paper
@@ -322,34 +336,27 @@ function EventList({ allData }) {
                 height: 500,
             }}
         >
-            <Typography fontWeight="bold">Events List:</Typography>
+            <Typography fontWeight="bold">Remaining Collection Funds:</Typography>
             <Divider />
-            {allData.map((item, index) => {
-                let status;
-                if (currentData.isSameOrAfter(moment(item.startDate)) && currentData.isSameOrBefore(moment(item.endDate))) {
-                    status = 'active';
-                } else if (currentData.isBefore(moment(item.startDate))) {
-                    status = 'pending';
-                } else {
-                    status = 'expired';
-                }
+            {collectionData.map((item, index) => {
+                const totalCollectionFunds = item.transaction
+                    .filter((item) => item.status == "confirm")
+                    .reduce((sum, item) => sum + item.amount, 0)
+                let total = 0
+                const totalProjectFunds = item.project
+                    .map((item) => {
+                        total += item.items.reduce((sum, item) => sum + item.amount * item.quantity, 0)
+                    })
+                const remainingFund = totalCollectionFunds - total
                 return (
                     <MenuItem sx={{ display: 'flex', justifyContent: 'space-between' }} key={index}>
-                        <Typography 
-                            sx={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} 
+                        <Typography
+                            sx={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                             noWrap
                         >
-                            {item.event}
+                            {item.collectionName}
                         </Typography>
-                        {status === 'active' && (
-                            <Chip color="success" label="Active" />
-                        )}
-                        {status === 'pending' && (
-                            <Chip color="warning" label="Pending" />
-                        )}
-                        {status === 'expired' && (
-                            <Chip color="error" label="Expired" />
-                        )}
+                        <Chip label={`₱ ${remainingFund}`} color='success' />
                     </MenuItem>
                 );
             })}

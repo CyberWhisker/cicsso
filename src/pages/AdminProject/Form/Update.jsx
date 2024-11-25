@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Box, Button, Stack, TextField, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
 import { updateProject } from '../../../api/ProjectApi';
+import { fetchCollections } from '../../../api/CollectionApi';
 
 function Update({selected, handleCloseModal, getProjects}) {
-    const [formData, setFormData] = useState(selected);
+    const [formData, setFormData] = useState({...selected, collectionId: selected.collectionId._id});
     const [submitted, setSubmitted] = useState(false);
 
     const handleChange = (e) => 
@@ -14,8 +15,8 @@ function Update({selected, handleCloseModal, getProjects}) {
         e.preventDefault();
         setSubmitted(true);
 
-        const { project, description } = formData;
-        if (!project || !description) {
+        const { project, description, status } = formData;
+        if (!project || !description || !status) {
             toast.error("All fields are required");
             return;
         }
@@ -31,7 +32,6 @@ function Update({selected, handleCloseModal, getProjects}) {
         }
         setSubmitted(false);
     };
-
     return (
         <Box sx={{ width: '60vh', p: 2 }}>
             <Typography variant='h4' fontWeight='bold'>Update Project</Typography>
@@ -48,6 +48,7 @@ function Update({selected, handleCloseModal, getProjects}) {
                             error={submitted && !formData.project}
                             helperText={submitted && !formData.project ? "Required" : ""}
                         />
+                        <SelectCollection handleChange={handleChange} formData={formData}/>
                         <TextField
                             label='Project Details'
                             name='description'
@@ -60,6 +61,20 @@ function Update({selected, handleCloseModal, getProjects}) {
                             multiline
                             rows={4}
                         />
+                        <TextField
+                            label='Status'
+                            name='status'
+                            variant="outlined"
+                            sx={{ width: '100%'}}
+                            value={formData.status}
+                            onChange={handleChange}
+                            error={submitted && !formData.status}
+                            helperText={submitted && !formData.status ? "Required" : ""}
+                            select
+                        >
+                            <MenuItem value="Ongoing">Ongoing</MenuItem>
+                            <MenuItem value="Complete">Complete</MenuItem>
+                        </TextField>
                         <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
                             Submit
                         </Button>
@@ -68,6 +83,34 @@ function Update({selected, handleCloseModal, getProjects}) {
             </Box>
         </Box>
     );
+}
+
+function SelectCollection({handleChange, formData}) {
+    const [collectionData, setCollectionData] = useState([])
+    const [loading, isLoading] = useState(true)
+
+    const handleGetCollection = async () => {
+        isLoading(true)
+        const { data, error } = await fetchCollections()
+        
+        if (!error) {
+            setCollectionData(data)
+        }
+        isLoading(false)
+
+    }
+
+    useEffect(() => {
+        handleGetCollection()
+    }, [])
+
+    return (
+        <TextField select label="Select Collection Fund" onChange={handleChange} name='collectionId' value={!loading ?formData?.collectionId : ''}>
+            {collectionData.map((item, index) => (
+                <MenuItem key={index} value={item._id}>{item.collectionName}</MenuItem>
+            ))}
+        </TextField>
+    )
 }
 
 export default Update;

@@ -15,28 +15,28 @@ function Collection() {
       <Stack spacing={2}>
         <Typography variant="h5" fontWeight='bold'>Collection List Fines:</Typography>
         <Box>
-          <Divider/>
+          <Divider />
           {isLoading &&
-            <LinearProgress/>
+            <LinearProgress />
           }
         </Box>
         <Box>
-          <CollectionList setIsLoading={setIsLoading}/>
+          <CollectionList setIsLoading={setIsLoading} />
         </Box>
       </Stack>
     </Master>
   )
 }
 
-function CollectionList({setIsLoading}) {
+function CollectionList({ setIsLoading }) {
   const [selected, setSelected] = useState([]);
   const [collections, setCollection] = useState([]);
   const [paymentModal, setPaymentModal] = useState(false);
-  const {auth} = useAuthContext();
+  const { auth } = useAuthContext();
 
   const handleGetData = async () => {
     setIsLoading(true)
-    const {data, error} = await fetchCollectionWithTransactionByUserId(auth.user._id)
+    const { data, error } = await fetchCollectionWithTransactionByUserId(auth.user._id)
     if (error) {
       toast.error(error)
     } else {
@@ -51,29 +51,29 @@ function CollectionList({setIsLoading}) {
 
   useEffect(() => {
     handleGetData()
-  },[])
-  
+  }, [])
+
   return (
     <Grid container spacing={2}>
       {collections.map((item, index) => {
         if (item.eventId) {
           return (
-            <EventCard data={item} setPaymentModal={setPaymentModal} setSelected={setSelected} auth={auth} key={index}/>
+            <EventCard data={item} setPaymentModal={setPaymentModal} setSelected={setSelected} auth={auth} key={index} />
           )
         } else {
           return (
-            <CollectionCard data={item} setPaymentModal={setPaymentModal} setSelected={setSelected} auth={auth} key={index}/>
+            <CollectionCard data={item} setPaymentModal={setPaymentModal} setSelected={setSelected} auth={auth} key={index} />
           )
         }
       })}
       <Drawer open={paymentModal} anchor='right' onClose={handleCloseModal}>
-        <Payment selected={selected} handleGetData={handleGetData} handleCloseModal={handleCloseModal}/>
+        <Payment selected={selected} handleGetData={handleGetData} handleCloseModal={handleCloseModal} />
       </Drawer>
     </Grid>
   )
 }
 
-function CollectionCard ({data, setSelected, setPaymentModal, auth}) {
+function CollectionCard({ data, setSelected, setPaymentModal, auth }) {
   const handlePaymentModal = async (item) => {
     const dataForm = {
       ...item,
@@ -91,27 +91,29 @@ function CollectionCard ({data, setSelected, setPaymentModal, auth}) {
     setPaymentModal(true)
   }
   return (
-    <Grid 
-    item 
-    xs={6} 
-    md={4}
+    <Grid
+      item
+      xs={6}
+      md={4}
     >
       <CustomCard>
-        <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
-          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-              <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{data.collectionName}</Typography>
-              {data.transaction[0]?.status == 'confirm' && <Chip label='Confirmed' color='success'/>}
-              {data.transaction[0]?.status == 'pending' && <Chip label='Pending' color='warning'/>}
-              {data.transaction[0]?.status == 'decline' && <Chip label='Decline' color='error'/>}
-              {!data.transaction[0]?.status && <Chip label='Unpaid' color='error'/>}
+        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{data.collectionName}</Typography>
+            {data.transaction[0]?.status == 'confirm' && <Chip label='Confirmed' color='success' />}
+            {data.transaction[0]?.status == 'pending' && <Chip label='Pending' color='warning' />}
+            {data.transaction[0]?.status == 'decline' && <Chip label='Decline' color='error' />}
+            {/* {!data.transaction[0]?.status && <Chip label='Unpaid' color='error' />} */}
+            {!data.transaction[0]?.status && data?.label == "Urgent" && <Chip label={`${data.label}`} color='error' />}
+            {!data.transaction[0]?.status && data?.label == "Mandatory" && <Chip label={`${data.label}`} color='warning' />}
           </Box>
-          <Box sx={{display: 'flex',flexDirection: 'column' ,justifyContent: 'center', textDecoration: 'none', minHeight: '15vh'}} 
-              onClick={() => handlePaymentModal(data)}
+          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
+            onClick={() => handlePaymentModal(data)}
           >
-              <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {data.fine}</Typography>
+            <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {data.fine}</Typography>
           </Box>
-          <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
-              <Typography>AY: {moment(data.startDate).format('MMM DD, YYYY')} - {moment(data.endDate).format('MMM DD, YYYY')}</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography>AY: {moment(data.startDate).format('MMM DD, YYYY')} - {moment(data.endDate).format('MMM DD, YYYY')}</Typography>
           </Box>
         </Box>
       </CustomCard>
@@ -119,7 +121,7 @@ function CollectionCard ({data, setSelected, setPaymentModal, auth}) {
   )
 }
 
-function EventCard ({data, setSelected, setPaymentModal, auth}) {
+function EventCard({ data, setSelected, setPaymentModal, auth }) {
   const [totalPenalty, setTotalPenalty] = useState(0);
   const [totalFine, setTotalFine] = useState(0);
 
@@ -173,42 +175,42 @@ function EventCard ({data, setSelected, setPaymentModal, auth}) {
     handlePenalty()
   }, [])
   return (
-    <Grid 
-    item 
-    xs={6} 
-    md={4}
+    <Grid
+      item
+      xs={6}
+      md={4}
     >
       <CustomCard>
-        <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
-          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-              <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{data.collectionName}</Typography>
-              {totalPenalty === 0 ? (
-                <Chip label="Confirmed" color="success" />
-              ) : (
-                <>
-                  {data.transaction[0]?.status === 'confirm' && (
-                    <Chip label="Confirmed" color="success" />
-                  )}
-                  {data.transaction[0]?.status === 'pending' && (
-                    <Chip label="Pending" color="warning" />
-                  )}
-                  {data.transaction[0]?.status === 'decline' && (
-                    <Chip label="Decline" color="error" />
-                  )}
-                  {!data.transaction[0]?.status && (
-                    <Chip label="Unpaid" color="error" />
-                  )}
-                </>
-              )}
+        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{data.collectionName}</Typography>
+            {totalPenalty === 0 ? (
+              <Chip label="Confirmed" color="success" />
+            ) : (
+              <>
+                {data.transaction[0]?.status === 'confirm' && (
+                  <Chip label="Confirmed" color="success" />
+                )}
+                {data.transaction[0]?.status === 'pending' && (
+                  <Chip label="Pending" color="warning" />
+                )}
+                {data.transaction[0]?.status === 'decline' && (
+                  <Chip label="Decline" color="error" />
+                )}
+                {!data.transaction[0]?.status && (
+                  <Chip label="Unpaid" color="error" />
+                )}
+              </>
+            )}
           </Box>
-          <Box sx={{display: 'flex',flexDirection: 'column' ,justifyContent: 'center', textDecoration: 'none', minHeight: '15vh'}} 
-              onClick={() => handlePaymentModal(data)}
+          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
+            onClick={() => handlePaymentModal(data)}
           >
-              <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {totalFine}</Typography>
+            <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {totalFine}</Typography>
           </Box>
-          <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
-              <Typography>AY: {moment(data.startDate).format('MMM DD, YYYY')} - {moment(data.endDate).format('MMM DD, YYYY')}</Typography>
-              <Chip label={totalPenalty} color='error'/>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography>AY: {moment(data.startDate).format('MMM DD, YYYY')} - {moment(data.endDate).format('MMM DD, YYYY')}</Typography>
+            <Chip label={totalPenalty} color='error' />
           </Box>
         </Box>
       </CustomCard>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Master from '../../layouts/Master'
-import { Box, Card, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, Typography } from '@mui/material'
+import { Box, Card, Chip, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, Typography } from '@mui/material'
 import { CustomCard, DropDown, AlertModal } from '../../components'
 import { Add, Error } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
@@ -133,11 +133,15 @@ function CollectionList({ setIsLoading }) {
           <CustomCard>
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary">{item.collectionName}</Typography>
-                <DropDown >
-                  <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
-                  <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
-                </DropDown>
+                <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{item.collectionName}</Typography>
+                <Stack direction={'row'} alignItems={'center'}>
+                  {item.label == "Mandatory" && <Chip label={`${item.label}`} color='warning'/>}
+                  {item.label == "Urgent" && <Chip label={`${item.label}`} color='error'/>}
+                  <DropDown >
+                    <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
+                    <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
+                  </DropDown>
+                </Stack>
               </Box>
               <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
                 component={Link}

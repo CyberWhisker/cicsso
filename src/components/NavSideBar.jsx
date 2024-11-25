@@ -2,17 +2,19 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
-import { styled} from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import Navlist from './Navlist';
 import Logo from '/appImg/Logo.png'
-import { Avatar, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Avatar, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from '@mui/material';
 import { ChevronLeft } from '@mui/icons-material';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const drawerWidth = 240;
 
-function NavSideBar({children, themeMode}) {
+function NavSideBar({ children, themeMode }) {
+  const {auth} = useAuthContext()
   const [open, setOpen] = React.useState(localStorage.getItem('sideMode') === 'true' ? true : false);
 
   const toggleDrawer = () => {
@@ -46,26 +48,31 @@ function NavSideBar({children, themeMode}) {
         }),
       },
     }),
-);
+  );
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh'}}>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <CssBaseline />
-      <Drawer variant="permanent" open={open} sx={{display: {xs: 'none', md: 'block'}}}>
+      <Drawer variant="permanent" open={open} sx={{ display: { xs: 'none', md: 'block' } }}>
         <List component="nav">
           <ListItemButton onClick={toggleDrawer}>
             <ListItemIcon>
-              {/* <img src={Logo} alt="Logo" style={{height: '5vh', borderRadius: '100%'}}/> */}
-              <Avatar src={Logo} alt='Logo'/>
+              <Avatar src={Logo} alt='Logo' />
             </ListItemIcon>
-            <ListItemText primary="CICSSO" />
-            <ChevronLeft/>
+            <ListItemText>
+              <Stack>
+                <Typography>CICSSO</Typography>
+                <Divider/>
+                <Typography>{auth.user.role == "admin" ? "Admin" : "Student"}</Typography>
+              </Stack>
+            </ListItemText>
+            <ChevronLeft />
           </ListItemButton>
           <Divider />
-          <Navlist/>
+          <Navlist />
         </List>
       </Drawer>
-      <Box sx={{width: "100%"}}>
-          {children}
+      <Box sx={{ width: "100%" }}>
+        {children}
       </Box>
     </Box>
   )

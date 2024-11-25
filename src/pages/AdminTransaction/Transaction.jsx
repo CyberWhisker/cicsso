@@ -243,7 +243,7 @@ function DataGridList ({data, handleGetData}) {
                     <Typography color="warning.main">Edit</Typography>
                 </MenuItem>
                 <MenuItem onClick={handleDeleteModal}>
-                    <Typography color="error.main">Delete</Typography>
+                    <Typography color="error.main">Decline</Typography>
                 </MenuItem>
             </Menu>
             <Drawer open={updateModal} onClose={handleCloseModal} anchor='right'>

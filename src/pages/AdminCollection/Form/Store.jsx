@@ -25,8 +25,8 @@ function Store({ handleGetData, handleCloseModal }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
-        const { collectionName, fine, startDate, endDate } = formData;
-        if (!collectionName || !fine || !startDate || !endDate) {
+        const { collectionName, fine, startDate, endDate, label } = formData;
+        if (!collectionName || !fine || !startDate || !endDate || !label) {
             toast.error("All fields are required");
             return;
         }
@@ -71,6 +71,20 @@ function Store({ handleGetData, handleCloseModal }) {
                                 error={submitted && !formData.fine}
                                 helperText={submitted && !formData.fine ? "Required" : ""}
                             />
+                            <TextField
+                                label='Select Label'
+                                name='label'
+                                variant="outlined"
+                                sx={{ width: '100%' }}
+                                value={formData.label}
+                                onChange={handleChange}
+                                error={submitted && !formData.label}
+                                helperText={submitted && !formData.label ? "Required" : ""}
+                                select
+                            >
+                                <MenuItem value="Urgent">Urgent</MenuItem>
+                                <MenuItem value="Mandatory">Mandatory</MenuItem>
+                            </TextField>
                             <DatePicker
                                 label='Start Date'
                                 name='startDate'
@@ -103,7 +117,7 @@ function Store({ handleGetData, handleCloseModal }) {
 
                             <Divider />
 
-                            <SelectIndicator handleChange={handleChange} formData={formData}/>
+                            <SelectIndicator handleChange={handleChange} formData={formData} />
                             <Button type='submit' variant='contained' sx={{ mt: 2, width: '100%' }}>
                                 Submit
                             </Button>
@@ -115,7 +129,7 @@ function Store({ handleGetData, handleCloseModal }) {
     );
 }
 
-function SelectIndicator({handleChange, formData}) {
+function SelectIndicator({ handleChange, formData }) {
     const [data, setData] = useState([])
     const handleGetSchoolYear = async () => {
         const { data, error } = await fetchSchoolYear();

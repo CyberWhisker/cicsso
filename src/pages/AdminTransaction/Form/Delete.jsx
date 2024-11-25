@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, Button, Divider, TextField, Stack } from '@mui/material';
 import { toast } from 'react-toastify';
 import { deleteCollection } from '../../../api/CollectionApi';
-import { deleteTransaction } from '../../../api/TransactionApi';
+import { deleteTransaction, updateTransaction } from '../../../api/TransactionApi';
 
 const headerStyle = {
   p: 2,
@@ -21,7 +21,8 @@ const footerStyle = {
 function Delete({selected, onClose, handleGetData}) {
   const [formData, setFormData] = useState({
     ...selected,
-    message: ""
+    message: "",
+    status: "decline"
   })
 
   const handleChange = (e) => {
@@ -33,7 +34,7 @@ function Delete({selected, onClose, handleGetData}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const {data, error} = await deleteTransaction(formData);
+    const {data, error} = await updateTransaction(formData);
     if (error) {
       onClose();
       toast.error("Something went wrong!")
@@ -48,12 +49,12 @@ function Delete({selected, onClose, handleGetData}) {
     <>
       <Box sx={headerStyle}>
         <Typography id="delete-modal-title" variant="h6" component="h2">
-          Delete Confirmation
+          Decline Confirmation
         </Typography>
       </Box>
       <Stack sx={{ p:2}} spacing={2}>
         <Typography id="delete-modal-description">
-          Are you sure you want to delete this item? This action cannot be undone.
+          Are you sure you want to Decline this item?
         </Typography>
         <TextField label="Enter Message (Optional)" name='message' value={formData.message} onChange={handleChange} sx={{width: '100%'}}/>
       </Stack>
@@ -64,7 +65,7 @@ function Delete({selected, onClose, handleGetData}) {
             Cancel
           </Button>
           <Button variant="contained" color="error" type='submit'>
-            Delete
+            Decline
           </Button>
         </Box>
       </form>

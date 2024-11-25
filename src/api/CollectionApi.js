@@ -7,12 +7,12 @@ export const fetchCollections = async () => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -25,12 +25,12 @@ export const fetchCollectionById = async (id) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -45,12 +45,12 @@ export const storeCollection = async (formData) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error}
+        return { data: [], error: error }
     }
 }
 
@@ -65,12 +65,12 @@ export const updateCollection = async (formData) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -84,12 +84,12 @@ export const deleteCollection = async (id) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -102,12 +102,12 @@ export const fetchCollectionWithTransactionByUserId = async (id) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -120,12 +120,12 @@ export const fetchCollectionBySchoolYear = async (id) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -138,11 +138,29 @@ export const fetchCollectionWithEventAndAttendance = async (id) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
+    }
+}
+
+export const fetchCollectionWithTransaction = async (id) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection/getCollectionWithTransaction`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return { data: data, error: null }
+        } else {
+            return { data: [], error: data.error }
+        }
+    } catch (error) {
+        return { data: [], error: error.message }
     }
 }
