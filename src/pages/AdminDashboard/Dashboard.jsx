@@ -156,7 +156,7 @@ function InfoSection({ totalUsers, totalPenalties, totalFunds, totalPending }) {
             <Grid item xs={6} md={3}>
                 <Card sx={{ p: 2, backgroundColor: theme.palette.success.main }}>
                     <Typography>Funds:</Typography>
-                    <Typography textAlign="center" variant='h4' fontWeight="bold">{totalFunds}</Typography>
+                    <Typography textAlign="center" variant='h4' fontWeight="bold">₱ {totalFunds}</Typography>
                 </Card>
             </Grid>
         </Grid>
