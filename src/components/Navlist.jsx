@@ -135,11 +135,11 @@ function NavAdmin() {
 
       <Divider />
       {auth.user.role == "superAdmin" && (
-        <ListItemButton component={Link} to={'/schoolYear'} selected={location.pathname.startsWith('/schoolYear')}>
+        <ListItemButton component={Link} to={'/academicYear'} selected={location.pathname.startsWith('/academicYear')}>
           <ListItemIcon>
             <CalendarIcon />
           </ListItemIcon>
-          <ListItemText primary="School Year" />
+          <ListItemText primary="Academic Year" />
         </ListItemButton>
       )}
 

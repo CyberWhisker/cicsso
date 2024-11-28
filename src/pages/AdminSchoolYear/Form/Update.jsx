@@ -33,7 +33,7 @@ function Update({ selected, onClose, handleGetData }) {
         <LocalizationProvider dateAdapter={AdapterMoment}>
             <Box sx={{ width: "70vh", p: 2 }}>
                 <Typography variant="h4" fontWeight="bold">
-                    Update School Year
+                    Update Academic Year
                 </Typography>
                 <Divider />
                 <Box mt={2}>

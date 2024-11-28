@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { AlertModal } from "../../components";
 import moment from "moment";
 import { fetchSchoolYear, updateSchoolYear } from "../../api/SchoolYearApi";
+import { Add } from "@mui/icons-material";
 
 function SchoolYear() {
   const [storeModal, setStoreModal] = useState(false);
@@ -47,10 +48,10 @@ function SchoolYear() {
       <Stack spacing={2}>
         <Stack direction={"row"} spacing={2} alignItems={"center"}>
           <Typography variant="h5" fontWeight="bold">
-            School Year List :
+            Academic Year List :
           </Typography>
-          <Button variant="contained" onClick={() => setStoreModal(true)}>
-            Add School Year
+          <Button variant="contained" endIcon={<Add/>} onClick={() => setStoreModal(true)}>
+            Add Academic Year
           </Button>
         </Stack>
         <Box>

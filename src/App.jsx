@@ -150,7 +150,7 @@ function App() {
           </PrivateRoute>
         } />
 
-        <Route path="/schoolYear" element={
+        <Route path="/academicYear" element={
           <PrivateRoute>
             <AdminSchoolYear />
           </PrivateRoute>

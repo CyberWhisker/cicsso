@@ -12,29 +12,8 @@ import moment from 'moment';
 import AlertModal from '../../components/AlertModal';
 import { fetchScheduleById } from '../../api/ScheduleApi';
 import { fetchUsersWithAttendanceBySchedId } from '../../api/userApi';
-import { DataGrid, GridToolbarQuickFilter, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridToolbarQuickFilter, GridToolbar, GridToolbarExport, GridToolbarContainer } from "@mui/x-data-grid";
 
-function QuickSearchToolbar() {
-  return (
-    <Box
-      sx={{
-        p: 0.5,
-        pb: 0,
-        display: 'flex',
-        justifyContent: 'end'
-      }}
-    >
-      <GridToolbarQuickFilter
-        quickFilterParser={(searchInput) =>
-          searchInput
-            .split(',')
-            .map((value) => value.trim())
-            .filter((value) => value !== '')
-        }
-      />
-    </Box>
-  );
-}
 
 function Attendance() {
   const { id } = useParams();
@@ -201,9 +180,13 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       headerName: "Am In",
       flex: 1,
       headerAlign: "center",
+      valueFormatter: (value) => value ? moment(value).format('hh:mm A') : "Absent",
       renderCell: (params) => (
         <Box sx={{ textAlign: "center" }}>
-          {params.row.amInFormat}
+          {params.row.amIn ?
+            <Chip color='success' label={moment(params?.row?.amIn).format('hh:mm A')} />
+            : <Chip color='error' label='Absent' />
+          }
         </Box>
       ),
     },
@@ -212,9 +195,13 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       headerName: "Am Out",
       flex: 1,
       headerAlign: "center",
+      valueFormatter: (value) => value ? moment(value).format('hh:mm A') : "Absent",
       renderCell: (params) => (
         <Box sx={{ textAlign: "center" }}>
-          {params.row.amOutFormat}
+          {params.row.amOut ?
+            <Chip color='success' label={moment(params?.row?.amOut).format('hh:mm A')} />
+            : <Chip color='error' label='Absent' />
+          }
         </Box>
       ),
     },
@@ -223,9 +210,13 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       headerName: "Pm In",
       flex: 1,
       headerAlign: "center",
+      valueFormatter: (value) => value ? moment(value).format('hh:mm A') : "Absent",
       renderCell: (params) => (
         <Box sx={{ textAlign: "center" }}>
-          {params.row.pmInFormat}
+          {params.row.pmIn ?
+            <Chip color='success' label={moment(params?.row?.pmIn).format('hh:mm A')} />
+            : <Chip color='error' label='Absent' />
+          }
         </Box>
       ),
     },
@@ -234,9 +225,13 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       headerName: "Pm Out",
       flex: 1,
       headerAlign: "center",
+      valueFormatter: (value) => value ? moment(value).format('hh:mm A') : "Absent",
       renderCell: (params) => (
         <Box sx={{ textAlign: "center" }}>
-          {params.row.pmOutFormat}
+          {params.row.pmOut ?
+            <Chip color='success' label={moment(params?.row?.pmOut).format('hh:mm A')} />
+            : <Chip color='error' label='Absent' />
+          }
         </Box>
       ),
     },
@@ -252,72 +247,16 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
     },
   ];
 
-  // const rows = useMemo(() =>
-  //   combinedData.map((item) => {
-  //     const attendance = item.attendances?.[0];
-  //     return {
-  //       _id: item._id,
-  //       pictureFormat: <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-  //         <Avatar src={item.picture} alt={item.picture} />
-  //       </Box>,
-  //       name: `${item.lastName}, ${item.firstName} ${item.middleName[0]}.`,
-  //       amInFormat: attendance?.amIn ?
-  //         <Chip color='success' label={moment(attendance.amIn).format('hh:mm A')} /> :
-  //         <Chip color='error' label='Absent' />,
-  //       amOutFormat: attendance?.amOut ?
-  //         <Chip color='success' label={moment(attendance.amOut).format('hh:mm A')} /> :
-  //         <Chip color='error' label='Absent' />,
-  //       pmInFormat: attendance?.pmIn ?
-  //         <Chip color='success' label={moment(attendance.pmIn).format('hh:mm A')} /> :
-  //         <Chip color='error' label='Absent' />,
-  //       pmOutFormat: attendance?.pmOut ?
-  //         <Chip color='success' label={moment(attendance.pmOut).format('hh:mm A')} /> :
-  //         <Chip color='error' label='Absent' />,
-  //       picture: item.picture,
-  //       amIn: attendance?.amIn ? attendance.amIn : null,
-  //       amOut: attendance?.amOut ? attendance.amOut : null,
-  //       pmIn: attendance?.pmIn ? attendance.pmIn : null,
-  //       pmOut: attendance?.pmOut ? attendance.pmOut : null,
-  //       setting:
-  //         <DropDown>
-  //           {attendance?._id ? (
-  //             <>
-  //               <MenuItem onClick={() => handleUpdateModal(item)}>
-  //                 <Typography color="warning.main">Edit</Typography>
-  //               </MenuItem>
-  //               <MenuItem onClick={(e) => handleDeleteModal(item)}>
-  //                 <Typography color="error.main">Delete</Typography>
-  //               </MenuItem>
-  //             </>
-  //           ) : (
-  //             <MenuItem disabled>
-  //               <Typography color="error.main">No Record</Typography>
-  //             </MenuItem>
-  //           )}
-  //         </DropDown>
-  //     }
-  //   }),
-  //   [combinedData]
-  // );
-
   const rows = useMemo(
     () =>
       combinedData.map((item) => ({
         ...item,
         id: item._id,
         name: `${item.lastName}, ${item.firstName} ${item.middleName[0]}.`,
-        amInFormat: item?.attendances[0]?.amIn ?
-          <Chip color='success' label={moment(item?.attendances[0]?.amIn).format('hh:mm A')} /> :
-          <Chip color='error' label='Absent' />,
-        amOutFormat: item?.attendances[0]?.amOut != null ?
-          <Chip color='success' label={moment(item?.attendances[0]?.amOut).format('hh:mm A')} /> :
-          <Chip color='error' label='Absent' />,
-        pmInFormat: item?.attendances[0]?.pmIn != null ?
-          <Chip color='success' label={moment(item?.attendances[0]?.pmIn).format('hh:mm A')} /> :
-          <Chip color='error' label='Absent' />,
-        pmOutFormat: item?.attendances[0]?.pmOut != null ?
-          <Chip color='success' label={moment(item?.attendances[0]?.pmOut).format('hh:mm A')} /> :
-          <Chip color='error' label='Absent' />,
+        amInFormat: item?.attendances[0]?.amIn || null,
+        amOutFormat: item?.attendances[0]?.amOut || null,
+        pmInFormat: item?.attendances[0]?.pmIn || null,
+        pmOutFormat: item?.attendances[0]?.pmOut || null,
         picture: item.picture,
         amIn: item?.attendances[0]?.amIn ? item?.attendances[0]?.amIn : null,
         amOut: item?.attendances[0]?.amOut ? item?.attendances[0]?.amOut : null,
@@ -349,12 +288,10 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       <DataGrid
         columns={columns}
         rows={rows}
-        slots={{ toolbar: QuickSearchToolbar }}
-        slotProps={{
-            toolbar: {
-                showQuickFilter: true,
-            },
+        slots={{
+          toolbar: CustomToolbar,
         }}
+      // slotProps={{ toolbar: { printOptions: { disableToolbarButton: false } } }}
       />
       <Drawer anchor='right' open={updateModal} onClose={handleCloseModal}>
         <Update onClose={handleCloseModal} selected={selected} handleGetData={handleGetData} />
@@ -363,6 +300,28 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
         <Delete onClose={handleCloseModal} selected={selected} handleGetData={handleGetData} />
       </AlertModal>
     </Box>
+  );
+}
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        width: '100%'
+      }}>
+        <GridToolbar printOptions={{ disableToolbarButton: true }} />
+        <GridToolbarQuickFilter
+          quickFilterParser={(searchInput) =>
+            searchInput
+              .split(',')
+              .map((value) => value.trim())
+              .filter((value) => value !== '')
+          }
+        />
+      </Box>
+    </GridToolbarContainer>
   );
 }
 

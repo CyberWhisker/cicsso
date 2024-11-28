@@ -108,7 +108,7 @@ function SemesterContent({ selected }) {
                     fontFamily: "'Times New Roman', Times, serif",
                 }}
             >
-                S.Y {moment(selected?.schoolYear?.startDate).format("YYYY")} - {moment(selected?.schoolYear?.endDate).format("YYYY")} {selected?.schoolYear?.semester || 'Null'}
+                A.Y {moment(selected?.schoolYear?.startDate).format("YYYY")} - {moment(selected?.schoolYear?.endDate).format("YYYY")} {selected?.schoolYear?.semester || 'Null'}
             </Typography>
         </Stack>
     );

@@ -37,7 +37,7 @@ function Store({ onClose, handleGetData }) {
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
             <Box sx={{ width: '70vh', p: 2 }}>
-                <Typography variant='h4' fontWeight='bold'>Add School Year</Typography>
+                <Typography variant='h4' fontWeight='bold'>Add Academic Year</Typography>
                 <Divider />
                 <Box mt={2}>
                     <form onSubmit={handleSubmit}>

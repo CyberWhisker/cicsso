@@ -112,7 +112,7 @@ function DataGridList({ data, handleGetData }) {
     },
     {
       field: "schoolYearFormat",
-      headerName: "School Year",
+      headerName: "Academic Year",
       flex: 1,
       headerAlign: "center",
     },

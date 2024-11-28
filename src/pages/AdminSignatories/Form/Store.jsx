@@ -69,7 +69,7 @@ function Store({ onClose, handleGetData }) {
                                 value={formData.role}
                                 onChange={handleChange}
                             />
-                            <TextField select name='schoolYear' value={formData.schoolYear} onChange={handleChange} label='School Year'>
+                            <TextField select name='schoolYear' value={formData.schoolYear} onChange={handleChange} label='Academic Year'>
                                 {schoolYearData.map((item, index) => (
                                     <MenuItem value={item._id} key={index}>{item.semester} ({moment(item.startDate).format('MMM YYYY')} - {moment(item.endDate).format('MMM YYYY')})</MenuItem>
                                 ))}
