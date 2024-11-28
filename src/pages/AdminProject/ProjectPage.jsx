@@ -103,12 +103,12 @@ function EventList({ setIsLoading }) {
                   component={Link}
                   to={`/item/${item._id}`}
                 >
-                  <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱{totalCost}</Typography>
+                  <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱{totalCost.toFixed(2)}</Typography>
                   <Typography textAlign='center' fontWeight='bold' color='primary'>Total Cost</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Chip label={`Funds: ${item.collectionId.collectionName}`} color='success'/>
-                  <Chip label={`₱ ${remainingFund}`} color='success' />
+                  <Chip label={`₱ ${remainingFund.toFixed(2)}`} color='success' />
                 </Box>
               </Box>
             </CustomCard>

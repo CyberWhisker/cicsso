@@ -110,7 +110,7 @@ function CollectionCard({ data, setSelected, setPaymentModal, auth }) {
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
             onClick={() => handlePaymentModal(data)}
           >
-            <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {data.fine}</Typography>
+            <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {data.fine.toFixed(2)}</Typography>
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography>AY: {moment(data.startDate).format('MMM DD, YYYY')} - {moment(data.endDate).format('MMM DD, YYYY')}</Typography>
@@ -206,7 +206,7 @@ function EventCard({ data, setSelected, setPaymentModal, auth }) {
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
             onClick={() => handlePaymentModal(data)}
           >
-            <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {totalFine}</Typography>
+            <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {totalFine.toFixed(2)}</Typography>
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography>AY: {moment(data.startDate).format('MMM DD, YYYY')} - {moment(data.endDate).format('MMM DD, YYYY')}</Typography>

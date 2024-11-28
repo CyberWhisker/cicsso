@@ -163,7 +163,7 @@ function DataGridList ({data, handleGetData}) {
             renderCell: (params) => (
                 params.row.transaction?.amount ? (
                     <Box sx={{textAlign: 'center'}}>
-                        <Chip label={params.row.transaction.amount}/>
+                        <Chip label={`₱ ${params.row.transaction.amount.toFixed(2)}`}/>
                     </Box>
                 ) : 
                     <Box sx={{textAlign: 'center'}}>

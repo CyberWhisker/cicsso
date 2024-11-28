@@ -75,7 +75,7 @@ function TableSection ({transData}) {
             renderCell: (params) => (
                 params.row.amount ? (
                     <Box sx={{textAlign: 'center'}}>
-                        <Chip label={params.row.amount}/>
+                        <Chip label={`₱ ${params.row.amount.toFixed(2)}`}/>
                     </Box>
                 ) : 
                     <Box sx={{textAlign: 'center'}}>

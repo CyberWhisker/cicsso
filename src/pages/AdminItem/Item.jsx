@@ -15,13 +15,13 @@ import { KeyboardReturn } from '@mui/icons-material';
 
 function Details() {
     const navigate = useNavigate();
-    const {id} = useParams();
+    const { id } = useParams();
     const [storeModal, setStoreModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState([]);
     const handleGetData = async () => {
         setIsLoading(true)
-        const {data, error} = await fetchItemByProjectId(id)
+        const { data, error } = await fetchItemByProjectId(id)
         if (error) {
             toast.error(error)
         } else {
@@ -32,32 +32,32 @@ function Details() {
 
     useEffect(() => {
         handleGetData()
-    },[])
+    }, [])
 
     return (
         <Master>
             <Stack spacing={2}>
                 <Stack direction={'row'} spacing={2} alignItems={'center'}>
                     <Typography variant="h5" fontWeight="bold">Item List :</Typography>
-                    <Button variant="contained" onClick={() => navigate(-1)} startIcon={<KeyboardReturn/>}>Projects</Button>
+                    <Button variant="contained" onClick={() => navigate(-1)} startIcon={<KeyboardReturn />}>Projects</Button>
                     <Button variant="contained" onClick={() => setStoreModal(true)}>Add Item</Button>
                 </Stack>
                 <Box>
-                    <Divider/>
+                    <Divider />
                     {isLoading &&
-                        <LinearProgress/>
+                        <LinearProgress />
                     }
                 </Box>
-                <DataGridList data={data} handleGetData={handleGetData}/>
+                <DataGridList data={data} handleGetData={handleGetData} />
             </Stack>
             <Drawer open={storeModal} anchor='right' onClose={() => setStoreModal(false)}>
-                <Store handleGetData={handleGetData} onClose={() => setStoreModal(false)}/>
+                <Store handleGetData={handleGetData} onClose={() => setStoreModal(false)} />
             </Drawer>
         </Master>
     )
 }
 
-function DataGridList ({data, handleGetData}) {
+function DataGridList({ data, handleGetData }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selected, setSelected] = useState(null);
     const [updateModal, setUpdateModal] = useState(false);
@@ -98,38 +98,45 @@ function DataGridList ({data, handleGetData}) {
             field: 'quantity',
             headerName: 'Quantity',
             flex: 1,
-            headerAlign: 'center'
+            headerAlign: 'center',
+            type: 'number'
         },
         {
             field: 'amount',
             headerName: 'Amount',
             flex: 1,
-            headerAlign: 'center'
+            headerAlign: 'center',
+            type: 'number',
+            valueFormatter: (params) => {
+                const value = params || 0;
+                return `₱${value.toFixed(2)}`;
+            },
         },
         {
             field: 'date',
             headerName: 'Date',
             flex: 1,
-            headerAlign: 'center'
+            headerAlign: 'center',
+            type: 'date'
         },
         {
             field: 'setting',
             headerName: 'Setting',
             renderCell: (params) => (
-                <Box sx={{textAlign: 'center'}}>
-                    <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{cursor: 'pointer'}}/>
+                <Box sx={{ textAlign: 'center' }}>
+                    <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{ cursor: 'pointer' }} />
                 </Box>
             ),
             headerAlign: 'center'
-            
+
         },
     ]
 
-    const rows = useMemo(() => 
+    const rows = useMemo(() =>
         data.map((item) => ({
             ...item,
             id: item._id,
-            date: moment(item.date).format("MMMM DD YYYY")
+            date: new Date(item.date)
         })),
         [data]
     );
@@ -143,8 +150,8 @@ function DataGridList ({data, handleGetData}) {
                         ...rows.initialState,
                         filter: {
                             filterModel: {
-                            items: [],
-                            quickFilterValues: [],
+                                items: [],
+                                quickFilterValues: [],
                             },
                         },
                     }}
@@ -169,10 +176,10 @@ function DataGridList ({data, handleGetData}) {
                 </MenuItem>
             </Menu>
             <Drawer open={updateModal} onClose={handleCloseModal} anchor='right'>
-                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData}/>
+                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
             </Drawer>
             <AlertModal open={deleteModal} onClose={handleCloseModal} anchor='right'>
-                <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData}/>
+                <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
             </AlertModal>
         </>
     )

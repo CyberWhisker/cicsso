@@ -147,7 +147,7 @@ function CollectionList({ setIsLoading }) {
                 component={Link}
                 to={`/transaction/${item._id}`}
               >
-                <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {item.fine}</Typography>
+                <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱ {item.fine.toFixed(2)}</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography>AY: {moment(item.startDate).format('MMM DD, YYYY')} - {moment(item.endDate).format('MMM DD, YYYY')}</Typography>

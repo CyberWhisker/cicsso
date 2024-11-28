@@ -81,7 +81,7 @@ function NotificationList() {
               <Stack direction={'row'} spacing={2}>
                 <Typography fontWeight={'bold'} variant='h5'>Payment: {item?.transactionId?.payment || "Removed"}</Typography>
                 <Chip label={
-                  <Typography fontWeight={'bold'} variant='h5'>Amount: ₱ {item?.transactionId?.amount || "Removed"}</Typography>
+                  <Typography fontWeight={'bold'} variant='h5'>Amount: ₱ {item?.transactionId?.amount.toFixed(2) || "Removed"}</Typography>
                 } color='success' />
               </Stack>
             </Box>

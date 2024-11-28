@@ -77,7 +77,7 @@ function UsersList({ usersData, setIsLoading, setUserData }) {
                                     width: 50
                                 }} />
                                 <Box>
-                                    <Typography fontWeight={'bold'}>{item.lastName}, {item.firstName} {item.middleName[0]}.</Typography>
+                                    <Typography fontWeight={'bold'}>{item.lastName.toUpperCase()}, {item.firstName.toUpperCase()} {item.middleName[0].toUpperCase()}.</Typography>
                                     <Typography>{item.email}</Typography>
                                 </Box>
                             </Stack>
@@ -177,7 +177,14 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                     sx={{ width: '100%' }}
                                     value={userData.firstName}
                                     disabled={toggleUpdate}
-                                    onChange={handleChange}
+                                    onChange={(e) =>
+                                      handleChange({
+                                        target: {
+                                          name: e.target.name,
+                                          value: e.target.value.toUpperCase(), // Transform to uppercase
+                                        },
+                                      })
+                                    }
                                 />
                                 <Typography>Middle Name:</Typography>
                                 <TextField
@@ -185,7 +192,14 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                     sx={{ width: '100%' }}
                                     value={userData.middleName}
                                     disabled={toggleUpdate}
-                                    onChange={handleChange}
+                                    onChange={(e) =>
+                                      handleChange({
+                                        target: {
+                                          name: e.target.name,
+                                          value: e.target.value.toUpperCase(), // Transform to uppercase
+                                        },
+                                      })
+                                    }
                                 />
                                 <Typography>Last Name:</Typography>
                                 <TextField
@@ -193,7 +207,14 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                     sx={{ width: '100%' }}
                                     value={userData.lastName}
                                     disabled={toggleUpdate}
-                                    onChange={handleChange}
+                                    onChange={(e) =>
+                                      handleChange({
+                                        target: {
+                                          name: e.target.name,
+                                          value: e.target.value.toUpperCase(), // Transform to uppercase
+                                        },
+                                      })
+                                    }
                                 />
                                 <Typography fontWeight={'bold'}>Student Information</Typography>
                                 <Divider />

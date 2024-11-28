@@ -63,7 +63,14 @@ function Store() {
           label="First Name"
           name="firstName"
           value={formData.firstName}
-          onChange={handleChange}
+          onChange={(e) =>
+            handleChange({
+              target: {
+                name: e.target.name,
+                value: e.target.value.toUpperCase(), // Transform to uppercase
+              },
+            })
+          }
           error={Boolean(errors.firstName)}
           helperText={errors.firstName}
         />
@@ -71,7 +78,14 @@ function Store() {
           label="Middle Name"
           name="middleName"
           value={formData.middleName}
-          onChange={handleChange}
+          onChange={(e) =>
+            handleChange({
+              target: {
+                name: e.target.name,
+                value: e.target.value.toUpperCase(), // Transform to uppercase
+              },
+            })
+          }
           error={Boolean(errors.middleName)}
           helperText={errors.middleName}
         />
@@ -79,7 +93,14 @@ function Store() {
           label="Last Name"
           name="lastName"
           value={formData.lastName}
-          onChange={handleChange}
+          onChange={(e) =>
+            handleChange({
+              target: {
+                name: e.target.name,
+                value: e.target.value.toUpperCase(), // Transform to uppercase
+              },
+            })
+          }
           error={Boolean(errors.lastName)}
           helperText={errors.lastName}
         />
@@ -87,7 +108,14 @@ function Store() {
           label="Extension Name (Optional)"
           name="extensionName"
           value={formData.extensionName}
-          onChange={handleChange}
+          onChange={(e) =>
+            handleChange({
+              target: {
+                name: e.target.name,
+                value: e.target.value.toUpperCase(), // Transform to uppercase
+              },
+            })
+          }
         />
         <Divider />
         <Typography fontWeight={'bold'}>Student Information</Typography>

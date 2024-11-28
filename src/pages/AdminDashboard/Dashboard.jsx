@@ -156,7 +156,7 @@ function InfoSection({ totalUsers, totalPenalties, totalFunds, totalPending }) {
             <Grid item xs={6} md={3}>
                 <Card sx={{ p: 2, backgroundColor: theme.palette.success.main }}>
                     <Typography>Funds:</Typography>
-                    <Typography textAlign="center" variant='h4' fontWeight="bold">₱ {totalFunds}</Typography>
+                    <Typography textAlign="center" variant='h4' fontWeight="bold">₱ {totalFunds.toFixed(2)}</Typography>
                 </Card>
             </Grid>
         </Grid>
@@ -239,7 +239,7 @@ function PendingTable({ pendingData, handleGetData, userData }) {
             renderCell: (params) => (
                 params.row.amount ? (
                     <Box sx={{ textAlign: 'center' }}>
-                        <Chip label={params.row.amount} />
+                        <Chip label={`₱ ${params.row.amount.toFixed(2)}`} />
                     </Box>
                 ) :
                     <Box sx={{ textAlign: 'center' }}>
@@ -364,7 +364,7 @@ function EventList({ allData }) {
                         >
                             {item.collectionName}
                         </Typography>
-                        <Chip label={`₱ ${remainingFund}`} color='success' />
+                        <Chip label={`₱ ${remainingFund.toFixed(2)}`} color='success' />
                     </MenuItem>
                 );
             })}
@@ -413,9 +413,9 @@ function ProjectList() {
                                     <Typography fontWeight={'bold'}>{item.project}</Typography>
                                     <Stack>
                                         <Typography >Funds: {item.collectionId.collectionName}</Typography>
-                                        <Typography >Total Funds: ₱ {totalTransaction}</Typography>
-                                        <Typography >Project Cost: ₱ {totalCost}</Typography>
-                                        <Typography >Remaining Funds: ₱ {remainingFund}</Typography>
+                                        <Typography >Total Funds: ₱ {totalTransaction.toFixed(2)}</Typography>
+                                        <Typography >Project Cost: ₱ {totalCost.toFixed(2)}</Typography>
+                                        <Typography >Remaining Funds: ₱ {remainingFund.toFixed(2)}</Typography>
                                         <Typography color={'green'}>Status: {item.status}</Typography>
                                     </Stack>
                                 </Stack>

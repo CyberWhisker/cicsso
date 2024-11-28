@@ -165,7 +165,7 @@ function InfoSection({events, auth}) {
             <Grid item xs={6} md={3}>
                 <Card sx={{p:2, backgroundColor: theme.palette.success.main}}>
                     <Typography>Credit:</Typography>
-                    <Typography textAlign="center" variant='h4' fontWeight="bold">{credit}</Typography>
+                    <Typography textAlign="center" variant='h4' fontWeight="bold">₱ {credit.toFixed(2)}</Typography>
                 </Card>
             </Grid>
         </Grid>
