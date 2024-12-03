@@ -129,7 +129,7 @@ export const fetchCollectionBySchoolYear = async (id) => {
     }
 }
 
-export const fetchCollectionWithEventAndAttendance = async (id) => {
+export const fetchCollectionWithEventAndAttendance = async () => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API}/api/collection/getCollectionWithEventsAndAttendance`, {
             headers: {
@@ -150,6 +150,42 @@ export const fetchCollectionWithEventAndAttendance = async (id) => {
 export const fetchCollectionWithTransaction = async (id) => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API}/api/collection/getCollectionWithTransaction`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return { data: data, error: null }
+        } else {
+            return { data: [], error: data.error }
+        }
+    } catch (error) {
+        return { data: [], error: error.message }
+    }
+}
+
+export const fetchCollectionWithTransactionBySchoolYear = async (id) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection/getDataWithTransactionBySchoolYearId/${id}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return { data: data, error: null }
+        } else {
+            return { data: [], error: data.error }
+        }
+    } catch (error) {
+        return { data: [], error: error.message }
+    }
+}
+
+export const fetchCollectionBySchoolYearIdandUserId = async (schoolYearId, userId) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection/getDataBySchoolYearAndUserId/${schoolYearId}/${userId}`, {
             headers: {
                 'Content-Type': 'application/json'
             },

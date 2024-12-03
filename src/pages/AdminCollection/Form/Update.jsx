@@ -80,6 +80,7 @@ function Update({ selected, handleCloseModal, handleGetData }) {
                             >
                                 <MenuItem value="Urgent">Urgent</MenuItem>
                                 <MenuItem value="Mandatory">Mandatory</MenuItem>
+                                <MenuItem value="Optional">Optional</MenuItem>
                             </TextField>
                             <DatePicker
                                 label='Start Date'

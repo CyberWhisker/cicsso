@@ -10,7 +10,6 @@ import Delete from './Form/Delete'
 import { fetchProjects } from '../../api/ProjectApi'
 import { toast } from 'react-toastify'
 import moment from 'moment'
-import { fetchItem } from '../../api/ItemApi'
 
 function ProjectPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -91,24 +90,39 @@ function EventList({ setIsLoading }) {
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{item.project}</Typography>
                   <Stack direction={'row'}>
-                    {item.status == "Ongoing" && <Chip label={item.status} color='warning'/>}
-                    {item.status == "Complete" && <Chip label={item.status} color='success'/>}
+                    {item.status == "Ongoing" && <Chip label={item.status} color='warning' />}
+                    {item.status == "Complete" && <Chip label={item.status} color='success' />}
                     <DropDown >
                       <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
                       <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
                     </DropDown>
                   </Stack>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
+                <Grid
+                  container
+                  direction={'row'}
                   component={Link}
                   to={`/item/${item._id}`}
+                  sx={{
+                    textDecoration: 'none',
+                  }}
                 >
-                  <Typography textAlign='center' fontWeight='bold' variant='h3' color='primary'>₱{totalCost.toFixed(2)}</Typography>
-                  <Typography textAlign='center' fontWeight='bold' color='primary'>Total Cost</Typography>
-                </Box>
+
+                  <Grid xs={6} item sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', minHeight: '15vh' }}
+
+                  >
+                    <Typography textAlign='center' fontWeight='bold' variant='h4' color='primary'>₱{totalCost.toFixed(2)}</Typography>
+                    <Typography textAlign='center' fontWeight='bold' color='primary'>Unit Cost</Typography>
+                  </Grid>
+                  <Grid xs={6} item sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
+                  >
+                    <Typography textAlign='center' fontWeight='bold' variant='h4' color='primary'>₱{remainingFund.toFixed(2)}</Typography>
+                    <Typography textAlign='center' fontWeight='bold' color='primary'>Total Amount</Typography>
+                  </Grid>
+                </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Chip label={`Funds: ${item.collectionId.collectionName}`} color='success'/>
-                  <Chip label={`₱ ${remainingFund.toFixed(2)}`} color='success' />
+                  <Chip label={`Funds: ${item.collectionId.collectionName}`} color='success' />
+                  {/* <Chip label={`₱ ${remainingFund.toFixed(2)}`} color='success' /> */}
                 </Box>
               </Box>
             </CustomCard>

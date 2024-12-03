@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import {
   AdminAttendance,
   AdminCollection,
@@ -28,6 +28,38 @@ import {
 import { useAuthContext } from './hooks/useAuthContext';
 import PrivateRoute from './hooks/privateRoute';
 import StudentClearance from './layouts/PDF/StudentClearance';
+import DisbursementReport from './pages/AdminReport/Reports/DisbursementReport';
+import NotVerified from './pages/NotVerified/NotVerified';
+import Verify from './pages/Verify/Verify';
+import { fetchUserById } from './api/userApi';
+
+// Wrapper for authenticated and verified user routes
+function VerifiedUserRoute({ children }) {
+  const { auth } = useAuthContext();
+  const [isVerified, setIsVerified] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkVerification = async () => {
+      if (auth?.user) {
+        try {
+          const { data } = await fetchUserById(auth.user._id);
+          setIsVerified(data.verified);
+        } catch (error) {
+          console.error('Verification check failed:', error);
+        }
+      }
+      setLoading(false);
+    };
+    checkVerification();
+  }, [auth]);
+
+  if (!auth) return <Navigate to="/login" replace />;
+  if (loading) return <div>Loading...</div>;
+  if (!isVerified) return <Navigate to="/notVerified" replace />;
+
+  return children;
+}
 
 function App() {
   const { auth } = useAuthContext();
@@ -37,159 +69,205 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/notVerified" element={<NotVerified />} />
+        <Route path="/verify-email" element={<Verify />} />
 
         <Route path="/dashboard" element={
-          <PrivateRoute>
-            {auth && auth.user.role != 'user' ? (
-              <AdminDashboard />
-            ) : (
-              <UserDashboard />
-            )}
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              {auth && auth.user.role !== 'user' ? (
+                <AdminDashboard />
+              ) : (
+                <UserDashboard />
+              )}
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/users" element={
-          <PrivateRoute>
-            {auth && auth.user.role != 'user' ? (
-              <AdminUsers />
-            ) : (
-              <Login />
-            )}
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              {auth && auth.user.role !== 'user' ? (
+                <AdminUsers />
+              ) : (
+                <Login />
+              )}
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/events" element={
-          <PrivateRoute>
-            {auth && auth.user.role != 'user' ? (
-              <AdminEvents />
-            ) : (
-              <Login />
-            )}
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              {auth && auth.user.role !== 'user' ? (
+                <AdminEvents />
+              ) : (
+                <Login />
+              )}
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/schedule/:id" element={
-          <PrivateRoute>
-            {auth && auth.user.role != 'user' ? (
-              <AdminSchedule />
-            ) : (
-              <Login />
-            )}
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              {auth && auth.user.role !== 'user' ? (
+                <AdminSchedule />
+              ) : (
+                <Login />
+              )}
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/attendance/:id" element={
-          <PrivateRoute>
-            {auth && auth.user.role != 'user' ? (
-              <AdminAttendance />
-            ) : (
-              <Login />
-            )}
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              {auth && auth.user.role !== 'user' ? (
+                <AdminAttendance />
+              ) : (
+                <Login />
+              )}
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/penalties" element={
-          <PrivateRoute>
-            {auth && auth.user.role != 'user' ? (
-              <AdminPenalties />
-            ) : (
-              <Login />
-            )}
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              {auth && auth.user.role !== 'user' ? (
+                <AdminPenalties />
+              ) : (
+                <Login />
+              )}
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/transaction/:id" element={
-          <PrivateRoute>
-            {auth && auth.user.role != 'user' ? (
-              <AdminTransaction />
-            ) : (
-              <Login />
-            )}
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              {auth && auth.user.role !== 'user' ? (
+                <AdminTransaction />
+              ) : (
+                <Login />
+              )}
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/projects" element={
-          <PrivateRoute>
-            {auth && auth.user.role != 'user' ? (
-              <AdminProject />
-            ) : (
-              <Login />
-            )}
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              {auth && auth.user.role !== 'user' ? (
+                <AdminProject />
+              ) : (
+                <Login />
+              )}
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/item/:id" element={
-          <PrivateRoute>
-            {auth && auth.user.role != 'user' ? (
-              <AdminItem />
-            ) : (
-              <Login />
-            )}
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              {auth && auth.user.role !== 'user' ? (
+                <AdminItem />
+              ) : (
+                <Login />
+              )}
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/collection" element={
-          <PrivateRoute>
-            {auth && auth.user.role != 'user' ? (
-              <AdminCollection />
-            ) : (
-              <UserCollection />
-            )}
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              {auth && auth.user.role !== 'user' ? (
+                <AdminCollection />
+              ) : (
+                <UserCollection />
+              )}
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/report" element={
-          <PrivateRoute>
-            <AdminReport />
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              <AdminReport />
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/clearance" element={
-          <PrivateRoute>
-            <AdminClearance />
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              <AdminClearance />
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/academicYear" element={
-          <PrivateRoute>
-            <AdminSchoolYear />
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              <AdminSchoolYear />
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/signatories" element={
-          <PrivateRoute>
-            <AdminSignatories />
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              <AdminSignatories />
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/attendance" element={
-          <PrivateRoute>
-            <UserAttendance />
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              <UserAttendance />
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/transaction" element={
-          <PrivateRoute>
-            <UserTransaction />
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              <UserTransaction />
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/ClearanceForm" element={
-          <PrivateRoute>
-            <StudentClearance />
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              <StudentClearance />
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/userClearance" element={
-          <PrivateRoute>
-            <UserClearance />
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              <UserClearance />
+            </PrivateRoute>
+          </VerifiedUserRoute>
         } />
 
         <Route path="/notification" element={
-          <PrivateRoute>
-            <Notification />
-          </PrivateRoute>
+          <VerifiedUserRoute>
+            <PrivateRoute>
+              <Notification />
+            </PrivateRoute>
+          </VerifiedUserRoute>
+        } />
+
+        <Route path="/disbursementLayout" element={
+          <VerifiedUserRoute>
+            <DisbursementReport />
+          </VerifiedUserRoute>
         } />
       </Routes>
     </BrowserRouter>

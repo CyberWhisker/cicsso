@@ -34,6 +34,24 @@ export const fetchProjectByID = async (id) => {
     }
 }
 
+export const fetchProjectBySchoolYear = async (id) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/project/getDataBySchoolYearId/${id}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (response.ok) {
+            const data = await response.json()
+            return { data: data, error: null}
+        } else {
+            return { data: [], error: 'Failed to fetch Project'}
+        }
+    } catch (error) {
+        return { data: [], error: error.message}
+    }
+}
+
 export const storeProject = async (dataForm) => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API}/api/project`, {

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Master from '../../layouts/Master';
-import { Box, Button, Card, Chip, Divider, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, Chip, Divider, Grid, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { BarChart } from '@mui/x-charts';
 import { fetchTransactionByStatus, fetchTransactions } from '../../api/TransactionApi';
 import { toast } from 'react-toastify';
@@ -8,6 +8,10 @@ import moment from 'moment';
 import { fetchItem, fetchItemWithProject } from '../../api/ItemApi';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useReactToPrint } from 'react-to-print';
+import CollectionList from './Reports/CollectionList';
+import CollectionFund from './Reports/CollectionFund';
+import ReceivableAmount from './Reports/ReceivableAmount';
+import DisbursementReport from './Reports/DisbursementReport';
 
 function AdminReport() {
   const [reportType, setReportType] = useState('annually');
@@ -27,9 +31,28 @@ function AdminReport() {
   return (
     <Master>
       <Stack spacing={1} pb={2}>
+        <Typography variant='h4' fontWeight={'bold'}>Reports</Typography>
+        <Divider />
+
+        <Grid container gap={2} alignItems="stretch">
+          <Grid item xs={5}>
+            <CollectionList />
+          </Grid>
+          <Grid item xs={6.8}>
+            <CollectionFund />
+          </Grid>
+        </Grid>
+        <Grid container gap={2} alignItems="stretch">
+          <Grid item xs={5}>
+            <DisbursementReport />
+          </Grid>
+          <Grid item xs={6.8}>
+            <ReceivableAmount />
+          </Grid>
+        </Grid>
+        <Divider/>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Stack spacing={2} direction={'row'}>
-            <Typography variant='h4' fontWeight={'bold'}>Reports</Typography>
             <Button variant='contained' color='warning' onClick={printFile}>Print</Button>
           </Stack>
           <TextField
@@ -58,8 +81,8 @@ function AdminReport() {
             ))}
           </TextField>
         </Box>
-        <Divider />
         <Stack spacing={2} ref={contentRef} margin={2}>
+
           <CollectionReport reportType={reportType} selectedYear={selectedYear} />
           <ExpensesReport reportType={reportType} selectedYear={selectedYear} />
           <DispursementReport />
@@ -262,7 +285,7 @@ function filterAnnually(data) {
   const totalAmount = {};
 
   data.forEach(item => {
-    let total = item.amount 
+    let total = item.amount
     const year = moment(item.date).format('YYYY');
     if (item.quantity) {
       total = item.amount * item.quantity

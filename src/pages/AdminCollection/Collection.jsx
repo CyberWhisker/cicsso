@@ -137,6 +137,7 @@ function CollectionList({ setIsLoading }) {
                 <Stack direction={'row'} alignItems={'center'}>
                   {item.label == "Mandatory" && <Chip label={`${item.label}`} color='warning'/>}
                   {item.label == "Urgent" && <Chip label={`${item.label}`} color='error'/>}
+                  {item.label == "Optional" && <Chip label={`${item.label}`}/>}
                   <DropDown >
                     <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
                     <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>

@@ -106,6 +106,7 @@ function CollectionCard({ data, setSelected, setPaymentModal, auth }) {
             {/* {!data.transaction[0]?.status && <Chip label='Unpaid' color='error' />} */}
             {!data.transaction[0]?.status && data?.label == "Urgent" && <Chip label={`${data.label}`} color='error' />}
             {!data.transaction[0]?.status && data?.label == "Mandatory" && <Chip label={`${data.label}`} color='warning' />}
+            {!data.transaction[0]?.status && data?.label == "Optional" && <Chip label={`${data.label}`} />}
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
             onClick={() => handlePaymentModal(data)}

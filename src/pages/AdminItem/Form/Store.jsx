@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { storeItem } from '../../../api/ItemApi';
 import { toast } from 'react-toastify';
+import { fetchProjectByID } from '../../../api/ProjectApi';
 
-function Store({onClose, handleGetData}) {
-    const {id} = useParams();
+function Store({ onClose, handleGetData }) {
+    const [remainingFund, setRemainingFund] = useState(0)
+    const { id } = useParams();
     const [submitted, setSubmitted] = useState(false);
     const [formData, setFormData] = useState({
         project: id,
@@ -18,27 +20,49 @@ function Store({onClose, handleGetData}) {
     });
 
     const handleChange = (e) => {
-        setFormData({...formData, [e.target.name]: e.target.value});
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
     const handleDate = (name, value) => {
-        setFormData({...formData, [name]: value});
+        setFormData({ ...formData, [name]: value });
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true);
-        const {data, error} = await storeItem(formData);
-        if (error) {
-            toast.error(error)
+
+        if (formData.amount < remainingFund) {
+            setSubmitted(true);
+            const { data, error } = await storeItem(formData);
+            if (error) {
+                toast.error(error)
+            } else {
+                toast.success("Successfuly added item")
+                handleGetData()
+                onClose();
+            }
+
         } else {
-            toast.success("Successfuly added item")
-            handleGetData()
-            onClose();
+            toast.error("Insufficient Funds")
         }
+
     };
 
-    
+    useEffect(() => {
+        const hanldeGetData = async () => {
+            const { data, error } = await fetchProjectByID(id)
+            if (!error) {
+                const totalCost = data.items
+                    .reduce((sum, item) => sum + item.amount * item.quantity, 0);
+                const totalTransaction = data.collectionId.transaction
+                    .filter((transaction) => transaction.status === "confirm")
+                    .reduce((sum, item) => sum + item.amount, 0)
+                setRemainingFund(totalTransaction - totalCost)
+            }
+        }
+        hanldeGetData()
+    }, [])
+
+
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
             <Box sx={{ width: '70vh', p: 2 }}>
@@ -50,7 +74,7 @@ function Store({onClose, handleGetData}) {
                                 label='Enter Item'
                                 name='item'
                                 variant="outlined"
-                                sx={{ width: '100%'}}
+                                sx={{ width: '100%' }}
                                 value={formData.item}
                                 onChange={handleChange}
                                 error={submitted && !formData.item}
@@ -62,7 +86,7 @@ function Store({onClose, handleGetData}) {
                                 value={formData.quantity}
                                 onChange={handleChange}
                                 error={submitted && !formData.quantity}
-                                helperText={submitted && !formData.quantity ? "Required": ""}
+                                helperText={submitted && !formData.quantity ? "Required" : ""}
                             />
                             <TextField
                                 label='Amount'
@@ -70,7 +94,7 @@ function Store({onClose, handleGetData}) {
                                 value={formData.amount}
                                 onChange={handleChange}
                                 error={submitted && !formData.amount}
-                                helperText={submitted && !formData.amount ? "Required": ""}
+                                helperText={submitted && !formData.amount ? "Required" : ""}
                             />
                             <DatePicker
                                 label='Date'
@@ -84,7 +108,7 @@ function Store({onClose, handleGetData}) {
                                     },
                                 }}
                             />
-                            <Button type='submit' variant='contained' sx={{width: '100%'}}>
+                            <Button type='submit' variant='contained' sx={{ width: '100%' }}>
                                 Submit
                             </Button>
                         </Stack>

@@ -3,60 +3,87 @@ import { Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/materi
 import { toast } from 'react-toastify';
 import { storeProject } from '../../../api/ProjectApi';
 import { fetchCollections } from '../../../api/CollectionApi';
+import { fetchActiveSchoolYear } from '../../../api/SchoolYearApi';
 
 function Store({ getProjects, handleCloseModal }) {
+    const [schoolYearId, setSchoolYearId] = useState("");
     const [formData, setFormData] = useState({
-        project: '',
-        description: ''
+        schoolYearId: "",
+        project: "",
+        description: "",
+        collectionId: "",
     });
     const [submitted, setSubmitted] = useState(false);
 
-    const handleChange = (e) =>
+    // Fetch the active school year
+    useEffect(() => {
+        const fetchSchoolYear = async () => {
+            const { data, error } = await fetchActiveSchoolYear();
+            if (!error) {
+                setSchoolYearId(data._id);
+                setFormData((prev) => ({ ...prev, schoolYearId: data._id }));
+            } else {
+                toast.error("Failed to fetch active school year");
+            }
+        };
+        fetchSchoolYear();
+    }, []);
+
+    const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
 
-        const { project, description } = formData;
-        if (!project || !description) {
+        const { project, description, schoolYearId, collectionId } = formData;
+        if (!project || !description || !collectionId) {
             toast.error("All fields are required");
             return;
         }
-        const { data, error } = await storeProject(formData)
+
+        const { data, error } = await storeProject(formData);
         if (error) {
-            toast.error(error)
+            toast.error(error);
         } else {
             getProjects();
             toast.success("Project added successfully");
-            setFormData({ project: '', description: '' });
+            setFormData({
+                schoolYearId,
+                project: "",
+                description: "",
+                collectionId: "",
+            });
+            setSubmitted(false);
             handleCloseModal();
         }
-        setSubmitted(false);
     };
 
     return (
         <Box sx={{ width: '60vh', p: 2 }}>
-            <Typography variant='h4' fontWeight='bold'>Add Project</Typography>
+            <Typography variant="h4" fontWeight="bold">
+                Add Project
+            </Typography>
             <Box mt={2}>
                 <form onSubmit={handleSubmit}>
                     <Stack spacing={2}>
                         <TextField
-                            label='Project Name'
-                            name='project'
+                            label="Project Name"
+                            name="project"
                             variant="outlined"
-                            sx={{ width: '100%' }}
+                            fullWidth
                             value={formData.project}
                             onChange={handleChange}
                             error={submitted && !formData.project}
                             helperText={submitted && !formData.project ? "Required" : ""}
                         />
-                        <SelectCollection handleChange={handleChange}/>
+                        <SelectCollection handleChange={handleChange} selectedValue={formData.collectionId} />
                         <TextField
-                            label='Project Details'
-                            name='description'
+                            label="Project Details"
+                            name="description"
                             variant="outlined"
-                            sx={{ width: '100%' }}
+                            fullWidth
                             value={formData.description}
                             onChange={handleChange}
                             error={submitted && !formData.description}
@@ -64,7 +91,7 @@ function Store({ getProjects, handleCloseModal }) {
                             multiline
                             rows={4}
                         />
-                        <Button type='submit' variant='contained' sx={{ mt: 2, width: '100%' }}>
+                        <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
                             Submit
                         </Button>
                     </Stack>
@@ -74,29 +101,37 @@ function Store({ getProjects, handleCloseModal }) {
     );
 }
 
-function SelectCollection({handleChange}) {
-    const [collectionData, setCollectionData] = useState([])
-
-    const handleGetCollection = async () => {
-        const { data, error } = await fetchCollections()
-
-        if (!error) {
-            setCollectionData(data)
-        }
-
-    }
+function SelectCollection({ handleChange, selectedValue }) {
+    const [collectionData, setCollectionData] = useState([]);
 
     useEffect(() => {
-        handleGetCollection()
-    }, [])
+        const fetchCollectionsData = async () => {
+            const { data, error } = await fetchCollections();
+            if (!error) {
+                setCollectionData(data);
+            } else {
+                toast.error("Failed to fetch collections");
+            }
+        };
+        fetchCollectionsData();
+    }, []);
 
     return (
-        <TextField select label="Select Collection Fund" onChange={handleChange} name='collectionId' defaultValue={""}>
-            {collectionData.map((item, index) => (
-                <MenuItem key={index} value={item._id}>{item.collectionName}</MenuItem>
+        <TextField
+            select
+            label="Select Collection Fund"
+            name="collectionId"
+            value={selectedValue || ""}
+            onChange={handleChange}
+            fullWidth
+        >
+            {collectionData.map((item) => (
+                <MenuItem key={item._id} value={item._id}>
+                    {item.collectionName}
+                </MenuItem>
             ))}
         </TextField>
-    )
+    );
 }
 
 export default Store;
