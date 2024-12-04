@@ -108,21 +108,21 @@ function EventList({ setIsLoading }) {
                   }}
                 >
 
-                  <Grid xs={6} item sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', minHeight: '15vh' }}
+                  <Grid xs={12} item sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', minHeight: '15vh' }}
 
                   >
                     <Typography textAlign='center' fontWeight='bold' variant='h4' color='primary'>₱{totalCost.toFixed(2)}</Typography>
                     <Typography textAlign='center' fontWeight='bold' color='primary'>Unit Cost</Typography>
                   </Grid>
-                  <Grid xs={6} item sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
+                  {/* <Grid xs={6} item sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
                   >
                     <Typography textAlign='center' fontWeight='bold' variant='h4' color='primary'>₱{remainingFund.toFixed(2)}</Typography>
                     <Typography textAlign='center' fontWeight='bold' color='primary'>Total Amount</Typography>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Chip label={`Funds: ${item.collectionId.collectionName}`} color='success' />
-                  {/* <Chip label={`₱ ${remainingFund.toFixed(2)}`} color='success' /> */}
+                  <Chip label={`₱ ${remainingFund.toFixed(2)}`} color='success' />
                 </Box>
               </Box>
             </CustomCard>

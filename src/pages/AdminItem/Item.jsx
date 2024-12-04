@@ -103,7 +103,18 @@ function DataGridList({ data, handleGetData }) {
         },
         {
             field: 'amount',
-            headerName: 'Amount',
+            headerName: 'Unit Cost',
+            flex: 1,
+            headerAlign: 'center',
+            type: 'number',
+            valueFormatter: (params) => {
+                const value = params || 0;
+                return `₱${value.toFixed(2)}`;
+            },
+        },
+        {
+            field: 'total',
+            headerName: 'Total',
             flex: 1,
             headerAlign: 'center',
             type: 'number',
@@ -136,7 +147,8 @@ function DataGridList({ data, handleGetData }) {
         data.map((item) => ({
             ...item,
             id: item._id,
-            date: new Date(item.date)
+            date: new Date(item.date),
+            total: item.amount * item.quantity
         })),
         [data]
     );
