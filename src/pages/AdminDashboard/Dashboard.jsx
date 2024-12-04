@@ -19,6 +19,7 @@ import { fetchItem } from '../../api/ItemApi';
 import { fetchCollections, fetchCollectionWithTransaction } from '../../api/CollectionApi';
 import { fetchProjects } from '../../api/ProjectApi';
 import { PieChart } from '@mui/x-charts';
+import { Link } from 'react-router-dom';
 
 function Dashboard() {
     const [isLoading, setIsLoading] = useState(true)
@@ -135,25 +136,25 @@ function InfoSection({ totalUsers, totalPenalties, totalFunds, totalPending }) {
     const theme = useTheme();
     return (
         <Grid container spacing={2}>
-            <Grid item xs={6} md={3}>
-                <Card sx={{ p: 2, backgroundColor: theme.palette.primary.main }}>
+            <Grid item xs={6} md={3} component={Link} to={'/users'} sx={{ textDecoration: 'none' }}>
+                <Card sx={{ p: 2, backgroundColor: theme.palette.primary.main }} >
                     <Typography>Users:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">{totalUsers}</Typography>
                 </Card>
             </Grid>
-            <Grid item xs={6} md={3}>
+            <Grid item xs={6} md={3} component={Link} to={'/penalties'} sx={{ textDecoration: 'none' }}>
                 <Card sx={{ p: 2, backgroundColor: theme.palette.error.main }}>
                     <Typography>Penalty:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">{totalPenalties}</Typography>
                 </Card>
             </Grid>
-            <Grid item xs={6} md={3}>
+            <Grid item xs={6} md={3} component={Link} to={'/collection'} sx={{ textDecoration: 'none' }}>
                 <Card sx={{ p: 2, backgroundColor: theme.palette.warning.main }}>
                     <Typography>Pending Transaction:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">{totalPending}</Typography>
                 </Card>
             </Grid>
-            <Grid item xs={6} md={3}>
+            <Grid item xs={6} md={3} component={Link} to={'/report'} sx={{ textDecoration: 'none' }}>
                 <Card sx={{ p: 2, backgroundColor: theme.palette.success.main }}>
                     <Typography>Funds:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">₱ {totalFunds.toFixed(2)}</Typography>

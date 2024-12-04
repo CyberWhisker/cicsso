@@ -119,7 +119,7 @@ function UsersList({ usersData, setEventWithAttend, setIsLoading }) {
                                         width: 50
                                     }} />
                                     <Box>
-                                        <Typography fontWeight={'bold'}>{item.lastName}, {item.firstName} {item.middleName[0]}.</Typography>
+                                        <Typography noWrap maxWidth={'25vh'} fontWeight={'bold'}>{item.lastName}, {item.firstName} {item.middleName[0]}.</Typography>
                                         <Typography>{item.email}</Typography>
                                     </Box>
                                 </Stack>

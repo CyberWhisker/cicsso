@@ -35,7 +35,7 @@ function Users() {
             <Stack direction={'column'} spacing={2}>
                 <Stack direction={'row'} spacing={2}>
                     <Typography variant="h5" fontWeight="bold">User Management</Typography>
-                    <UploadExcelBtn />
+                    {/* <UploadExcelBtn /> */}
                 </Stack>
                 <Box>
                     <Divider />
@@ -81,8 +81,8 @@ function UsersList({ usersData, setIsLoading, setUserData }) {
                                     width: 50
                                 }} />
                                 <Box>
-                                    <Typography fontWeight={'bold'}>{item.lastName.toUpperCase()}, {item.firstName.toUpperCase()} {item.middleName[0].toUpperCase()}.</Typography>
-                                    <Typography>{item.email}</Typography>
+                                    <Typography noWrap fontWeight={'bold'}>{item.lastName.toUpperCase()}, {item.firstName.toUpperCase()} {item.middleName[0].toUpperCase()}.</Typography>
+                                    <Typography noWrap>{item.email}</Typography>
                                 </Box>
                             </Stack>
                         </Box>

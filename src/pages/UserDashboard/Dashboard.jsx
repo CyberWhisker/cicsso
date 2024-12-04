@@ -11,14 +11,15 @@ import moment from 'moment';
 import { fetchTransactionByUserId } from '../../api/TransactionApi';
 import { fetchCollections, fetchCollectionWithEventAndAttendance } from '../../api/CollectionApi';
 import { List, Search } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 function Dashboard() {
-    const {auth} = useAuthContext();
+    const { auth } = useAuthContext();
     const [events, setEvents] = useState([])
     const [unfilteredEvent, setUnfilteredEvent] = useState([])
-    
+
     const handleGetEventWithAttendance = async () => {
-        const {data, error} = await fetchEventsWithAttendanceByUserId(auth.user._id)
+        const { data, error } = await fetchEventsWithAttendanceByUserId(auth.user._id)
         if (error) {
             toast.error(error)
         } else {
@@ -35,25 +36,25 @@ function Dashboard() {
 
     useEffect(() => {
         handleGetEventWithAttendance()
-    },[])
+    }, [])
 
     return (
         <Master>
             <Stack gap={2}>
-                <InfoSection events={events} auth={auth}/>
-                <EventSection unfilteredEvent={unfilteredEvent}/>
+                <InfoSection events={events} auth={auth} />
+                <EventSection unfilteredEvent={unfilteredEvent} />
             </Stack>
         </Master>
     )
 }
 
-function InfoSection({events, auth}) {
+function InfoSection({ events, auth }) {
     const theme = useTheme();
     const [attendance, setAttendance] = useState(0);
     const [penalties, setPenalties] = useState(0);
     const [transaction, setTransaction] = useState(0);
     const [credit, setCredit] = useState(0);
-    
+
     const handleAttendance = async () => {
         let totalAttend = 0;
         events.map(event => {
@@ -104,7 +105,7 @@ function InfoSection({events, auth}) {
     }
 
     const handleTransaction = async (totalAttend) => {
-        const {data, error} = await fetchTransactionByUserId(auth.user._id)
+        const { data, error } = await fetchTransactionByUserId(auth.user._id)
         if (error) {
             toast.error(error)
         } else {
@@ -114,7 +115,7 @@ function InfoSection({events, auth}) {
     }
 
     const handleCredit = async (trans, totalAttend) => {
-        const {data, error} = await fetchCollectionWithEventAndAttendance();
+        const { data, error } = await fetchCollectionWithEventAndAttendance();
         if (error) {
             toast.error(error)
         } else {
@@ -123,7 +124,7 @@ function InfoSection({events, auth}) {
             data.map((item, index) => {
                 if (item.eventId) {
                     attend = item.eventId.schedules.length * 4 - totalAttend
-                    totalFine +=  item.fine * attend
+                    totalFine += item.fine * attend
                 } else {
                     totalFine += item.fine
                 }
@@ -140,30 +141,30 @@ function InfoSection({events, auth}) {
     useEffect(() => {
         handleAttendance()
         handlePenalties()
-    },[events])
+    }, [events])
 
     return (
         <Grid container spacing={2}>
-            <Grid item xs={6} md={3}>
-                <Card sx={{p:2, backgroundColor: theme.palette.primary.main}}>
+            <Grid item xs={6} md={3} component={Link} to={'/attendance'} sx={{ textDecoration: 'none' }}>
+                <Card sx={{ p: 2, backgroundColor: theme.palette.primary.main }}>
                     <Typography>Attendance:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">{attendance}</Typography>
                 </Card>
             </Grid>
-            <Grid item xs={6} md={3}>
-                <Card sx={{p:2, backgroundColor: theme.palette.error.main}}>
+            <Grid item xs={6} md={3} component={Link} to={'/attendance'} sx={{ textDecoration: 'none' }}>
+                <Card sx={{ p: 2, backgroundColor: theme.palette.error.main }}>
                     <Typography>Penalty:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">{penalties}</Typography>
                 </Card>
             </Grid>
-            <Grid item xs={6} md={3}>
-                <Card sx={{p:2, backgroundColor: theme.palette.warning.main}}>
+            <Grid item xs={6} md={3} component={Link} to={'/transaction'} sx={{ textDecoration: 'none' }}>
+                <Card sx={{ p: 2, backgroundColor: theme.palette.warning.main }}>
                     <Typography>Transaction:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">{transaction}</Typography>
                 </Card>
             </Grid>
-            <Grid item xs={6} md={3}>
-                <Card sx={{p:2, backgroundColor: theme.palette.success.main}}>
+            <Grid item xs={6} md={3} component={Link} to={'/collection'} sx={{ textDecoration: 'none' }}>
+                <Card sx={{ p: 2, backgroundColor: theme.palette.success.main }}>
                     <Typography>Credit:</Typography>
                     <Typography textAlign="center" variant='h4' fontWeight="bold">₱ {credit.toFixed(2)}</Typography>
                 </Card>
@@ -172,7 +173,7 @@ function InfoSection({events, auth}) {
     )
 }
 
-function EventSection({unfilteredEvent}) {
+function EventSection({ unfilteredEvent }) {
     const [schedules, setSchedules] = useState([])
 
     const handleSchedules = (event) => {
@@ -182,43 +183,43 @@ function EventSection({unfilteredEvent}) {
         <Grid container spacing={3}>
             {/* Chart */}
             <Grid item xs={12} md={8} lg={9}>
-            <Paper
-                sx={{
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                minheight: 500,
-                }}
-            >
-                {schedules.length == 0 && (
-                    <Box
-                        display="flex"
-                        flexDirection="column"
-                        alignItems="center"
-                        justifyContent="center"
-                        height="70vh" // Full height of the viewport
-                        textAlign="center"
-                    >
-                        <Search style={{ fontSize: 100 }} /> {/* Large icon */}
-                        <Box mt={2}> {/* Margin top for spacing */}
-                            Please select from the event list
+                <Paper
+                    sx={{
+                        p: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minheight: 500,
+                    }}
+                >
+                    {schedules.length == 0 && (
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            alignItems="center"
+                            justifyContent="center"
+                            height="70vh" // Full height of the viewport
+                            textAlign="center"
+                        >
+                            <Search style={{ fontSize: 100 }} /> {/* Large icon */}
+                            <Box mt={2}> {/* Margin top for spacing */}
+                                Please select from the event list
+                            </Box>
                         </Box>
-                    </Box>
-                )}
-                <SceduleList schedules={schedules}/>
-            </Paper>
+                    )}
+                    <SceduleList schedules={schedules} />
+                </Paper>
             </Grid>
             <Grid item xs={12} md={4} lg={3}>
                 <Paper
                     sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minheight: 500,
+                        p: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minheight: 500,
                     }}
                 >
                     <Typography fontWeight="bold">Events List:</Typography>
-                    <Divider/>
+                    <Divider />
                     {unfilteredEvent.map((item, index) => {
                         const currentDate = moment();
                         let status;
@@ -231,8 +232,8 @@ function EventSection({unfilteredEvent}) {
                         }
                         return (
                             <MenuItem sx={{ display: 'flex', justifyContent: 'space-between' }} key={index} onClick={() => handleSchedules(item)}>
-                                <Typography 
-                                    sx={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} 
+                                <Typography
+                                    sx={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                                     noWrap
                                 >
                                     {item.event}
@@ -255,7 +256,7 @@ function EventSection({unfilteredEvent}) {
     )
 }
 
-function SceduleList ({schedules}) {
+function SceduleList({ schedules }) {
     return (
         <Grid container spacing={2}>
             {schedules.map((item, index) => {
@@ -267,43 +268,43 @@ function SceduleList ({schedules}) {
                     status = 'Pending';
                     color = 'warning';  // Pending status
                 } else if (today.isSame(eventDate)) {
-                    status = 'Active'; 
+                    status = 'Active';
                     color = 'success';  // Success status if today is the event date
                 } else if (today.isAfter(eventDate)) {
                     status = 'Expired';
                     color = 'error';    // Expired status if today is after the event date
                 }
                 return (
-                    <Grid 
-                        item 
-                        xs={6} 
+                    <Grid
+                        item
+                        xs={6}
                         md={4}
                         key={index}
                     >
                         <CustomCard>
-                        <Stack direction={'column'} spacing={1}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography fontWeight="bold" variant='h6'>{moment(item.date).format('MMMM')}</Typography>
-                            <Chip label={status} color={color}/>
-                            </Box>
-                            <Stack direction={'row'} justifyContent={'center'} spacing={2} sx={{ textDecoration: 'none' }}
-                            >
-                                <Typography color="primary" variant='h3' fontWeight="bold" textAlign='center'>
-                                    {moment(item.date).format('ddd')}
-                                </Typography>
-                                <Typography color="primary" variant='h3' fontWeight="bold" textAlign='center'>
-                                    {moment(item.date).format('DD')}
-                                </Typography>
+                            <Stack direction={'column'} spacing={1}>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <Typography fontWeight="bold" variant='h6'>{moment(item.date).format('MMMM')}</Typography>
+                                    <Chip label={status} color={color} />
+                                </Box>
+                                <Stack direction={'row'} justifyContent={'center'} spacing={2} sx={{ textDecoration: 'none' }}
+                                >
+                                    <Typography color="primary" variant='h3' fontWeight="bold" textAlign='center'>
+                                        {moment(item.date).format('ddd')}
+                                    </Typography>
+                                    <Typography color="primary" variant='h3' fontWeight="bold" textAlign='center'>
+                                        {moment(item.date).format('DD')}
+                                    </Typography>
+                                </Stack>
+                                <Stack direction={'row'} spacing={2}>
+                                    <TextField color='error' label='AM IN' size='small' value={moment(item.amIn).format('hh : mm a')} disabled />
+                                    <TextField label='AM OUT' size='small' value={moment(item.amOut).format('hh : mm a')} disabled />
+                                </Stack>
+                                <Stack direction={'row'} spacing={2}>
+                                    <TextField label='PM IN' size='small' value={moment(item.pmIn).format('hh : mm a')} disabled />
+                                    <TextField label='PM OUT' size='small' value={moment(item.pmOut).format('hh : mm a')} disabled />
+                                </Stack>
                             </Stack>
-                            <Stack direction={'row'} spacing={2}>
-                                <TextField color='error' label='AM IN' size='small' value={moment(item.amIn).format('hh : mm a')} disabled/>
-                                <TextField label='AM OUT' size='small' value={moment(item.amOut).format('hh : mm a')} disabled/>
-                            </Stack>
-                            <Stack direction={'row'} spacing={2}>
-                                <TextField label='PM IN' size='small' value={moment(item.pmIn).format('hh : mm a')} disabled/>
-                                <TextField label='PM OUT' size='small' value={moment(item.pmOut).format('hh : mm a')} disabled/>
-                            </Stack>
-                        </Stack>
                         </CustomCard>
                     </Grid>
                 )
