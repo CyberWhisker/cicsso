@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Accordion, AccordionSummary, Avatar, Badge, Box, Card, Chip, Divider,Grid,LinearProgress, Stack, Typography } from '@mui/material';
+import { Accordion, AccordionSummary, Avatar, Badge, Box, Card, Chip, Divider, Grid, LinearProgress, Stack, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
 import { CustomCard, DataTable } from '../../components';
 import { fetchUsersWithAttendance, } from '../../api/userApi';
@@ -16,13 +16,13 @@ function Penalties() {
     const handleGetUser = async () => {
         setIsLoading(true);
 
-        const [{data:userData, error:userError}, {data:schedData, error: schedError}] = await Promise.all([
+        const [{ data: userData, error: userError }, { data: schedData, error: schedError }] = await Promise.all([
             fetchUsersWithAttendance(),
             fetchSchedule(),
         ])
 
         if (userError, schedError) {
-           toast.error('Something went wrong....');
+            toast.error('Something went wrong....');
         } else {
             let totalSchedule = 0;
             schedData.map(sched => {
@@ -61,35 +61,35 @@ function Penalties() {
     };
     useEffect(() => {
         handleGetUser();
-    },[]);
+    }, []);
     return (
         <Master>
             <Stack direction={'column'} spacing={2}>
                 <Typography variant="h5" fontWeight="bold">Penalties</Typography>
                 <Box>
-                    <Divider/>
+                    <Divider />
                     {isLoading && (
-                        <LinearProgress/>
+                        <LinearProgress />
                     )}
                 </Box>
             </Stack>
             <Grid container mt={1} spacing={2}>
                 <Grid item xs={4}>
-                    <UsersList usersData={usersData} setEventWithAttend={setEventWithAttend} setIsLoading={setIsLoading}/>
+                    <UsersList usersData={usersData} setEventWithAttend={setEventWithAttend} setIsLoading={setIsLoading} />
                 </Grid>
                 <Grid item xs={8}>
-                    <AttendanceList eventWithAttend={eventWithAttend}/>
+                    <AttendanceList eventWithAttend={eventWithAttend} />
                 </Grid>
             </Grid>
         </Master>
     )
 }
 
-function UsersList({usersData, setEventWithAttend, setIsLoading}) {
+function UsersList({ usersData, setEventWithAttend, setIsLoading }) {
     const getUserAttendance = async (id) => {
         setIsLoading(true)
         try {
-            const {data, error} = await fetchEventsWithAttendanceByUserId(id)
+            const { data, error } = await fetchEventsWithAttendanceByUserId(id)
             if (error) {
                 toast.error(error.message)
             } else {
@@ -105,19 +105,19 @@ function UsersList({usersData, setEventWithAttend, setIsLoading}) {
         setIsLoading(false)
     };
     return (
-        <Card sx={{p: 2, minHeight: '75vh', overflow: 'auto'}} elevation={5}>
+        <Card sx={{ p: 2, minHeight: '75vh', overflow: 'auto' }} elevation={5}>
             <Stack direction={'column'} spacing={2}>
                 <Typography fontWeight={'bold'}>User List:</Typography>
-                <Divider/>
+                <Divider />
                 {usersData.map((item, index) => (
                     <CustomCard key={index} >
-                        <Box sx={{minHeight: 50}} onClick={() => getUserAttendance(item._id)}>
+                        <Box sx={{ minHeight: 50 }} onClick={() => getUserAttendance(item._id)}>
                             <Stack direction={'row'} spacing={2} justifyContent={'space-between'}>
                                 <Stack direction={'row'} spacing={2}>
                                     <Avatar alt='img' src={item.picture} sx={{
                                         height: 50,
                                         width: 50
-                                    }}/>
+                                    }} />
                                     <Box>
                                         <Typography fontWeight={'bold'}>{item.lastName}, {item.firstName} {item.middleName[0]}.</Typography>
                                         <Typography>{item.email}</Typography>
@@ -135,7 +135,8 @@ function UsersList({usersData, setEventWithAttend, setIsLoading}) {
     );
 }
 
-function AttendanceList({eventWithAttend}) {
+function AttendanceList({ eventWithAttend }) {
+    const currentDay = moment()
     // Columns definition
     const columns = useMemo(() => [
         { id: 'date', label: 'Date' },
@@ -151,18 +152,26 @@ function AttendanceList({eventWithAttend}) {
             const attendance = item.attendances?.[0];
             return {
                 date: moment(item.date).format('MMM - DD - YYYY ddd'),
-                amInFormat: attendance?.amIn ? 
-                    <Chip color='success' label={moment(attendance.amIn).format('hh:mm A')} /> : 
-                    <Chip color='error' label='Absent' />,
-                amOutFormat: attendance?.amOut ? 
-                    <Chip color='success' label={moment(attendance.amOut).format('hh:mm A')} /> : 
-                    <Chip color='error' label='Absent' />,
-                pmInFormat: attendance?.pmIn ? 
-                    <Chip color='success' label={moment(attendance.pmIn).format('hh:mm A')} /> : 
-                    <Chip color='error' label='Absent' />,
-                pmOutFormat: attendance?.pmOut ? 
-                    <Chip color='success' label={moment(attendance.pmOut).format('hh:mm A')} /> : 
-                    <Chip color='error' label='Absent' />,
+                amInFormat: attendance?.amIn &&
+                    <Chip color='success' label={moment(attendance.amIn).format('hh:mm A')} /> ||
+                    moment(item.pmIn).isBefore(currentDay) ?
+                    <Chip color='error' label='Absent' /> :
+                    <Chip label='Absent' />,
+                amOutFormat: attendance?.amOut &&
+                    <Chip color='success' label={moment(attendance.amOut).format('hh:mm A')} /> ||
+                    moment(item.amOut).isBefore(currentDay) ?
+                    <Chip color='error' label='Absent' /> :
+                    <Chip label='Absent' />,
+                pmInFormat: attendance?.pmIn &&
+                    <Chip color='success' label={moment(attendance.pmIn).format('hh:mm A')} /> ||
+                    moment(item.pmIn).isBefore(currentDay) ?
+                    <Chip color='error' label='Absent' /> :
+                    <Chip label='Absent' />,
+                pmOutFormat: attendance?.pmOut &&
+                    <Chip color='success' label={moment(attendance.pmOut).format('hh:mm A')} /> ||
+                    moment(item.pmOut).isBefore(currentDay) ?
+                    <Chip color='error' label='Absent' /> :
+                    <Chip label='Absent' />,
                 amIn: attendance?.amIn || null,
                 amOut: attendance?.amOut || null,
                 pmIn: attendance?.pmIn || null,
@@ -185,7 +194,7 @@ function AttendanceList({eventWithAttend}) {
                             >
                                 {event.event}
                             </AccordionSummary>
-                            <DataTable 
+                            <DataTable
                                 columns={columns}
                                 rows={getRows(event.schedules)}
                             />

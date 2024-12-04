@@ -29,7 +29,8 @@
     "react-fetch-hook": "^1.9.5",
     "react-router-dom": "^6.24.1",
     "react-to-print": "^3.0.2",
-    "react-toastify": "^10.0.5"
+    "react-toastify": "^10.0.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

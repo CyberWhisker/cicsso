@@ -85,6 +85,7 @@ function Attendance() {
 function AttendanceTable({ combinedData, handleGetData, id }) {
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [schedule, setSchedule] = useState({});
   const [selected, setSelected] = useState([]);
   const [active, setActive] = useState({
     amInChip: false,
@@ -144,11 +145,14 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       if (error) {
         console.log(error)
       } else {
+        setSchedule(data)
         handleActive(data)
       }
     }
     getSchedule();
   }, []);
+
+  const currentDay = moment()
 
   const columns = [
     {
@@ -183,9 +187,12 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       valueFormatter: (value) => value ? moment(value).format('hh:mm A') : "Absent",
       renderCell: (params) => (
         <Box sx={{ textAlign: "center" }}>
-          {params.row.amIn ?
+          {params.row.amIn &&
             <Chip color='success' label={moment(params?.row?.amIn).format('hh:mm A')} />
-            : <Chip color='error' label='Absent' />
+          }
+          {!params.row.amIn && moment(schedule[0].amIn).isBefore(currentDay) ?
+            <Chip color='error' label='Absent' /> :
+            <Chip label='Absent' />
           }
         </Box>
       ),
@@ -198,9 +205,12 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       valueFormatter: (value) => value ? moment(value).format('hh:mm A') : "Absent",
       renderCell: (params) => (
         <Box sx={{ textAlign: "center" }}>
-          {params.row.amOut ?
+          {params.row.amOut &&
             <Chip color='success' label={moment(params?.row?.amOut).format('hh:mm A')} />
-            : <Chip color='error' label='Absent' />
+          }
+          {!params.row.amOut && moment(schedule[0].amOut).isBefore(currentDay) ?
+            <Chip color='error' label='Absent' /> :
+            <Chip label='Absent' />
           }
         </Box>
       ),
@@ -213,9 +223,12 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       valueFormatter: (value) => value ? moment(value).format('hh:mm A') : "Absent",
       renderCell: (params) => (
         <Box sx={{ textAlign: "center" }}>
-          {params.row.pmIn ?
+          {params.row.pmIn &&
             <Chip color='success' label={moment(params?.row?.pmIn).format('hh:mm A')} />
-            : <Chip color='error' label='Absent' />
+          }
+          {!params.row.pmIn && moment(schedule[0].pmIn).isBefore(currentDay) ?
+            <Chip color='error' label='Absent' /> :
+            <Chip label='Absent' />
           }
         </Box>
       ),
@@ -228,9 +241,12 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       valueFormatter: (value) => value ? moment(value).format('hh:mm A') : "Absent",
       renderCell: (params) => (
         <Box sx={{ textAlign: "center" }}>
-          {params.row.pmOut ?
+          {params.row.pmOut &&
             <Chip color='success' label={moment(params?.row?.pmOut).format('hh:mm A')} />
-            : <Chip color='error' label='Absent' />
+          }
+          {!params.row.pmOut && moment(schedule[0].pmOut).isBefore(currentDay) ?
+            <Chip color='error' label='Absent' /> :
+            <Chip label='Absent' />
           }
         </Box>
       ),
