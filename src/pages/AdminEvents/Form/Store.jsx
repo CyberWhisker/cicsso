@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
-import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { DatePicker, LocalizationProvider, renderTimeViewClock, TimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import moment from 'moment';
 
-function Store({setEvents, onClose}) {
+function Store({ setEvents, onClose }) {
     const [formData, setFormData] = useState({
         event: '',
         startDate: null,
@@ -24,7 +24,7 @@ function Store({setEvents, onClose}) {
 
     const [submitted, setSubmitted] = useState(false);
 
-    const handleChange = (e) => 
+    const handleChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleDateChange = (name, date) => {
@@ -43,7 +43,7 @@ function Store({setEvents, onClose}) {
         const { amIn, amOut, pmIn, pmOut } = formSchedule;
 
         // Check if all fields are filled
-        if (!event || !startDate || !endDate || !amIn || !amOut || !pmIn || !pmOut) {
+        if (!event || !startDate || !endDate) {
             toast.error("All fields, including times, are required");
             return;
         }
@@ -90,7 +90,7 @@ function Store({setEvents, onClose}) {
     const handleSchedule = async (eventId) => {
         let minDate = moment(formData.startDate);
         const endDate = moment(formData.endDate);
-    
+
         while (minDate.isSameOrBefore(endDate)) {
             let scheduleDateAmIn = minDate.clone();
             let scheduleDateAmOut = minDate.clone();
@@ -128,16 +128,16 @@ function Store({setEvents, onClose}) {
                     second: pmOutTime.second(), // Optional, if you need seconds as well
                 });
             }
-    
+
             const currentSchedule = {
                 event: eventId,
-                date: minDate, 
+                date: minDate,
                 amIn: scheduleDateAmIn,
                 amOut: scheduleDateAmOut,
                 pmIn: scheduleDatePmIn,
                 pmOut: scheduleDatePmOut,
             };
-    
+
             const response = await fetch(`${import.meta.env.VITE_API}/api/schedule`, {
                 method: 'POST',
                 body: JSON.stringify(currentSchedule),
@@ -145,13 +145,13 @@ function Store({setEvents, onClose}) {
                     'Content-Type': 'application/json',
                 },
             });
-    
+
             if (response.ok) {
                 toast.success("Schedule added successfully");
             } else {
                 toast.error("Failed to add schedule");
             }
-    
+
             // Move to the next day
             minDate.add(1, 'days');
         }
@@ -162,25 +162,25 @@ function Store({setEvents, onClose}) {
                 <Typography variant='h4' fontWeight='bold'>Add Event</Typography>
                 <Box mt={2}>
                     <form onSubmit={handleSubmit}>
-                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                             <TextField
                                 label='Enter Event'
                                 name='event'
                                 variant="outlined"
-                                sx={{ width: '100%'}}
+                                sx={{ width: '100%' }}
                                 value={formData.event}
                                 onChange={handleChange}
                                 error={submitted && !formData.event}
                                 helperText={submitted && !formData.event ? "Required" : ""}
                             />
-                            <Divider/>
+                            <Divider />
                             <Typography>Date</Typography>
-                            <DatePicker 
+                            <DatePicker
                                 label="Start Date"
                                 value={formData.startDate}
                                 onChange={(newValue) => handleDateChange('startDate', newValue)}
                                 minDate={moment()}
-                                maxDate={moment(formData.endDate ? formData.endDate : null )}
+                                maxDate={moment(formData.endDate ? formData.endDate : null)}
                                 slotProps={{
                                     textField: {
                                         error: submitted && !formData.startDate,
@@ -188,11 +188,11 @@ function Store({setEvents, onClose}) {
                                     },
                                 }}
                             />
-                            <DatePicker 
+                            <DatePicker
                                 label="End Date"
                                 value={formData.endDate}
                                 onChange={(newValue) => handleDateChange('endDate', newValue)}
-                                minDate={moment(formData.startDate ? formData.startDate : null )}
+                                minDate={moment(formData.startDate ? formData.startDate : null)}
                                 slotProps={{
                                     textField: {
                                         error: submitted && !formData.endDate,
@@ -200,10 +200,10 @@ function Store({setEvents, onClose}) {
                                     },
                                 }}
                             />
-                            <Divider/>
+                            <Divider />
                             <Typography>Time</Typography>
                             <Stack direction={'row'} spacing={2}>
-                                <TimePicker 
+                                <TimePicker
                                     label="AM IN"
                                     value={formSchedule.amIn}
                                     onChange={(newValue) => handleTimeChange('amIn', newValue)}
@@ -213,21 +213,32 @@ function Store({setEvents, onClose}) {
                                             helperText: submitted && !formSchedule.amIn ? "Required" : "",
                                         },
                                     }}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
-                                <TimePicker 
+                                <TimePicker
                                     label="AM OUT"
                                     value={formSchedule.amOut}
                                     onChange={(newValue) => handleTimeChange('amOut', newValue)}
+                                    minTime={formSchedule.amIn}
                                     slotProps={{
                                         textField: {
                                             error: submitted && !formSchedule.amOut,
                                             helperText: submitted && !formSchedule.amOut ? "Required" : "",
                                         },
                                     }}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
                             </Stack>
                             <Stack direction={'row'} spacing={2}>
-                                <TimePicker 
+                                <TimePicker
                                     label="PM IN"
                                     value={formSchedule.pmIn}
                                     onChange={(newValue) => handleTimeChange('pmIn', newValue)}
@@ -238,7 +249,7 @@ function Store({setEvents, onClose}) {
                                         },
                                     }}
                                 />
-                                <TimePicker 
+                                <TimePicker
                                     label="PM OUT"
                                     value={formSchedule.pmOut}
                                     onChange={(newValue) => handleTimeChange('pmOut', newValue)}
@@ -260,7 +271,7 @@ function Store({setEvents, onClose}) {
                                 onChange={handleChange}
                                 type='file'
                             /> */}
-                            <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
+                            <Button type='submit' variant='contained' sx={{ mt: 2, width: '100%' }}>
                                 Submit
                             </Button>
                         </Box>
