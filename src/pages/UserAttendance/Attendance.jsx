@@ -65,7 +65,7 @@ function EventList({ event }) {
                         <Chip label='Absent' color='error' />
                     </Box> :
                     <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='Absent' />
+                        <Chip label='UpComing' />
                     </Box>
             )
         },
@@ -85,7 +85,7 @@ function EventList({ event }) {
                         <Chip label='Absent' color='error' />
                     </Box> :
                     <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='Absent' />
+                        <Chip label='UpComing' />
                     </Box>
             )
         },
@@ -105,7 +105,7 @@ function EventList({ event }) {
                         <Chip label='Absent' color='error' />
                     </Box> :
                     <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='Absent' />
+                        <Chip label='UpComing' />
                     </Box>
             )
         },
@@ -125,7 +125,7 @@ function EventList({ event }) {
                         <Chip label='Absent' color='error' />
                     </Box> :
                     <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='Absent' />
+                        <Chip label='UpComing' />
                     </Box>
             )
         },

@@ -39,7 +39,7 @@ function Store() {
     if (!email || !/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Valid email is required';
     if (!firstName) newErrors.firstName = 'First Name is required';
     if (!lastName) newErrors.lastName = 'Last Name is required';
-    if (!middleName) newErrors.middleName = 'Middle Name is required';
+    // if (!middleName) newErrors.middleName = 'Middle Name is required';
     if (!program) newErrors.program = 'Program is required';
     if (!year) newErrors.year = 'Year is required';
     if (!section) newErrors.section = 'Section is required';

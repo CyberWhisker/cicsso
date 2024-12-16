@@ -11,17 +11,18 @@ import * as XLSX from 'xlsx';
 
 function Users() {
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [usersData, setUsersData] = useState([]);
     const [userData, setUserData] = useState(null);
+    const [backupUser, setBackupUser] = useState([]);
 
     const getUsers = async () => {
         setIsLoading(true);
         const { data, error } = await fetchUsers();
         if (error) {
-            setError(error);
+            console.log(error);
         } else {
             setUsersData(data);
+            setBackupUser(data)
         }
         setIsLoading(false);
     };
@@ -46,7 +47,7 @@ function Users() {
             </Stack>
             <Grid container spacing={2} mt={1}>
                 <Grid item xs={4}>
-                    <UsersList usersData={usersData} setIsLoading={setIsLoading} setUserData={setUserData} />
+                    <UsersList usersData={usersData} setIsLoading={setIsLoading} setUserData={setUserData} setUsersData={setUsersData} backupUser={backupUser} />
                 </Grid>
                 <Grid item xs={8}>
                     <UserDetails userData={userData} setIsLoading={setIsLoading} setUserData={setUserData} getUsers={getUsers} />
@@ -56,7 +57,7 @@ function Users() {
     )
 }
 
-function UsersList({ usersData, setIsLoading, setUserData }) {
+function UsersList({ usersData, setIsLoading, setUserData, setUsersData, backupUser }) {
     const handleUserData = async (id) => {
         setIsLoading(true)
         const { data, error } = await fetchUserById(id);
@@ -67,10 +68,23 @@ function UsersList({ usersData, setIsLoading, setUserData }) {
         }
         setIsLoading(false)
     }
+    const onChangeSearch = (e) => {
+        const value = e.target.value.toLowerCase();
+        const terms = value.split(' '); // Split the input into search terms
+
+        const filtered = backupUser.filter((item) => {
+            const fullName = `${item.firstName} ${item?.middleName} ${item.lastName}`.toLowerCase(); // Combine all fields
+            return terms.every((term) => fullName.includes(term)); // Check if all terms exist in the fullName
+        });
+        setUsersData(filtered)
+    }
     return (
         <Card sx={{ p: 2, minHeight: '75vh', overflow: 'auto' }} elevation={5}>
             <Stack direction={'column'} spacing={2}>
-                <Typography fontWeight={'bold'}>User List:</Typography>
+                <Box sx={{ display: 'flex' }}>
+                    {/* <Typography fontWeight={'bold'}>User List:</Typography> */}
+                    <TextField fullWidth label="Search" onChange={onChangeSearch} />
+                </Box>
                 <Divider />
                 {usersData.map((item, index) => (
                     <CustomCard key={index} >
@@ -81,7 +95,7 @@ function UsersList({ usersData, setIsLoading, setUserData }) {
                                     width: 50
                                 }} />
                                 <Box>
-                                    <Typography noWrap fontWeight={'bold'}>{item.lastName.toUpperCase()}, {item.firstName.toUpperCase()} {item.middleName[0].toUpperCase()}.</Typography>
+                                    <Typography noWrap fontWeight={'bold'}>{item.lastName.toUpperCase()}, {item.firstName.toUpperCase()} {item?.middleName[0]?.toUpperCase()}.</Typography>
                                     <Typography noWrap>{item.email}</Typography>
                                 </Box>
                             </Stack>
@@ -194,7 +208,7 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                 <TextField
                                     name='middleName'
                                     sx={{ width: '100%' }}
-                                    value={userData.middleName}
+                                    value={userData?.middleName}
                                     disabled={toggleUpdate}
                                     onChange={(e) =>
                                         handleChange({

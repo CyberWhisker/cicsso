@@ -17,14 +17,14 @@ import { fetchTransactionByCollectionId } from '../../api/TransactionApi';
 
 function Details() {
     const navigate = useNavigate();
-    const {id} = useParams();
+    const { id } = useParams();
     const [storeModal, setStoreModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState([]);
     const handleGetData = async () => {
         const [
-            {data: userData, error: userError},
-            {data: TransData, error: TransError},
+            { data: userData, error: userError },
+            { data: TransData, error: TransError },
         ] = await Promise.all([
             fetchUsers(),
             fetchTransactionByCollectionId(id)
@@ -43,26 +43,26 @@ function Details() {
 
     useEffect(() => {
         handleGetData()
-    },[])
+    }, [])
 
     return (
         <Master>
             <Stack spacing={2}>
                 <Stack direction={'row'} spacing={2} alignItems={'center'}>
                     <Typography variant="h5" fontWeight="bold">Transaction List :</Typography>
-                    <Button variant="contained" onClick={() => navigate(-1)} startIcon={<KeyboardReturn/>}>Collection</Button>
-                    <Button variant="contained" onClick={() => setStoreModal(true)} endIcon={<Add/>}>Add Transaction</Button>
+                    <Button variant="contained" onClick={() => navigate(-1)} startIcon={<KeyboardReturn />}>Collection</Button>
+                    <Button variant="contained" onClick={() => setStoreModal(true)} endIcon={<Add />}>Add Transaction</Button>
                 </Stack>
                 <Box>
-                    <Divider/>
+                    <Divider />
                     {isLoading &&
-                        <LinearProgress/>
+                        <LinearProgress />
                     }
                 </Box>
-                <DataGridList data={data} handleGetData={handleGetData}/>
+                <DataGridList data={data} handleGetData={handleGetData} />
             </Stack>
             <Drawer open={storeModal} anchor='right' onClose={() => setStoreModal(false)}>
-                <Store handleGetData={handleGetData} handleCloseModal={() => setStoreModal(false)} data={data}/>
+                <Store handleGetData={handleGetData} handleCloseModal={() => setStoreModal(false)} data={data} />
             </Drawer>
         </Master>
     )
@@ -90,15 +90,15 @@ function QuickSearchToolbar() {
     );
 }
 
-function DataGridList ({data, handleGetData}) {
+function DataGridList({ data, handleGetData }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selected, setSelected] = useState(null);
     const [updateModal, setUpdateModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const handleMenuOpen = (event, item) => {
         setAnchorEl(event.currentTarget)
-        const {_id: userId} = item
-        const {_id: _id, collectionId, payment, amount, date, status, image} = item.transaction
+        const { _id: userId } = item
+        const { _id: _id, collectionId, payment, amount, date, status, image } = item.transaction
         const newForm = {
             _id: _id,
             userId: userId,
@@ -146,13 +146,13 @@ function DataGridList ({data, handleGetData}) {
             headerAlign: 'center',
             renderCell: (params) => (
                 params.row.transaction?.payment ? (
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label={params.row.transaction.payment} color='success'/>
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Chip label={params.row.transaction.payment} color='success' />
                     </Box>
-                ) : 
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label='Unpaid' color='error'/>       
-                    </Box> 
+                ) :
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Chip label='Unpaid' color='error' />
+                    </Box>
             )
         },
         {
@@ -162,12 +162,12 @@ function DataGridList ({data, handleGetData}) {
             headerAlign: 'center',
             renderCell: (params) => (
                 params.row.transaction?.amount ? (
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label={`₱ ${params.row.transaction.amount.toFixed(2)}`}/>
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Chip label={`₱ ${params.row.transaction.amount.toFixed(2)}`} />
                     </Box>
-                ) : 
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label='Unpaid' color='error'/>     
+                ) :
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Chip label='Unpaid' color='error' />
                     </Box>
             )
         },
@@ -178,12 +178,12 @@ function DataGridList ({data, handleGetData}) {
             headerAlign: 'center',
             renderCell: (params) => (
                 params.row.transaction?.status ? (
-                    <Box sx={{textAlign: 'center'}}>
-                        <StatusChip status={params.row.transaction.status}/>
+                    <Box sx={{ textAlign: 'center' }}>
+                        <StatusChip status={params.row.transaction.status} />
                     </Box>
-                ) : 
-                    <Box sx={{textAlign: 'center'}}>
-                        <Chip label='Unpaid' color='error'/>     
+                ) :
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Chip label='Unpaid' color='error' />
                     </Box>
             )
         },
@@ -199,26 +199,26 @@ function DataGridList ({data, handleGetData}) {
             renderCell: (params) => (
                 params.row.transaction?._id ? (
                     <Stack height={'100%'} justifyContent={'center'} alignItems={'center'}>
-                        <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{cursor: 'pointer'}}/>
+                        <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{ cursor: 'pointer' }} />
                     </Stack>
                 ) : (
                     <Stack height={'100%'} justifyContent={'center'} alignItems={'center'}>
-                        <DisabledByDefault/>
+                        <DisabledByDefault />
                     </Stack>
                 )
             ),
             headerAlign: 'center'
-            
+
         },
     ]
 
-    const rows = useMemo(() => 
+    const rows = useMemo(() =>
         data.map((item) => ({
             ...item,
             id: item._id,
-            name: `${item.lastName}, ${item.firstName} ${item.middleName[0]}.`,
+            name: `${item.lastName}, ${item.firstName} ${item?.middleName[0] || ''}.`,
             date: item.transaction?.date ? moment(item.transaction.date).format("MMMM DD YYYY") :
-            null,
+                null,
             payment: item.transaction?.payment,
             amount: item.transaction?.amount,
             status: item.transaction?.status
@@ -247,22 +247,22 @@ function DataGridList ({data, handleGetData}) {
                 </MenuItem>
             </Menu>
             <Drawer open={updateModal} onClose={handleCloseModal} anchor='right'>
-                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} data={data}/>
+                <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} data={data} />
             </Drawer>
             <AlertModal open={deleteModal} onClose={handleCloseModal} anchor='right'>
-                <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData}/>
+                <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
             </AlertModal>
         </>
     )
 }
 
-function StatusChip ({status}) {
+function StatusChip({ status }) {
     if (status == 'pending') {
-        return <Chip color='warning' label='Pending'/>
+        return <Chip color='warning' label='Pending' />
     } else if (status == 'confirm') {
-        return <Chip color='success' label='Confirm'/>
+        return <Chip color='success' label='Confirm' />
     } else {
-        return <Chip color='error' label='Decline'/>
+        return <Chip color='error' label='Decline' />
     }
 }
 export default Details

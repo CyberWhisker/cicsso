@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Accordion, AccordionSummary, Avatar, Badge, Box, Card, Chip, Divider, Grid, LinearProgress, Stack, Typography } from '@mui/material';
+import { Accordion, AccordionSummary, Avatar, Badge, Box, Card, Chip, Divider, Grid, LinearProgress, Stack, TextField, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
 import { CustomCard, DataTable } from '../../components';
 import { fetchUsersWithAttendance, } from '../../api/userApi';
@@ -13,6 +13,7 @@ function Penalties() {
     const [isLoading, setIsLoading] = useState(true);
     const [usersData, setUsersData] = useState([]);
     const [eventWithAttend, setEventWithAttend] = useState([]);
+    const [backupUser, setBackupUser] = useState([]);
     const handleGetUser = async () => {
         setIsLoading(true);
 
@@ -55,6 +56,7 @@ function Penalties() {
                     absent: absent
                 }
             })
+            setBackupUser(newData)
             setUsersData(newData)
         }
         setIsLoading(false);
@@ -75,7 +77,7 @@ function Penalties() {
             </Stack>
             <Grid container mt={1} spacing={2}>
                 <Grid item xs={4}>
-                    <UsersList usersData={usersData} setEventWithAttend={setEventWithAttend} setIsLoading={setIsLoading} />
+                    <UsersList usersData={usersData} setEventWithAttend={setEventWithAttend} setIsLoading={setIsLoading} setUsersData={setUsersData} backupUser={backupUser} />
                 </Grid>
                 <Grid item xs={8}>
                     <AttendanceList eventWithAttend={eventWithAttend} />
@@ -85,7 +87,7 @@ function Penalties() {
     )
 }
 
-function UsersList({ usersData, setEventWithAttend, setIsLoading }) {
+function UsersList({ usersData, setEventWithAttend, setIsLoading, setUsersData, backupUser }) {
     const getUserAttendance = async (id) => {
         setIsLoading(true)
         try {
@@ -104,10 +106,22 @@ function UsersList({ usersData, setEventWithAttend, setIsLoading }) {
         }
         setIsLoading(false)
     };
+
+    const onChangeSearch = (e) => {
+        const value = e.target.value.toLowerCase();
+        const terms = value.split(' '); // Split the input into search terms
+
+        const filtered = backupUser.filter((item) => {
+            const fullName = `${item.firstName} ${item.middleName} ${item.lastName}`.toLowerCase(); // Combine all fields
+            return terms.every((term) => fullName.includes(term)); // Check if all terms exist in the fullName
+        });
+        setUsersData(filtered)
+    }
     return (
         <Card sx={{ p: 2, minHeight: '75vh', overflow: 'auto' }} elevation={5}>
             <Stack direction={'column'} spacing={2}>
-                <Typography fontWeight={'bold'}>User List:</Typography>
+                {/* <Typography fontWeight={'bold'}>User List:</Typography> */}
+                <TextField fullWidth label="Search" onChange={onChangeSearch} />
                 <Divider />
                 {usersData.map((item, index) => (
                     <CustomCard key={index} >

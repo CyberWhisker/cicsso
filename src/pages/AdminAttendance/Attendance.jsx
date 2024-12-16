@@ -192,7 +192,7 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
           }
           {!params.row.amIn && moment(schedule[0].amIn).isBefore(currentDay) ?
             <Chip color='error' label='Absent' /> :
-            <Chip label='Absent' />
+            <Chip label='Upcoming' />
           }
         </Box>
       ),
@@ -210,7 +210,7 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
           }
           {!params.row.amOut && moment(schedule[0].amOut).isBefore(currentDay) ?
             <Chip color='error' label='Absent' /> :
-            <Chip label='Absent' />
+            <Chip label='Upcoming' />
           }
         </Box>
       ),
@@ -228,7 +228,7 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
           }
           {!params.row.pmIn && moment(schedule[0].pmIn).isBefore(currentDay) ?
             <Chip color='error' label='Absent' /> :
-            <Chip label='Absent' />
+            <Chip label='Upcoming' />
           }
         </Box>
       ),
@@ -246,7 +246,7 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
           }
           {!params.row.pmOut && moment(schedule[0].pmOut).isBefore(currentDay) ?
             <Chip color='error' label='Absent' /> :
-            <Chip label='Absent' />
+            <Chip label='Upcoming' />
           }
         </Box>
       ),

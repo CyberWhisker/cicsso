@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { Chart, CustomCard } from '../../components';
+import { CustomCard } from '../../components';
 import Master from '../../layouts/Master';
 import { Box, Card, Chip, Divider, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useTheme } from '@emotion/react';
@@ -9,8 +9,8 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 import { fetchEventsWithAttendanceByUserId } from '../../api/EventApi';
 import moment from 'moment';
 import { fetchTransactionByUserId } from '../../api/TransactionApi';
-import { fetchCollections, fetchCollectionWithEventAndAttendance } from '../../api/CollectionApi';
-import { List, Search } from '@mui/icons-material';
+import { fetchCollectionWithEventAndAttendance } from '../../api/CollectionApi';
+import { Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 function Dashboard() {
@@ -116,6 +116,7 @@ function InfoSection({ events, auth }) {
 
     const handleCredit = async (trans, totalAttend) => {
         const { data, error } = await fetchCollectionWithEventAndAttendance();
+        const dateToday = moment();
         if (error) {
             toast.error(error)
         } else {
@@ -123,13 +124,13 @@ function InfoSection({ events, auth }) {
             let attend = 0;
             data.map((item, index) => {
                 if (item.eventId) {
-                    attend = item.eventId.schedules.length * 4 - totalAttend
+                    const filteredSched = item.eventId.schedules.filter((item) => moment(item.date).isBefore(dateToday, 'day'))
+                    attend = filteredSched.length * 4 - totalAttend
                     totalFine += item.fine * attend
                 } else {
                     totalFine += item.fine
                 }
             })
-            // const totalFine = data.reduce((sum, item) => sum + item.fine, 0);
             const totalAmount = trans.reduce((sum, item) => {
                 return item.status === 'confirm' ? sum + item.amount : sum;
             }, 0);

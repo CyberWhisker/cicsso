@@ -125,12 +125,14 @@ function CollectionCard({ data, setSelected, setPaymentModal, auth }) {
 function EventCard({ data, setSelected, setPaymentModal, auth }) {
   const [totalPenalty, setTotalPenalty] = useState(0);
   const [totalFine, setTotalFine] = useState(0);
+  const currentDay = moment();
 
   const handlePenalty = () => {
     let countTotalAttendance = 0;
     let countAttendance = 0;
-    countTotalAttendance = data.eventId.schedules.length * 4
-    data.eventId.schedules.map((sched) => {
+    const filteredSched = data.eventId.schedules.filter((item) => moment(item.date).isBefore(currentDay, 'day'))
+    countTotalAttendance = filteredSched.length * 4
+    filteredSched.map((sched) => {
       if (sched.attendances.length > 0) {
         if (sched.attendances[0].amIn) {
           countAttendance++
@@ -186,7 +188,13 @@ function EventCard({ data, setSelected, setPaymentModal, auth }) {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{data.collectionName}</Typography>
             {totalPenalty === 0 ? (
-              <Chip label="Confirmed" color="success" />
+              <>
+                {moment(data.startDate).isAfter(currentDay, 'day') ?
+                  <Chip label="Upcoming" />
+                  :
+                  <Chip label="Confirmed" color="success" />
+                }
+              </>
             ) : (
               <>
                 {data.transaction[0]?.status === 'confirm' && (
