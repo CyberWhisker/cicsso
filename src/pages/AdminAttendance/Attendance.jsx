@@ -190,8 +190,10 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
           {params.row.amIn &&
             <Chip color='success' label={moment(params?.row?.amIn).format('hh:mm A')} />
           }
-          {!params.row.amIn && moment(schedule[0].amIn).isBefore(currentDay) ?
-            <Chip color='error' label='Absent' /> :
+          {!params.row.amIn && moment(schedule[0].amIn).isBefore(currentDay) &&
+            <Chip color='error' label='Absent' />
+          }
+          {!params.row.amIn && moment(schedule[0].amIn).isAfter(currentDay) &&
             <Chip label='Upcoming' />
           }
         </Box>
@@ -208,8 +210,10 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
           {params.row.amOut &&
             <Chip color='success' label={moment(params?.row?.amOut).format('hh:mm A')} />
           }
-          {!params.row.amOut && moment(schedule[0].amOut).isBefore(currentDay) ?
-            <Chip color='error' label='Absent' /> :
+          {!params.row.amOut && moment(schedule[0].amOut).isBefore(currentDay) &&
+            <Chip color='error' label='Absent' />
+          }
+          {!params.row.amOut && moment(schedule[0].amOut).isAfter(currentDay) &&
             <Chip label='Upcoming' />
           }
         </Box>
@@ -226,8 +230,10 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
           {params.row.pmIn &&
             <Chip color='success' label={moment(params?.row?.pmIn).format('hh:mm A')} />
           }
-          {!params.row.pmIn && moment(schedule[0].pmIn).isBefore(currentDay) ?
-            <Chip color='error' label='Absent' /> :
+          {!params.row.pmIn && moment(schedule[0].pmIn).isBefore(currentDay) &&
+            <Chip color='error' label='Absent' />
+          }
+          {!params.row.pmIn && moment(schedule[0].pmIn).isAfter(currentDay) &&
             <Chip label='Upcoming' />
           }
         </Box>
@@ -244,8 +250,10 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
           {params.row.pmOut &&
             <Chip color='success' label={moment(params?.row?.pmOut).format('hh:mm A')} />
           }
-          {!params.row.pmOut && moment(schedule[0].pmOut).isBefore(currentDay) ?
-            <Chip color='error' label='Absent' /> :
+          {!params.row.pmOut && moment(schedule[0].pmOut).isBefore(currentDay) &&
+            <Chip color='error' label='Absent' />
+          }
+          {!params.row.pmOut && moment(schedule[0].pmOut).isAfter(currentDay) &&
             <Chip label='Upcoming' />
           }
         </Box>

@@ -4,7 +4,6 @@ import moment from 'moment';
 import { Check } from '@mui/icons-material';
 
 function StudentClearance({ selected }) {
-    console.log(selected)
     return (
         <div>
             <div id="test" style={{ fontFamily: "'Times New Roman', Times, serif", color: 'black' }}>

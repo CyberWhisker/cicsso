@@ -27,10 +27,10 @@ function Payment() {
         <PaymentRounded sx={{ height: '100%', width: '100%' }} />
       </Box>
       <Box sx={{ width: '50%', textAlign: { xs: 'center', sm: 'left' } }}>
-        <Typography variant="h3" fontWeight="bold">
+        <Typography variant="h3" fontWeight="bold" sx={{ textAlign: 'center' }}>
           Payment
         </Typography>
-        <Typography variant="h6" sx={{ mt: 2, width: '100%' }}>
+        <Typography variant="h6" sx={{ mt: 2, width: '100%', textAlign: 'center' }}>
           Facilitate secure and efficient payment processing for contributions, fees, and fines. The system ensures transparency and provides real-time payment status updates for users.
         </Typography>
       </Box>

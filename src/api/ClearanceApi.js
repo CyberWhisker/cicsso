@@ -106,3 +106,22 @@ export const deleteClearance = async (formData) => {
         return { data: [], error: error };
     }
 }
+
+export const updateSelectedClearance = async (formData) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/clearance/updateSelectedClearance`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        if (!response.ok) {
+            throw new Error('Failed to update Clearance');
+        }
+        const data = await response.json();
+        return { data, error: null };
+    } catch (error) {
+        return { data: [], error: error };
+    }
+}

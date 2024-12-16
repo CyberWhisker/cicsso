@@ -1,18 +1,19 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Button, Card, Chip, Divider, Drawer, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
-import { DataGrid, GridToolbarQuickFilter, GridMoreVertIcon } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarQuickFilter, GridActionsCellItem } from '@mui/x-data-grid';
 import moment from 'moment';
 import StudentClearance from '../../layouts/PDF/StudentClearance';
 import { toast } from 'react-toastify';
-import { fetchActiveSchoolYear } from '../../api/SchoolYearApi';
 import { useReactToPrint } from 'react-to-print/lib';
 import Update from './Form/Update';
 import Delete from './Form/Delete';
 import { AlertModal } from '../../components';
 import { fetchClearances } from '../../api/ClearanceApi';
-import { Add } from '@mui/icons-material';
+import { Add, Edit, Visibility, Delete as DeleteIcon } from '@mui/icons-material';
 import Store from './Form/Store';
+import SelectedUpdate from './Form/SelectedUpdate';
+import View from './Form/View';
 
 function QuickSearchToolbar() {
     return (
@@ -98,6 +99,7 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
     const [anchorEl, setAnchorEl] = useState(null);
     const [updateModal, setUpdateModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
+    const [viewModal, setViewModal] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]); // State for selected rows
 
     const handleMenuOpen = (event, item) => {
@@ -108,21 +110,29 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
         setAnchorEl(null);
     };
 
-    const handleUpdateModal = () => {
-        handleMenuClose();
+    const handleUpdateModal = (params) => {
+        setSelected(params.row)
         setUpdateModal(true);
     };
-    const handleDeleteModal = () => {
-        handleMenuClose();
+
+    const handleViewModal = (params) => {
+        setSelected(params.row)
+        setViewModal(true);
+    };
+
+    const handleDeleteModal = (params) => {
+        setSelected(params.row)
         setDeleteModal(true);
     };
+
     const handleCloseModal = () => {
+        setViewModal(false);
         setDeleteModal(false);
         setUpdateModal(false);
     };
 
     const columns = [
-        { field: 'id', headerName: 'Id', flex: 1, headerAlign: 'center' },
+        { field: 'id', headerName: 'Id', headerAlign: 'center' },
         { field: 'name', headerName: 'Name', flex: 1, headerAlign: 'center' },
         { field: 'semester', headerName: 'Semester', flex: 1, headerAlign: 'center' },
         {
@@ -149,14 +159,34 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
             ),
         },
         {
-            field: 'setting',
-            headerName: 'Setting',
-            renderCell: (params) => (
-                <Box sx={{ textAlign: 'center' }}>
-                    <GridMoreVertIcon onClick={(e) => handleMenuOpen(e, params.row)} sx={{ cursor: 'pointer' }} />
-                </Box>
-            ),
+            field: 'actions',
+            headerName: 'Action',
+            type: 'actions',
             headerAlign: 'center',
+            flex: 1,
+            getActions: (params) => {
+                return [
+                    <GridActionsCellItem
+                        icon={<Edit />}
+                        label="Save"
+                        color="warning"
+                        onClick={() => handleUpdateModal(params)}
+                    />,
+                    <GridActionsCellItem
+                        icon={<Visibility />}
+                        label="Save"
+                        color="success"
+                        onClick={() => handleViewModal(params)}
+                    />,
+                    <GridActionsCellItem
+                        icon={<DeleteIcon />}
+                        label="Save"
+                        color="error"
+                        onClick={() => handleDeleteModal(params)}
+                    />,
+                ]
+
+            }
         },
     ];
 
@@ -176,7 +206,7 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
 
     return (
         <>
-            <PrintCheckedPdfButton selectedData={selectedData} />
+            <PrintCheckedPdfButton selectedData={selectedData} handleGetData={handleGetData} />
             <Card sx={{ width: '100%', height: 550 }} elevation={5}>
                 <DataGrid
                     loading={isLoading}
@@ -204,35 +234,54 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
             <Drawer open={updateModal} onClose={handleCloseModal} anchor="right">
                 <Update selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
             </Drawer>
-            <AlertModal open={deleteModal} onClose={handleCloseModal} anchor="right">
+            <Drawer open={viewModal} onClose={handleCloseModal} anchor="right">
+                <View selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
+            </Drawer>
+            <AlertModal open={deleteModal} onClose={handleCloseModal}>
                 <Delete selected={selected} onClose={handleCloseModal} handleGetData={handleGetData} />
             </AlertModal>
         </>
     );
 }
 
-function PrintCheckedPdfButton({ selectedData }) {
-    const handlePrint = async () => {
-        printFile()
+// function PrintCheckedPdfButton({ selectedData }) {
+//     const handlePrint = async () => {
+//         printFile()
+//     };
+//     const contentRef = useRef(null);
+//     const printFile = useReactToPrint({ contentRef })
+//     return (
+//         <>
+//             {selectedData.length > 0 && <Button variant='contained' onClick={() => handlePrint()}>Approve Clearance ({selectedData.length}) </Button>}
+
+
+//             {selectedData.length > 0 && (
+//                 <div style={{ display: 'none' }}>
+//                     <div ref={contentRef}>
+//                         {selectedData.map((item, index) => (
+//                             <div key={index} style={{ pageBreakAfter: 'always' }}>
+//                                 <StudentClearance selected={item} />
+//                             </div>
+//                         ))}
+//                     </div>
+//                 </div>
+//             )}
+//         </>
+//     )
+// }
+
+function PrintCheckedPdfButton({ selectedData, handleGetData }) {
+    const [updateModal, setUpdateModal] = useState(false)
+
+    const handleApprove = async () => {
+        setUpdateModal(true)
     };
-    const contentRef = useRef(null);
-    const printFile = useReactToPrint({ contentRef })
     return (
         <>
-            {selectedData.length > 0 && <Button variant='contained' onClick={() => handlePrint()}>PDF FILE Selected ({selectedData.length}) </Button>}
-
-
-            {selectedData.length > 0 && (
-                <div style={{ display: 'none' }}>
-                    <div ref={contentRef}>
-                        {selectedData.map((item, index) => (
-                            <div key={index} style={{ pageBreakAfter: 'always' }}>
-                                <StudentClearance selected={item} />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+            {selectedData.length > 0 && <Button variant='contained' onClick={() => handleApprove()}>Approve Clearance ({selectedData.length}) </Button>}
+            <AlertModal open={updateModal} onClose={() => setUpdateModal(false)}>
+                <SelectedUpdate selected={selectedData} onClose={() => setUpdateModal(false)} handleGetData={handleGetData} />
+            </AlertModal>
         </>
     )
 }

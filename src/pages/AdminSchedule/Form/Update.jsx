@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
-import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, renderTimeViewClock, TimePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
-function Update({data, onClose, setSchedule, schedule}) {
+function Update({ data, onClose, setSchedule, schedule }) {
     const [formData, setFormData] = useState(data);
     const [submitted, setSubmitted] = useState(false);
 
@@ -35,7 +35,7 @@ function Update({data, onClose, setSchedule, schedule}) {
 
         if (response.ok) {
             const newData = await response.json();
-            const newDatas = schedule.map(item => 
+            const newDatas = schedule.map(item =>
                 item._id === newData._id ? newData : item
             );
             onClose()
@@ -56,13 +56,13 @@ function Update({data, onClose, setSchedule, schedule}) {
                                 label="Date"
                                 name='event'
                                 variant="outlined"
-                                sx={{ width: '100%'}}
+                                sx={{ width: '100%' }}
                                 value={moment(formData.date).format('MMMM - DD - YYYY')}
                                 disabled
                             />
-                            <Divider/>
+                            <Divider />
                             <Stack direction={'row'} spacing={2}>
-                                <TimePicker 
+                                <TimePicker
                                     label="AM IN"
                                     defaultValue={moment(formData.amIn)}
                                     onChange={(newValue) => handleTimeChange('amIn', newValue)}
@@ -72,8 +72,13 @@ function Update({data, onClose, setSchedule, schedule}) {
                                             helperText: submitted && !formData.amIn ? "Required" : "",
                                         },
                                     }}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
-                                <TimePicker 
+                                <TimePicker
                                     label="AM OUT"
                                     defaultValue={moment(formData.amOut)}
                                     onChange={(newValue) => handleTimeChange('amOut', newValue)}
@@ -83,10 +88,16 @@ function Update({data, onClose, setSchedule, schedule}) {
                                             helperText: submitted && !formData.amOut ? "Required" : "",
                                         },
                                     }}
+                                    minTime={moment(formData.amIn)}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
                             </Stack>
                             <Stack direction={'row'} spacing={2}>
-                                <TimePicker 
+                                <TimePicker
                                     label="PM IN"
                                     defaultValue={moment(formData.pmIn)}
                                     onChange={(newValue) => handleTimeChange('pmIn', newValue)}
@@ -96,8 +107,14 @@ function Update({data, onClose, setSchedule, schedule}) {
                                             helperText: submitted && !formData.pmIn ? "Required" : "",
                                         },
                                     }}
+                                    minTime={moment(formData.amOut)}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
-                                <TimePicker 
+                                <TimePicker
                                     label="PM OUT"
                                     defaultValue={moment(formData.pmOut)}
                                     onChange={(newValue) => handleTimeChange('pmOut', newValue)}
@@ -107,9 +124,15 @@ function Update({data, onClose, setSchedule, schedule}) {
                                             helperText: submitted && !formData.pmOut ? "Required" : "",
                                         },
                                     }}
+                                    minTime={moment(formData.pmIn)}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
                             </Stack>
-                            <Button type='submit' variant='contained' color='warning' sx={{ mt: 2 ,width: '100%'}}>
+                            <Button type='submit' variant='contained' color='warning' sx={{ mt: 2, width: '100%' }}>
                                 Submit
                             </Button>
                         </Stack>

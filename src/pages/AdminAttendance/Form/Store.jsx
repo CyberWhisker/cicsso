@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Divider, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, renderTimeViewClock, TimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { fetchUsers } from '../../../api/userApi';
 import { storeAttendance } from '../../../api/AttendanceApi';
+import moment from 'moment';
 
-function Store({onClose, handleGetData}) {
-    const {id} = useParams();
+function Store({ onClose, handleGetData }) {
+    const { id } = useParams();
     const [submitted, setSubmitted] = useState(false);
     const [userDatas, setUserDatas] = useState([]);
     const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ function Store({onClose, handleGetData}) {
 
     useEffect(() => {
         const getUsers = async () => {
-            const {data, error} = await fetchUsers();
+            const { data, error } = await fetchUsers();
             if (error) {
                 toast.error("Something went wrong")
             } else {
@@ -51,12 +52,12 @@ function Store({onClose, handleGetData}) {
 
         const { user } = formData;
         // Check if all fields are filled
-        if (!user ) {
+        if (!user) {
             toast.error("All fields, including times, are required");
             return;
         }
 
-        const {data, error} = await storeAttendance(formData);
+        const { data, error } = await storeAttendance(formData);
         if (error) {
             onClose();
             toast.error("Data already exist")
@@ -73,10 +74,10 @@ function Store({onClose, handleGetData}) {
                 pmOut: null,
             });
         }
-        
+
     };
 
-    
+
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
             <Box sx={{ width: '70vh', p: 2 }}>
@@ -88,7 +89,7 @@ function Store({onClose, handleGetData}) {
                                 label='Select User'
                                 name='user'
                                 variant="outlined"
-                                sx={{ width: '100%'}}
+                                sx={{ width: '100%' }}
                                 value={formData.user}
                                 onChange={handleChange}
                                 error={submitted && !formData.user}
@@ -102,10 +103,10 @@ function Store({onClose, handleGetData}) {
                                     <MenuItem value={item._id} key={index}>{item.lastName}, {item.firstName} {item.middleName}</MenuItem>
                                 ))}
                             </TextField>
-                            <Divider/>
+                            <Divider />
                             <Typography>Time</Typography>
                             <Stack direction={'row'} spacing={2}>
-                                <TimePicker 
+                                <TimePicker
                                     label="AM IN"
                                     value={formData.amIn}
                                     onChange={(newValue) => handleTimeChange('amIn', newValue)}
@@ -115,8 +116,13 @@ function Store({onClose, handleGetData}) {
                                             helperText: submitted && !formData.amIn ? "Required" : "",
                                         },
                                     }}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
-                                <TimePicker 
+                                <TimePicker
                                     label="AM OUT"
                                     value={formData.amOut}
                                     onChange={(newValue) => handleTimeChange('amOut', newValue)}
@@ -126,10 +132,16 @@ function Store({onClose, handleGetData}) {
                                             helperText: submitted && !formData.amOut ? "Required" : "",
                                         },
                                     }}
+                                    minTime={moment(formData.amIn)}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
                             </Stack>
                             <Stack direction={'row'} spacing={2}>
-                                <TimePicker 
+                                <TimePicker
                                     label="PM IN"
                                     value={formData.pmIn}
                                     onChange={(newValue) => handleTimeChange('pmIn', newValue)}
@@ -139,8 +151,14 @@ function Store({onClose, handleGetData}) {
                                             helperText: submitted && !formData.pmIn ? "Required" : "",
                                         },
                                     }}
+                                    minTime={moment(formData.amOut)}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
-                                <TimePicker 
+                                <TimePicker
                                     label="PM OUT"
                                     value={formData.pmOut}
                                     onChange={(newValue) => handleTimeChange('pmOut', newValue)}
@@ -150,9 +168,15 @@ function Store({onClose, handleGetData}) {
                                             helperText: submitted && !formData.pmOut ? "Required" : "",
                                         },
                                     }}
+                                    minTime={moment(formData.pmIn)}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
                             </Stack>
-                            <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
+                            <Button type='submit' variant='contained' sx={{ mt: 2, width: '100%' }}>
                                 Submit
                             </Button>
                         </Stack>

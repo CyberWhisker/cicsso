@@ -31,7 +31,7 @@ function Attendance() {
           <Typography variant="h3" fontWeight="bold" textAlign='center'>
             Attendance
           </Typography>
-          <Typography variant="h6" sx={{ mt: 2, width: '100%' }}>
+          <Typography variant="h6" sx={{ mt: 2, width: '100%', textAlign: 'center' }}>
             Monitor and manage attendance records effortlessly. The system provides a comprehensive overview of attendance data, reducing manual processes and enhancing accuracy.
           </Typography>
         </Box>

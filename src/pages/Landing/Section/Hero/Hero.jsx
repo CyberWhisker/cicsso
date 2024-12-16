@@ -34,7 +34,7 @@ function Hero() {
               SO
             </Typography>
           </Stack>
-          <Typography variant="h6" sx={{ mt: 2 }}>
+          <Typography variant="h6" sx={{ mt: 2, textAlign: 'center' }}>
             The College of Information and Computing Sciences (CICS) student organization at Marinduque State University is responsible for organizing and managing all major events within the department. The organization plays a key role in fostering collaboration among students while promoting the development of technical skills. Whether coordinating workshops, seminars, or social gatherings, CICS ensures that IT and IS students have opportunities to engage, learn, and grow in both their academic and professional pursuits.
           </Typography>
           <Button

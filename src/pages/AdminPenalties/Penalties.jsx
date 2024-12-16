@@ -166,26 +166,26 @@ function AttendanceList({ eventWithAttend }) {
             const attendance = item.attendances?.[0];
             return {
                 date: moment(item.date).format('MMM - DD - YYYY ddd'),
-                amInFormat: attendance?.amIn &&
-                    <Chip color='success' label={moment(attendance.amIn).format('hh:mm A')} /> ||
+                amInFormat: attendance?.amIn ?
+                    <Chip color='success' label={moment(attendance.amIn).format('hh:mm A')} /> :
                     moment(item.pmIn).isBefore(currentDay) ?
-                    <Chip color='error' label='Absent' /> :
-                    <Chip label='Absent' />,
-                amOutFormat: attendance?.amOut &&
-                    <Chip color='success' label={moment(attendance.amOut).format('hh:mm A')} /> ||
+                        <Chip color='error' label='Absent' /> :
+                        <Chip label='Upcoming' />,
+                amOutFormat: attendance?.amOut ?
+                    <Chip color='success' label={moment(attendance.amOut).format('hh:mm A')} /> :
                     moment(item.amOut).isBefore(currentDay) ?
-                    <Chip color='error' label='Absent' /> :
-                    <Chip label='Absent' />,
-                pmInFormat: attendance?.pmIn &&
-                    <Chip color='success' label={moment(attendance.pmIn).format('hh:mm A')} /> ||
+                        <Chip color='error' label='Absent' /> :
+                        <Chip label='Upcoming' />,
+                pmInFormat: attendance?.pmIn ?
+                    <Chip color='success' label={moment(attendance.pmIn).format('hh:mm A')} /> :
                     moment(item.pmIn).isBefore(currentDay) ?
-                    <Chip color='error' label='Absent' /> :
-                    <Chip label='Absent' />,
-                pmOutFormat: attendance?.pmOut &&
-                    <Chip color='success' label={moment(attendance.pmOut).format('hh:mm A')} /> ||
+                        <Chip color='error' label='Absent' /> :
+                        <Chip label='Upcoming' />,
+                pmOutFormat: attendance?.pmOut ?
+                    <Chip color='success' label={moment(attendance.pmOut).format('hh:mm A')} /> :
                     moment(item.pmOut).isBefore(currentDay) ?
-                    <Chip color='error' label='Absent' /> :
-                    <Chip label='Absent' />,
+                        <Chip color='error' label='Absent' /> :
+                        <Chip label='Upcoming' />,
                 amIn: attendance?.amIn || null,
                 amOut: attendance?.amOut || null,
                 pmIn: attendance?.pmIn || null,

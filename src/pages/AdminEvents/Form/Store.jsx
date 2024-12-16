@@ -248,6 +248,12 @@ function Store({ setEvents, onClose }) {
                                             helperText: submitted && !formSchedule.pmIn ? "Required" : "",
                                         },
                                     }}
+                                    minTime={formSchedule.amOut}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
                                 />
                                 <TimePicker
                                     label="PM OUT"
@@ -258,6 +264,12 @@ function Store({ setEvents, onClose }) {
                                             error: submitted && !formSchedule.pmOut,
                                             helperText: submitted && !formSchedule.pmOut ? "Required" : "",
                                         },
+                                    }}
+                                    minTime={formSchedule.pmIn}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
                                     }}
                                 />
                             </Stack>

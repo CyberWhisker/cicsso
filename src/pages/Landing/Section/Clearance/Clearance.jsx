@@ -27,10 +27,10 @@ function Clearance() {
         <PaymentRounded sx={{ height: '100%', width: '100%' }} />
       </Box>
       <Box sx={{ width: '50%', textAlign: { xs: 'center', sm: 'left' } }}>
-        <Typography variant="h3" fontWeight="bold">
+        <Typography variant="h3" fontWeight="bold" sx={{ textAlign: 'center' }}>
           Clearance
         </Typography>
-        <Typography variant="h6" sx={{ mt: 2, width: '100%' }}>
+        <Typography variant="h6" sx={{ mt: 2, width: '100%', textAlign: 'center' }}>
           Simplify the clearance process with automated features. Users can download their clearance forms in a PDF format, complete with digital signatures for authentication and convenience.
         </Typography>
       </Box>
