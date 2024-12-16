@@ -268,12 +268,12 @@ function EventContent({ selected }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {selected?.schoolYear.collection.map((item, index) => {
+                    {selected.eventData && selected?.eventData.map((item, index) => {
                         return (
                             <tr key={index}>
                                 <td style={{ border: '1px solid black', padding: '8px' }}>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>{item.collectionName}</Typography>
+                                        <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>{item.collection}</Typography>
 
                                         <Typography fontWeight={'bold'} sx={{ fontFamily: "'Times New Roman', Times, serif" }}>₱ {item.fine.toFixed(2)}</Typography>
                                     </Box>
@@ -299,9 +299,16 @@ function EventContent({ selected }) {
                                     )}
                                 </td>
                                 <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>
-                                    <Chip color='success' label={
-                                        <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Paid</Typography>
-                                    } />
+                                    {item.status > 0 &&
+                                        <Chip label={
+                                            <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>₱ {item.status.toFixed(2)}</Typography>
+                                        } color='error' />
+                                    }
+                                    {item.status == 0 &&
+                                        <Chip label={
+                                            <Typography sx={{ fontFamily: "'Times New Roman', Times, serif" }}>Paid</Typography>
+                                        } color='success' />
+                                    }
                                 </td>
                             </tr>
                         )

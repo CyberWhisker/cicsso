@@ -112,7 +112,7 @@ function EventList({ setIsLoading }) {
 
                   >
                     <Typography textAlign='center' fontWeight='bold' variant='h4' color='primary'>₱{totalCost.toFixed(2)}</Typography>
-                    <Typography textAlign='center' fontWeight='bold' color='primary'>Unit Cost</Typography>
+                    <Typography textAlign='center' fontWeight='bold' color='primary'>Total</Typography>
                   </Grid>
                   {/* <Grid xs={6} item sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
                   >

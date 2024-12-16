@@ -8,7 +8,7 @@ import { fetchClearanceByUserId, fetchClearances } from '../../api/ClearanceApi'
 import moment from 'moment';
 import { useReactToPrint } from 'react-to-print';
 import StudentClearance from '../../layouts/PDF/StudentClearance';
-import { fetchCollectionBySchoolYear, fetchCollections } from '../../api/CollectionApi';
+import { fetchCollectionBySchoolYear, fetchCollectionBySchoolYearIdandUserId, fetchCollections } from '../../api/CollectionApi';
 import { useAuthContext } from '../../hooks/useAuthContext';
 
 function UserClearance() {
@@ -150,12 +150,12 @@ function PdfButton({ params, setSelected, contentRef }) {
     const printFile = useReactToPrint({ contentRef })
 
     const handlePrint = async () => {
-        await setSelected(params.row)
-        const { data, error } = await fetchCollectionBySchoolYear(params.row.schoolYear._id)
-        if (!error) {
-            console.log(data)
-        }
-        printFile()
+        const eventData = await handleGetCollection(params.row)
+        await setSelected({
+            ...params.row,
+            eventData
+        })
+        await printFile()
     };
 
     return (
@@ -172,6 +172,68 @@ function PdfButton({ params, setSelected, contentRef }) {
             )}
         </>
     );
+}
+
+const handleGetCollection = async (selected) => {
+    const { data, error } = await fetchCollectionBySchoolYearIdandUserId(selected.schoolYear._id, selected.user._id)
+    if (!error) {
+        const eventList = data.filter((item) => item.eventId)
+        const collectionList = data.filter((item) => !item.eventId && item.label != "Optional" || item.label == "Optional" && item.transaction.length > 0)
+        const collectionData = collectionList.map((item) => {
+            let remainingBalance = 0;
+            remainingBalance = item.fine
+            if (item.transaction.length > 0) {
+                remainingBalance = remainingBalance - item.transaction[0].amount
+            }
+            return {
+                id: item._id,
+                collection: item.collectionName,
+                status: remainingBalance,
+                indicator1: item.indicator1,
+                indicator2: item.indicator2,
+                fine: item.fine
+            }
+        })
+        const eventData = eventList.map((item) => {
+            let countSchedule = 0;
+            let countAttendance = 0;
+            let remainingBalance = 0;
+            item.eventId.schedules.map((item) => {
+                countSchedule += 4
+                if (item.attendances.length > 0) {
+                    if (item.attendances[0].amIn) {
+                        countAttendance++
+                    }
+                    if (item.attendances[0].amOut) {
+                        countAttendance++
+                    }
+                    if (item.attendances[0].pmIn) {
+                        countAttendance++
+                    }
+                    if (item.attendances[0].pmOut) {
+                        countAttendance++
+                    }
+                }
+            })
+            remainingBalance = (countSchedule - countAttendance) * item.fine
+            if (item.transaction.length > 0) {
+                remainingBalance = remainingBalance - item.transaction[0].amount
+            }
+            return {
+                id: item._id,
+                collection: item.collectionName,
+                status: remainingBalance,
+                indicator1: item.indicator1,
+                indicator2: item.indicator2,
+                fine: item.fine
+            }
+        })
+        const combinedData = [
+            ...collectionData,
+            ...eventData
+        ]
+        return combinedData
+    }
 }
 
 export default UserClearance;

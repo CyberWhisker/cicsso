@@ -14,6 +14,7 @@ import { Add, Edit, Visibility, Delete as DeleteIcon } from '@mui/icons-material
 import Store from './Form/Store';
 import SelectedUpdate from './Form/SelectedUpdate';
 import View from './Form/View';
+import { fetchCollectionBySchoolYearIdandUserId } from '../../api/CollectionApi';
 
 function QuickSearchToolbar() {
     return (
@@ -168,19 +169,19 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
                 return [
                     <GridActionsCellItem
                         icon={<Edit />}
-                        label="Save"
+                        label="Edit"
                         color="warning"
                         onClick={() => handleUpdateModal(params)}
                     />,
                     <GridActionsCellItem
                         icon={<Visibility />}
-                        label="Save"
+                        label="View"
                         color="success"
                         onClick={() => handleViewModal(params)}
                     />,
                     <GridActionsCellItem
                         icon={<DeleteIcon />}
-                        label="Save"
+                        label="Delete"
                         color="error"
                         onClick={() => handleDeleteModal(params)}
                     />,
@@ -292,13 +293,79 @@ function PdfButton({ params, contentRef, setSelected }) {
         if (params.row.schoolYear.signatories.length == 0) {
             toast.error(`Error: No assign Signatories on ${params.row.schoolYear.semester} S.Y (${moment(params.row.schoolYear.startDate).format('YYYY')} - ${moment(params.row.schoolYear.endDate).format('YYYY')})`)
         } else {
-            await setSelected(params.row)
+            const eventData = await handleGetCollection(params.row)
+            await setSelected({
+                ...params.row,
+                eventData
+            })
             printFile()
         }
     };
     return (
         <Button variant='contained' color='warning' onClick={handlePrint}>PDF FILE</Button>
     )
+}
+
+const handleGetCollection = async (selected) => {
+    const { data, error } = await fetchCollectionBySchoolYearIdandUserId(selected.schoolYear._id, selected.user._id)
+    if (!error) {
+        const eventList = data.filter((item) => item.eventId)
+        const collectionList = data.filter((item) => !item.eventId && item.label != "Optional" || item.label == "Optional" && item.transaction.length > 0)
+        const collectionData = collectionList.map((item) => {
+            let remainingBalance = 0;
+            remainingBalance = item.fine
+            if (item.transaction.length > 0) {
+                remainingBalance = remainingBalance - item.transaction[0].amount
+            }
+            return {
+                id: item._id,
+                collection: item.collectionName,
+                status: remainingBalance,
+                indicator1: item.indicator1,
+                indicator2: item.indicator2,
+                fine: item.fine
+            }
+        })
+        const eventData = eventList.map((item) => {
+            let countSchedule = 0;
+            let countAttendance = 0;
+            let remainingBalance = 0;
+            item.eventId.schedules.map((item) => {
+                countSchedule += 4
+                if (item.attendances.length > 0) {
+                    if (item.attendances[0].amIn) {
+                        countAttendance++
+                    }
+                    if (item.attendances[0].amOut) {
+                        countAttendance++
+                    }
+                    if (item.attendances[0].pmIn) {
+                        countAttendance++
+                    }
+                    if (item.attendances[0].pmOut) {
+                        countAttendance++
+                    }
+                }
+            })
+            remainingBalance = (countSchedule - countAttendance) * item.fine
+            if (item.transaction.length > 0) {
+                remainingBalance = remainingBalance - item.transaction[0].amount
+            }
+            return {
+                id: item._id,
+                collection: item.collectionName,
+                status: remainingBalance,
+                indicator1: item.indicator1,
+                indicator2: item.indicator2,
+                fine: item.fine
+            }
+        })
+        const combinedData = [
+            ...collectionData,
+            ...eventData
+        ]
+        return combinedData
+    }
 }
 
 

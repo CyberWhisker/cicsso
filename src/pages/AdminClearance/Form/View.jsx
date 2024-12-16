@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Chip, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
 import { updateClearance } from '../../../api/ClearanceApi';
 import { fetchCollectionBySchoolYearIdandUserId } from '../../../api/CollectionApi';
@@ -13,11 +13,22 @@ function View({ selected, onClose, handleGetData }) {
         if (!error) {
             const eventList = data.filter((item) => item.eventId)
             const collectionList = data.filter((item) => !item.eventId)
+            const collectionData = collectionList.map((item) => {
+                let remainingBalance = 0;
+                remainingBalance = item.fine
+                if (item.transaction.length > 0) {
+                    remainingBalance = remainingBalance - item.transaction[0].amount
+                }
+                return {
+                    id: item._id,
+                    collection: item.collectionName,
+                    status: remainingBalance,
+                }
+            })
             const eventData = eventList.map((item) => {
                 let countSchedule = 0;
                 let countAttendance = 0;
                 let remainingBalance = 0;
-                let transaction = null;
                 item.eventId.schedules.map((item) => {
                     countSchedule += 4
                     if (item.attendances.length > 0) {
@@ -42,10 +53,14 @@ function View({ selected, onClose, handleGetData }) {
                 return {
                     id: item._id,
                     collection: item.collectionName,
-                    status: remainingBalance
+                    status: remainingBalance,
                 }
             })
-            setCollectionData(eventData)
+            const combinedData = [
+                ...collectionData,
+                ...eventData
+            ]
+            setCollectionData(combinedData)
         }
     }
 
@@ -64,7 +79,17 @@ function View({ selected, onClose, handleGetData }) {
             field: 'status',
             headerName: 'Status',
             headerAlign: 'center',
-            flex: 1
+            flex: 1,
+            renderCell: ({ row }) => (
+                <Box sx={{ textAlign: 'center' }}>
+                    {row.status > 0 &&
+                        <Chip label={`₱ ${row.status.toFixed(2)}`} color='error' />
+                    }
+                    {row.status == 0 &&
+                        <Chip label="Paid" color='success' />
+                    }
+                </Box>
+            ),
         },
     ]
     return (
