@@ -54,19 +54,19 @@ function EventList({ event }) {
             headerName: 'Am In',
             flex: 1,
             headerAlign: 'center',
-            renderCell: (params) => (
-                params.row?.amIn && (
+            renderCell: ({ row }) => (
+                row?.amIn ? (
                     <Box sx={{ textAlign: 'center' }}>
-                        <Chip color='success' label={moment(params.row.amIn).format('hh:mm A')} />
+                        <Chip color='success' label={moment(row.amIn).format('hh:mm A')} />
                     </Box>
-                ) ||
-                    moment(params.row.sched.amIn).isBefore(currentDay) ?
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='Absent' color='error' />
-                    </Box> :
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='UpComing' />
-                    </Box>
+                ) :
+                    moment(row.sched.amIn).isBefore(currentDay) ?
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Chip label='Absent' color='error' />
+                        </Box> :
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Chip label='UpComing' />
+                        </Box>
             )
         },
         {
@@ -75,18 +75,18 @@ function EventList({ event }) {
             flex: 1,
             headerAlign: 'center',
             renderCell: (params) => (
-                params.row?.amOut && (
+                params.row?.amOut ? (
                     <Box sx={{ textAlign: 'center' }}>
                         <Chip color='success' label={moment(params.row.amOut).format('hh:mm A')} />
                     </Box>
-                ) ||
+                ) :
                     moment(params.row.sched.amOut).isBefore(currentDay) ?
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='Absent' color='error' />
-                    </Box> :
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='UpComing' />
-                    </Box>
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Chip label='Absent' color='error' />
+                        </Box> :
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Chip label='UpComing' />
+                        </Box>
             )
         },
         {
@@ -95,18 +95,18 @@ function EventList({ event }) {
             flex: 1,
             headerAlign: 'center',
             renderCell: (params) => (
-                params.row?.pmIn && (
+                params.row?.pmIn ? (
                     <Box sx={{ textAlign: 'center' }}>
                         <Chip color='success' label={moment(params.row.pmIn).format('hh:mm A')} />
                     </Box>
-                ) ||
+                ) :
                     moment(params.row.sched.pmIn).isBefore(currentDay) ?
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='Absent' color='error' />
-                    </Box> :
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='UpComing' />
-                    </Box>
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Chip label='Absent' color='error' />
+                        </Box> :
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Chip label='UpComing' />
+                        </Box>
             )
         },
         {
@@ -115,18 +115,18 @@ function EventList({ event }) {
             flex: 1,
             headerAlign: 'center',
             renderCell: (params) => (
-                params.row?.pmOut && (
+                params.row?.pmOut ? (
                     <Box sx={{ textAlign: 'center' }}>
                         <Chip color='success' label={moment(params.row.pmOut).format('hh:mm A')} />
                     </Box>
-                ) ||
+                ) :
                     moment(params.row.sched.pmOut).isBefore(currentDay) ?
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='Absent' color='error' />
-                    </Box> :
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Chip label='UpComing' />
-                    </Box>
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Chip label='Absent' color='error' />
+                        </Box> :
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Chip label='UpComing' />
+                        </Box>
             )
         },
     ]

@@ -47,7 +47,6 @@ function NotificationList() {
       }
     } else {
       const { data, error } = await fetchNotificationByUserId(auth.user._id)
-      console.log(data)
       if (error) {
         toast.error(error)
       } else {

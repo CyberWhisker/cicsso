@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Master from '../../layouts/Master'
-import { Box, Card, Chip, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, Typography } from '@mui/material'
+import { Box, Card, Chip, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material'
 import { CustomCard, DropDown, AlertModal } from '../../components'
 import { Add, Error } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
@@ -9,15 +9,31 @@ import Update from './Form/Update'
 import Delete from './Form/Delete'
 import { toast } from 'react-toastify'
 import moment from 'moment'
-import { fetchCollections } from '../../api/CollectionApi'
-import { fetchActiveSchoolYear } from '../../api/SchoolYearApi'
+import { fetchCollectionBySchoolYear } from '../../api/CollectionApi'
+import { fetchActiveSchoolYear, fetchSchoolYear } from '../../api/SchoolYearApi'
 
 function Collection() {
   const [isLoading, setIsLoading] = useState(true);
+  const [projects, setProjects] = useState([]);
+
+  const handleGetData = async (id) => {
+    setIsLoading(true)
+    const { data, error } = await fetchCollectionBySchoolYear(id);
+    if (error) {
+      toast.error(error)
+    } else {
+      setProjects(data)
+    }
+    setIsLoading(false)
+  }
+
   return (
     <Master>
       <Stack spacing={2}>
-        <Typography variant="h5" fontWeight='bold'>Collection List:</Typography>
+        <Stack direction={'row'} spacing={2} sx={{ alignItems: 'center' }}>
+          <Typography variant="h5" fontWeight='bold'>Collection List:</Typography>
+          <AcademicYearList handleGetCollection={handleGetData} />
+        </Stack>
         <Box>
           <Divider />
           {isLoading &&
@@ -25,32 +41,21 @@ function Collection() {
           }
         </Box>
         <Box>
-          <CollectionList setIsLoading={setIsLoading} />
+          <CollectionList handleGetData={handleGetData} projects={projects} />
         </Box>
       </Stack>
     </Master>
   )
 }
 
-function CollectionList({ setIsLoading }) {
+function CollectionList({ handleGetData, projects }) {
   const [schoolYearStatus, setSchoolYearStatus] = useState(false);
   const [storeModal, setStoreModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [selected, setSelected] = useState([]);
-  const [projects, setProjects] = useState([]);
 
-  const handleGetData = async () => {
-    setIsLoading(true)
-    const { data, error } = await fetchCollections();
-    if (error) {
-      setIsLoading(false)
-      toast.error(error)
-    } else {
-      setIsLoading(false)
-      setProjects(data)
-    }
-  }
+
 
   const handleGetActiveSchoolYear = async () => {
     const { data, error } = await fetchActiveSchoolYear();
@@ -58,6 +63,7 @@ function CollectionList({ setIsLoading }) {
       toast.error("No Active School Year")
       setSchoolYearStatus(false)
     } else {
+      await handleGetData(data._id)
       setSchoolYearStatus(true)
     }
   }
@@ -79,7 +85,6 @@ function CollectionList({ setIsLoading }) {
   }
 
   useEffect(() => {
-    handleGetData()
     handleGetActiveSchoolYear()
   }, [])
 
@@ -135,9 +140,9 @@ function CollectionList({ setIsLoading }) {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{item.collectionName}</Typography>
                 <Stack direction={'row'} alignItems={'center'}>
-                  {item.label == "Mandatory" && <Chip label={`${item.label}`} color='warning'/>}
-                  {item.label == "Urgent" && <Chip label={`${item.label}`} color='error'/>}
-                  {item.label == "Optional" && <Chip label={`${item.label}`}/>}
+                  {item.label == "Mandatory" && <Chip label={`${item.label}`} color='warning' />}
+                  {item.label == "Urgent" && <Chip label={`${item.label}`} color='error' />}
+                  {item.label == "Optional" && <Chip label={`${item.label}`} />}
                   <DropDown >
                     <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
                     <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
@@ -168,6 +173,37 @@ function CollectionList({ setIsLoading }) {
         <Delete onClose={handleCloseModal} selected={selected} handleGetData={handleGetData} />
       </AlertModal>
     </Grid>
+  )
+}
+
+function AcademicYearList({ handleGetCollection }) {
+  const [academicData, setAcademicData] = useState([])
+  const [selectedValue, setSelectedValue] = useState('')
+
+  const handleGetData = async () => {
+    const { data, error } = await fetchSchoolYear()
+    if (!error) {
+      const active = data.find((item) => item.status)
+      setSelectedValue(active ? active._id : '')
+      setAcademicData(data)
+    }
+  }
+
+  const handleChange = (event) => {
+    handleGetCollection(event.target.value)
+    setSelectedValue(event.target.value) // Update the selected value
+  }
+
+  useState(() => {
+    handleGetData()
+  }, [])
+
+  return (
+    <TextField sx={{ width: '60vh' }} label="Academic Year" select value={selectedValue} onChange={handleChange}>
+      {academicData.map((item, index) => (
+        <MenuItem value={item._id} key={index}>{item.semester} A.Y ({moment(item.startDate).format('MMM-DD-YYYY')} to {moment(item.endDate).format('MMM-DD-YYYY')})</MenuItem>
+      ))}
+    </TextField>
   )
 }
 

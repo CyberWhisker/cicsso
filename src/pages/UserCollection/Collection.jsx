@@ -1,42 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import Master from '../../layouts/Master'
-import { Box, Chip, Divider, Drawer, Grid, LinearProgress, Stack, Typography } from '@mui/material'
+import { Box, Chip, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material'
 import { CustomCard } from '../../components'
 import { toast } from 'react-toastify'
 import moment from 'moment'
-import { fetchCollectionWithTransactionByUserId } from '../../api/CollectionApi'
+import { fetchCollectionBySchoolYearIdandUserId, fetchCollectionWithTransactionByUserId } from '../../api/CollectionApi'
 import { useAuthContext } from '../../hooks/useAuthContext'
 import Payment from './Form/Payment'
+import { fetchSchoolYear } from '../../api/SchoolYearApi'
 
 function Collection() {
-  const [isLoading, setIsLoading] = useState(true);
-  return (
-    <Master>
-      <Stack spacing={2}>
-        <Typography variant="h5" fontWeight='bold'>Collection List Fines:</Typography>
-        <Box>
-          <Divider />
-          {isLoading &&
-            <LinearProgress />
-          }
-        </Box>
-        <Box>
-          <CollectionList setIsLoading={setIsLoading} />
-        </Box>
-      </Stack>
-    </Master>
-  )
-}
-
-function CollectionList({ setIsLoading }) {
-  const [selected, setSelected] = useState([]);
-  const [collections, setCollection] = useState([]);
-  const [paymentModal, setPaymentModal] = useState(false);
   const { auth } = useAuthContext();
+  const [isLoading, setIsLoading] = useState(true);
+  const [collections, setCollection] = useState([]);
 
-  const handleGetData = async () => {
+  const handleGetData = async (academicId) => {
     setIsLoading(true)
-    const { data, error } = await fetchCollectionWithTransactionByUserId(auth.user._id)
+    const { data, error } = await fetchCollectionBySchoolYearIdandUserId(academicId, auth.user._id)
     if (error) {
       toast.error(error)
     } else {
@@ -45,13 +25,35 @@ function CollectionList({ setIsLoading }) {
     setIsLoading(false)
   }
 
+  return (
+    <Master>
+      <Stack spacing={2}>
+        <Stack direction={'row'} spacing={2} sx={{ alignItems: 'center' }}>
+          <Typography variant="h5" fontWeight='bold'>Collection List Fines:</Typography>
+          <AcademicYearList handleGetCollection={handleGetData} />
+        </Stack>
+        <Box>
+          <Divider />
+          {isLoading &&
+            <LinearProgress />
+          }
+        </Box>
+        <Box>
+          <CollectionList setIsLoading={setIsLoading} handleGetData={handleGetData} collections={collections} />
+        </Box>
+      </Stack>
+    </Master>
+  )
+}
+
+function CollectionList({ handleGetData, collections }) {
+  const [selected, setSelected] = useState([]);
+  const [paymentModal, setPaymentModal] = useState(false);
+  const { auth } = useAuthContext();
+
   const handleCloseModal = () => {
     setPaymentModal(false)
   }
-
-  useEffect(() => {
-    handleGetData()
-  }, [])
 
   return (
     <Grid container spacing={2}>
@@ -219,11 +221,45 @@ function EventCard({ data, setSelected, setPaymentModal, auth }) {
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography>AY: {moment(data.startDate).format('MMM DD, YYYY')} - {moment(data.endDate).format('MMM DD, YYYY')}</Typography>
-            <Chip label={totalPenalty} color='error' />
+            {moment().isAfter(data.endDate) &&
+              <Chip label={totalPenalty} color='error' />
+            }
           </Box>
         </Box>
       </CustomCard>
     </Grid>
+  )
+}
+
+function AcademicYearList({ handleGetCollection }) {
+  const [academicData, setAcademicData] = useState([])
+  const [selectedValue, setSelectedValue] = useState('')
+
+  const handleGetData = async () => {
+    const { data, error } = await fetchSchoolYear()
+    if (!error) {
+      const active = data.find((item) => item.status)
+      setSelectedValue(active ? active._id : '')
+      setAcademicData(data)
+      handleGetCollection(active._id)
+    }
+  }
+
+  const handleChange = (event) => {
+    handleGetCollection(event.target.value)
+    setSelectedValue(event.target.value) // Update the selected value
+  }
+
+  useState(() => {
+    handleGetData()
+  }, [])
+
+  return (
+    <TextField sx={{ width: '60vh' }} label="Academic Year" select value={selectedValue} onChange={handleChange}>
+      {academicData.map((item, index) => (
+        <MenuItem value={item._id} key={index}>{item.semester} A.Y ({moment(item.startDate).format('MMM-DD-YYYY')} to {moment(item.endDate).format('MMM-DD-YYYY')})</MenuItem>
+      ))}
+    </TextField>
   )
 }
 
