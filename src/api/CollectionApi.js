@@ -129,9 +129,9 @@ export const fetchCollectionBySchoolYear = async (id) => {
     }
 }
 
-export const fetchCollectionWithEventAndAttendance = async () => {
+export const fetchCollectionWithEventAndAttendance = async (id) => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API}/api/collection/getCollectionWithEventsAndAttendance`, {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection/getCollectionWithEventsAndAttendance/${id}`, {
             headers: {
                 'Content-Type': 'application/json'
             },

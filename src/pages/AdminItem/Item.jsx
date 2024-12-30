@@ -96,7 +96,7 @@ function DataGridList({ data, handleGetData }) {
         },
         {
             field: 'quantity',
-            headerName: 'Quantity',
+            headerName: 'Qauntity',
             flex: 1,
             headerAlign: 'center',
             type: 'number'

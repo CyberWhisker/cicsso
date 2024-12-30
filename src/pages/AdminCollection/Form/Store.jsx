@@ -62,7 +62,7 @@ function Store({ handleGetData, handleCloseModal }) {
                                 helperText={submitted && !formData.collectionName ? "Required" : ""}
                             />
                             <TextField
-                                label='Enter Fine'
+                                label='Enter Fee'
                                 name='fine'
                                 variant="outlined"
                                 sx={{ width: '100%' }}

@@ -12,10 +12,13 @@ import CollectionList from './Reports/CollectionList';
 import CollectionFund from './Reports/CollectionFund';
 import ReceivableAmount from './Reports/ReceivableAmount';
 import DisbursementReport from './Reports/DisbursementReport';
+import { fetchSchoolYear } from '../../api/SchoolYearApi';
+import ReceivableAmountOptional from './Reports/ReceivableAmountOptional';
 
 function AdminReport() {
   const [reportType, setReportType] = useState('annually');
   const [selectedYear, setSelectedYear] = useState(moment().year()); // Default to current year
+  const [selectedAY, setselectedAY] = useState('')
 
   const handleChangeReportType = (e) => {
     setReportType(e.target.value);
@@ -31,26 +34,34 @@ function AdminReport() {
   return (
     <Master>
       <Stack spacing={1} pb={2}>
-        <Typography variant='h4' fontWeight={'bold'}>Reports</Typography>
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between'
+        }}>
+          <Stack direction={'row'} spacing={2}>
+            <Typography variant='h4' fontWeight={'bold'}>Reports</Typography>
+            <AcademicYearList setSelectedValue={setselectedAY} selectedValue={selectedAY} />
+          </Stack>
+        </Box>
         <Divider />
 
         <Grid container gap={2} alignItems="stretch">
           <Grid item xs={5}>
-            <CollectionList />
+            <CollectionList selectedAY={selectedAY} />
           </Grid>
           <Grid item xs={6.8}>
-            <CollectionFund />
+            <Stack spacing={2}>
+              <ReceivableAmount selectedAY={selectedAY} />
+              <ReceivableAmountOptional selectedAY={selectedAY} />
+            </Stack>
           </Grid>
         </Grid>
         <Grid container gap={2} alignItems="stretch">
-          <Grid item xs={5}>
-            <DisbursementReport />
-          </Grid>
-          <Grid item xs={6.8}>
-            <ReceivableAmount />
+          <Grid item xs={12}>
+            <DisbursementReport selectedAY={selectedAY} />
           </Grid>
         </Grid>
-        <Divider/>
+        {/* <Divider />
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Stack spacing={2} direction={'row'}>
             <Button variant='contained' color='warning' onClick={printFile}>Print</Button>
@@ -75,16 +86,15 @@ function AdminReport() {
             value={selectedYear}
             onChange={handleChangeYear}
           >
-            {/* Assuming you want to show a range of years */}
             {[2022, 2023, 2024, 2025, 2026].map(year => (
               <MenuItem key={year} value={year}>{year}</MenuItem>
             ))}
           </TextField>
-        </Box>
+        </Box> */}
         <Stack spacing={2} ref={contentRef} margin={2}>
 
-          <CollectionReport reportType={reportType} selectedYear={selectedYear} />
-          <ExpensesReport reportType={reportType} selectedYear={selectedYear} />
+          {/* <CollectionReport reportType={reportType} selectedYear={selectedYear} />
+          <ExpensesReport reportType={reportType} selectedYear={selectedYear} /> */}
           <DispursementReport />
         </Stack>
       </Stack>
@@ -394,7 +404,7 @@ function DispursementReport() {
       <Divider />
       <Card sx={{ p: 1 }}>
         <Stack spacing={2}>
-          <Typography variant='h5' fontWeight={'bold'}>Disbursement Report:</Typography>
+          <Typography variant='h5' fontWeight={'bold'}>Disbursement Record:</Typography>
           <DataGrid
             loading={isLoading}
             columns={columns}
@@ -403,6 +413,34 @@ function DispursementReport() {
         </Stack>
       </Card>
     </>
+  )
+}
+
+function AcademicYearList({ setSelectedValue, selectedValue }) {
+  const [academicData, setAcademicData] = useState([])
+
+  const handleGetData = async () => {
+    const { data, error } = await fetchSchoolYear()
+    if (!error) {
+      const active = data.find((item) => item.status)
+      setSelectedValue(active ? active._id : '')
+      setAcademicData(data)
+    }
+  }
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value) // Update the selected value
+  }
+
+  useEffect(() => {
+    handleGetData()
+  }, [])
+  return (
+    <TextField sx={{ width: '60vh' }} label="Academic Year" select value={selectedValue} onChange={handleChange}>
+      {academicData.map((item, index) => (
+        <MenuItem value={item._id} key={index}>{item.semester} A.Y ({moment(item.startDate).format('MMM-DD-YYYY')} to {moment(item.endDate).format('MMM-DD-YYYY')})</MenuItem>
+      ))}
+    </TextField>
   )
 }
 

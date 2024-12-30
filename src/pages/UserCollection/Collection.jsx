@@ -191,7 +191,7 @@ function EventCard({ data, setSelected, setPaymentModal, auth }) {
             <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{data.collectionName}</Typography>
             {totalPenalty === 0 ? (
               <>
-                {moment(data.startDate).isAfter(currentDay, 'day') ?
+                {moment(data.endDate).isAfter(currentDay, 'day') ?
                   <Chip label="Upcoming" />
                   :
                   <Chip label="Confirmed" color="success" />

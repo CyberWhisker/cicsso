@@ -4,7 +4,7 @@ import { fetchCollectionWithEventAndAttendance } from '../../../api/CollectionAp
 import { PieChart } from '@mui/x-charts'
 import { fetchUsers } from '../../../api/userApi'
 
-function ReceivableAmount({ selectedAY }) {
+function ReceivableAmountOptional({ selectedAY }) {
     const [graphData, setGraphData] = useState([])
 
     useEffect(() => {
@@ -17,7 +17,7 @@ function ReceivableAmount({ selectedAY }) {
         <Card sx={{ display: 'flex', height: '100%' }}>
             <Box sx={{ p: 1 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant='h5' fontWeight={'bold'}>Receivables/Collectibles:</Typography>
+                    <Typography variant='h5' fontWeight={'bold'}>Receivables/Collectibles: Optional</Typography>
                 </Box>
                 <PieChart
                     series={[{
@@ -48,7 +48,7 @@ const computeData = async (setGraphData, selectedAY) => {
     if (!eventError && !userError) {
         // Process Attendance data
         const attendanceData = eventData
-            .filter((item) => item.eventId && item.label != "Optional")
+            .filter((item) => item.eventId && item.label == "Optional")
             .map((item) => {
                 let countTotalAttendances = 0
                 let countTotalUserAttendances = 0
@@ -73,7 +73,7 @@ const computeData = async (setGraphData, selectedAY) => {
 
         // Process Collection data
         const collectionDataProcessed = eventData
-            .filter((item) => !item.eventId && item.label != "Optional")
+            .filter((item) => !item.eventId && item.label == "Optional")
             .map((item) => {
                 const totalPayment = item.fine * userData.length
                 const userPayment = item.transaction.reduce((sum, transaction) => sum + transaction.amount, 0)
@@ -88,4 +88,4 @@ const computeData = async (setGraphData, selectedAY) => {
     }
 }
 
-export default ReceivableAmount
+export default ReceivableAmountOptional

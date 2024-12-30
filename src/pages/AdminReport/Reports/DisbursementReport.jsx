@@ -5,7 +5,6 @@ import {
     Divider,
     Grid,
     Stack,
-    TextField,
     Typography,
     Table,
     TableBody,
@@ -14,37 +13,17 @@ import {
     TableHead,
     TableRow,
     Paper,
-    MenuItem,
 } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { useReactToPrint } from 'react-to-print';
-import { fetchSchoolYear } from '../../../api/SchoolYearApi';
 import moment from 'moment';
 import { fetchCollectionWithTransactionBySchoolYear } from '../../../api/CollectionApi';
 import { fetchProjectBySchoolYear } from '../../../api/ProjectApi';
 import { PieChart } from '@mui/x-charts';
 
-function DisbursementReport() {
+function DisbursementReport({ selectedAY }) {
     const contentRef = useRef(null);
     const printFile = useReactToPrint({ contentRef })
-    const [schoolYearData, setSchoolYearData] = useState([])
-    const [selectedAY, setselectedAY] = useState('')
-
-    const handleSelect = (e) => {
-        const selected = schoolYearData.find((item) => item._id == e.target.value)
-        setselectedAY(selected)
-
-    }
-
-    useEffect(() => {
-        const handleGetData = async () => {
-            const { data, error } = await fetchSchoolYear()
-            if (!error) {
-                setSchoolYearData(data)
-            }
-        }
-        handleGetData()
-    }, [])
 
     return (
         <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -53,15 +32,10 @@ function DisbursementReport() {
             </Box>
             <Box sx={{ p: 1, height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Stack spacing={2} sx={{ width: '100%' }}>
-                    <TextField label="Select Semester" select fullWidth defaultValue={''} onChange={handleSelect}>
-                        {schoolYearData.map((item, index) => (
-                            <MenuItem key={index} value={item._id}>{item.semester} A.Y({moment(item.startDate).format('MM-DD-YYYY')} to {moment(item.endDate).format('MM-DD-YYYY')})</MenuItem>
-                        ))}
-                    </TextField>
                     <Button variant='contained' onClick={printFile} fullWidth>Print</Button>
                 </Stack>
             </Box>
-            <Box sx={{display: 'none'}}>
+            <Box sx={{ display: 'none' }}>
                 <Layout contentRef={contentRef} selectedAY={selectedAY} />
             </Box>
         </Card>
@@ -108,7 +82,7 @@ function FinanceReport({ selectedAY }) {
 
     const handleGetCollection = async () => {
         if (selectedAY) {
-            const { data, error } = await fetchCollectionWithTransactionBySchoolYear(selectedAY._id)
+            const { data, error } = await fetchCollectionWithTransactionBySchoolYear(selectedAY)
             if (!error) {
                 let total = 0
                 const newGraphData = data.map((item) => {
@@ -128,7 +102,7 @@ function FinanceReport({ selectedAY }) {
 
     const handleGetProject = async () => {
         if (selectedAY) {
-            const { data, error } = await fetchProjectBySchoolYear(selectedAY._id)
+            const { data, error } = await fetchProjectBySchoolYear(selectedAY)
             if (!error) {
                 let total = 0
                 const projectData = data.map((item) => {
@@ -292,7 +266,7 @@ function DisbursementRecord({ selectedAY }) {
 
     const handleGetProject = async () => {
         if (selectedAY) {
-            const { data, error } = await fetchProjectBySchoolYear(selectedAY._id)
+            const { data, error } = await fetchProjectBySchoolYear(selectedAY)
             if (!error) {
                 let total = 0
                 let count = 0;
@@ -300,7 +274,6 @@ function DisbursementRecord({ selectedAY }) {
                     count++
                     const totalItem = item.items.reduce((sum, item) => sum + (item.amount * item.quantity), 0)
                     total += totalItem
-                    console.log(item)
                     return {
                         no: count,
                         date: moment(item.createdAt).format('DD/MM/YYYY'),
@@ -414,7 +387,7 @@ function GraphReport({ selectedAY }) {
 
     const handleGetProject = async () => {
         if (selectedAY) {
-            const { data, error } = await fetchProjectBySchoolYear(selectedAY._id)
+            const { data, error } = await fetchProjectBySchoolYear(selectedAY)
             if (!error) {
                 let total = 0
                 let count = 0;
@@ -437,7 +410,7 @@ function GraphReport({ selectedAY }) {
     }, [selectedAY])
 
     return (
-        <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <Typography
                 fontWeight={'bold'}
                 textAlign={'center'}

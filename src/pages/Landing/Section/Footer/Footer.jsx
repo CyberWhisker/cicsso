@@ -17,11 +17,11 @@ function Footer() {
           </Box> */}
         <Box>
           <Typography variant='h5' fontWeight='bold' sx={{ textAlign: 'center' }}>Vision:</Typography>
-          <Typography sx={{ textAlign: 'center' }}>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus, distinctio labore qui nesciunt rem veritatis unde odit impedit itaque! Blanditiis, rerum obcaecati aperiam saepe ab doloremque tenetur corrupti quis repellat.</Typography>
+          <Typography sx={{ textAlign: 'center' }}>An Organization composed of God-fearing and law-abiding individuals who are united by a common ideal that unites the student body to achieve the organization's goals and aspirations for the benefit of the studets.</Typography>
         </Box>
         <Box>
           <Typography variant='h5' fontWeight='bold' sx={{ textAlign: 'center' }}>Mission:</Typography>
-          <Typography sx={{ textAlign: 'center' }}>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minus, distinctio labore qui nesciunt rem veritatis unde odit impedit itaque! Blanditiis, rerum obcaecati aperiam saepe ab doloremque tenetur corrupti quis repellat.</Typography>
+          <Typography sx={{ textAlign: 'center' }}>To provide student service, unite,and represent the student body, protect and promote student's rights, welfare, and developments through activities and projects, that will benefit the welfare of the students.</Typography>
         </Box>
       </Stack>
     </Box>
