@@ -81,7 +81,7 @@ function Store({ onClose, handleGetData }) {
                                 helperText={submitted && !formData.item ? "Required" : ""}
                             />
                             <TextField
-                                label='Qauntity'
+                                label='Quantity'
                                 name='quantity'
                                 value={formData.quantity}
                                 onChange={handleChange}
