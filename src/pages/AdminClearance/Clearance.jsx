@@ -196,7 +196,7 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
             clearanceData.map((item) => ({
                 ...item,
                 id: item._id, // Ensure this matches the `selectionModel` IDs
-                name: `${item.user.lastName}, ${item.user.firstName} ${item.user.middleName[0]}.`,
+                name: `${item.user.lastName}, ${item.user.firstName}${item?.user?.middleName ? ` ${item.user.middleName[0]}.` : ''}`,
                 semester: item.schoolYear.semester,
             })),
         [clearanceData]
