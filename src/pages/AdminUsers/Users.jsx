@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Avatar, Box, Button, Card, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
 import { AlertModal, CustomCard } from '../../components';
-import { Person } from '@mui/icons-material';
+import { Add, Person } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { fetchUserById, fetchUsers, updateUser } from '../../api/userApi';
 import Delete from './Form/Delete';
 import * as XLSX from 'xlsx';
+import Store from './Form/Store';
 
 
 function Users() {
@@ -36,7 +37,7 @@ function Users() {
             <Stack direction={'column'} spacing={2}>
                 <Stack direction={'row'} spacing={2}>
                     <Typography variant="h5" fontWeight="bold">User Management</Typography>
-                    {/* <UploadExcelBtn /> */}
+                    <AddUser getUsers={getUsers} />
                 </Stack>
                 <Box>
                     <Divider />
@@ -348,38 +349,16 @@ function UserDetails({ userData, setUserData, getUsers }) {
     )
 }
 
-function UploadExcelBtn() {
-    const handleChange = (e) => {
-        const file = e.target.files[0]; // Get the first uploaded file
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const binaryStr = event.target.result;
-                const workbook = XLSX.read(binaryStr, { type: 'binary' });
-
-                // Get the first sheet name
-                const sheetName = workbook.SheetNames[0];
-
-                // Get the worksheet data
-                const worksheet = workbook.Sheets[sheetName];
-
-                // Convert worksheet data to JSON
-                const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-                // Example Output
-                console.log('Formatted Data:', jsonData);
-            };
-            reader.readAsBinaryString(file); // Read the file as a binary string
-        }
-    };
+function AddUser({ getUsers }) {
+    const [storeModal, setStoreModal] = useState(false)
 
     return (
-        <TextField
-            type="file"
-            name="excel"
-            inputProps={{ accept: '.xlsx, .xls' }} // Accept only Excel files
-            onChange={handleChange}
-        />
+        <>
+            <Button variant='contained' endIcon={<Add />} onClick={() => setStoreModal(true)}>Add User</Button>
+            <Drawer anchor='right' open={storeModal} onClose={() => setStoreModal(false)}>
+                <Store getUsers={getUsers} onClose={() => setStoreModal(false)} />
+            </Drawer>
+        </>
     );
 }
 

@@ -43,16 +43,16 @@ export const verifyUser = async (token) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({token: token})
+            body: JSON.stringify({ token: token })
         })
         if (response.ok) {
             const data = await response.json()
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: 'verification failed'}
+            return { data: [], error: 'verification failed' }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -67,12 +67,32 @@ export const userLogin = async (formData) => {
         })
         if (response.ok) {
             const data = await response.json()
-            return{data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return{data: [], error: 'Login Failed'}
+            return { data: [], error: 'Login Failed' }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
+    }
+}
+
+export const storeUser = async (formData) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/user/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        if (response.ok) {
+            const data = await response.json()
+            return { data: data, error: null }
+        } else {
+            return { data: [], error: 'Failed to store' }
+        }
+    } catch (error) {
+        return { data: [], error: error.message }
     }
 }
 
@@ -87,12 +107,12 @@ export const updateUser = async (formData) => {
         })
         if (response.ok) {
             const data = await response.json()
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: 'Failed to updated'}
+            return { data: [], error: 'Failed to updated' }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -106,12 +126,12 @@ export const deleteUser = async (formData) => {
         })
         if (response.ok) {
             const data = await response.json()
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: 'Failed to Delete'}
+            return { data: [], error: 'Failed to Delete' }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
