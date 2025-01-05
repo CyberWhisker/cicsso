@@ -15,6 +15,7 @@ import { fetchActiveSchoolYear, fetchSchoolYear } from '../../api/SchoolYearApi'
 function Collection() {
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState([]);
+  const [schoolYear, setSchoolYear] = useState("")
 
   const handleGetData = async (id) => {
     setIsLoading(true)
@@ -32,7 +33,7 @@ function Collection() {
       <Stack spacing={2}>
         <Stack direction={'row'} spacing={2} sx={{ alignItems: 'center' }}>
           <Typography variant="h5" fontWeight='bold'>Collection List:</Typography>
-          <AcademicYearList handleGetCollection={handleGetData} />
+          <AcademicYearList handleGetCollection={handleGetData} setSchoolYear={setSchoolYear} />
         </Stack>
         <Box>
           <Divider />
@@ -41,14 +42,14 @@ function Collection() {
           }
         </Box>
         <Box>
-          <CollectionList handleGetData={handleGetData} projects={projects} />
+          <CollectionList handleGetData={handleGetData} projects={projects} schoolYear={schoolYear} />
         </Box>
       </Stack>
     </Master>
   )
 }
 
-function CollectionList({ handleGetData, projects }) {
+function CollectionList({ handleGetData, projects, schoolYear }) {
   const [schoolYearStatus, setSchoolYearStatus] = useState(false);
   const [storeModal, setStoreModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
@@ -164,19 +165,19 @@ function CollectionList({ handleGetData, projects }) {
       ))}
 
       <Drawer open={storeModal} anchor='right' onClose={() => handleCloseModal()}>
-        <Store handleGetData={handleGetData} handleCloseModal={handleCloseModal} />
+        <Store handleGetData={() => handleGetData(schoolYear)} handleCloseModal={handleCloseModal} />
       </Drawer>
       <Drawer open={updateModal} anchor='right' onClose={() => handleCloseModal()}>
-        <Update selected={selected} handleCloseModal={handleCloseModal} handleGetData={handleGetData} />
+        <Update selected={selected} handleCloseModal={handleCloseModal} handleGetData={() => handleGetData(schoolYear)} />
       </Drawer>
       <AlertModal open={deleteModal} onClose={handleCloseModal}>
-        <Delete onClose={handleCloseModal} selected={selected} handleGetData={handleGetData} />
+        <Delete onClose={handleCloseModal} selected={selected} handleGetData={() => handleGetData(schoolYear)} />
       </AlertModal>
     </Grid>
   )
 }
 
-function AcademicYearList({ handleGetCollection }) {
+function AcademicYearList({ handleGetCollection, setSchoolYear }) {
   const [academicData, setAcademicData] = useState([])
   const [selectedValue, setSelectedValue] = useState('')
 
@@ -185,6 +186,7 @@ function AcademicYearList({ handleGetCollection }) {
     if (!error) {
       const active = data.find((item) => item.status)
       setSelectedValue(active ? active._id : '')
+      setSchoolYear(active ? active._id : '')
       setAcademicData(data)
     }
   }
@@ -192,6 +194,7 @@ function AcademicYearList({ handleGetCollection }) {
   const handleChange = (event) => {
     handleGetCollection(event.target.value)
     setSelectedValue(event.target.value) // Update the selected value
+    setSchoolYear(event.target.value) // Update the selected value
   }
 
   useState(() => {
