@@ -12,7 +12,7 @@ function View({ selected, onClose, handleGetData }) {
         const { data, error } = await fetchCollectionBySchoolYearIdandUserId(selected.schoolYear._id, selected.user._id)
         if (!error) {
             const eventList = data.filter((item) => item.eventId)
-            const collectionList = data.filter((item) => !item.eventId)
+            const collectionList = data.filter((item) => !item.eventId && item.label != "Optional" || item.label == "Optional" && item.transaction.length > 0)
             const collectionData = collectionList.map((item) => {
                 let remainingBalance = 0;
                 remainingBalance = item.fine
@@ -23,6 +23,9 @@ function View({ selected, onClose, handleGetData }) {
                     id: item._id,
                     collection: item.collectionName,
                     status: remainingBalance,
+                    indicator1: item.indicator1,
+                    indicator2: item.indicator2,
+                    fine: item.fine
                 }
             })
             const eventData = eventList.map((item) => {
@@ -54,6 +57,9 @@ function View({ selected, onClose, handleGetData }) {
                     id: item._id,
                     collection: item.collectionName,
                     status: remainingBalance,
+                    indicator1: item.indicator1,
+                    indicator2: item.indicator2,
+                    fine: item.fine
                 }
             })
             const combinedData = [
