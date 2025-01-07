@@ -8,6 +8,7 @@ import moment from 'moment';
 function Store({ setEvents, onClose }) {
     const [formData, setFormData] = useState({
         event: '',
+        schoolYearId: '',
         startDate: null,
         endDate: null,
         image: ''

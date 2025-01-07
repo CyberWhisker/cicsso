@@ -13,6 +13,7 @@ function Collection() {
   const { auth } = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
   const [collections, setCollection] = useState([]);
+  const [selectedValue, setSelectedValue] = useState('')
 
   const handleGetData = async (academicId) => {
     setIsLoading(true)
@@ -30,7 +31,7 @@ function Collection() {
       <Stack spacing={2}>
         <Stack direction={'row'} spacing={2} sx={{ alignItems: 'center' }}>
           <Typography variant="h5" fontWeight='bold'>Collection List Fines:</Typography>
-          <AcademicYearList handleGetCollection={handleGetData} />
+          <AcademicYearList handleGetCollection={handleGetData} setSelectedValue={setSelectedValue} selectedValue={selectedValue} />
         </Stack>
         <Box>
           <Divider />
@@ -39,7 +40,7 @@ function Collection() {
           }
         </Box>
         <Box>
-          <CollectionList setIsLoading={setIsLoading} handleGetData={handleGetData} collections={collections} />
+          <CollectionList setIsLoading={setIsLoading} handleGetData={() => handleGetData(selectedValue)} collections={collections} />
         </Box>
       </Stack>
     </Master>
@@ -132,9 +133,24 @@ function EventCard({ data, setSelected, setPaymentModal, auth }) {
   const handlePenalty = () => {
     let countTotalAttendance = 0;
     let countAttendance = 0;
-    const filteredSched = data.eventId.schedules.filter((item) => moment(item.date).isBefore(currentDay, 'day'))
-    countTotalAttendance = filteredSched.length * 4
+    let today = moment();
+    const filteredSched = data.eventId.schedules.filter((item) => moment(item.date).isSameOrBefore(currentDay, 'day'))
+    // countTotalAttendance = filteredSched.length * 4
     filteredSched.map((sched) => {
+
+      if (today.isAfter(sched.amIn)) {
+        countTotalAttendance++
+      }
+      if (today.isAfter(sched.amOut)) {
+        countTotalAttendance++
+      }
+      if (today.isAfter(sched.pmIn)) {
+        countTotalAttendance++
+      }
+      if (today.isAfter(sched.pmOut)) {
+        countTotalAttendance++
+      }
+
       if (sched.attendances.length > 0) {
         if (sched.attendances[0].amIn) {
           countAttendance++
@@ -194,13 +210,13 @@ function EventCard({ data, setSelected, setPaymentModal, auth }) {
                 {moment(data.endDate).isAfter(currentDay, 'day') ?
                   <Chip label="Upcoming" />
                   :
-                  <Chip label="Confirmed" color="success" />
+                  <Chip label="Complete" color="success" />
                 }
               </>
             ) : (
               <>
                 {data.transaction[0]?.status === 'confirm' && (
-                  <Chip label="Confirmed" color="success" />
+                  <Chip label="Paid" color="success" />
                 )}
                 {data.transaction[0]?.status === 'pending' && (
                   <Chip label="Pending" color="warning" />
@@ -231,9 +247,8 @@ function EventCard({ data, setSelected, setPaymentModal, auth }) {
   )
 }
 
-function AcademicYearList({ handleGetCollection }) {
+function AcademicYearList({ handleGetCollection, selectedValue, setSelectedValue }) {
   const [academicData, setAcademicData] = useState([])
-  const [selectedValue, setSelectedValue] = useState('')
 
   const handleGetData = async () => {
     const { data, error } = await fetchSchoolYear()

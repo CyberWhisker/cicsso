@@ -19,7 +19,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-function Payment({selected, handleGetData, handleCloseModal}) {
+function Payment({ selected, handleGetData, handleCloseModal }) {
     const [dataForm, setDataForm] = useState(selected.dataForm)
     const [paymentType, setPaymentType] = useState(true);
     const handleTogglePayment = (value) => {
@@ -32,7 +32,7 @@ function Payment({selected, handleGetData, handleCloseModal}) {
     }
     const handleSubmit = async () => {
 
-        const {data, error} = await storeTransaction(dataForm)
+        const { data, error } = await storeTransaction(dataForm)
         if (error) {
             toast.error(error)
         } else {
@@ -59,30 +59,30 @@ function Payment({selected, handleGetData, handleCloseModal}) {
                 />
                 <Typography>AY</Typography>
                 <DatePicker
-                label='Start Date'
-                value={moment(selected.startDate)}
-                disabled
+                    label='Start Date'
+                    value={moment(selected.startDate)}
+                    disabled
                 />
                 <DatePicker
-                label='End Date'
-                value={moment(selected.endDate)}
-                disabled
+                    label='End Date'
+                    value={moment(selected.endDate)}
+                    disabled
                 />
                 <Stack direction={'row'} spacing={2}>
-                    <Button variant='contained' color='success' sx={{width: '100%'}} onClick={() => handleTogglePayment('Cash')}>Cash</Button>
-                    <Button variant='contained' sx={{width: '100%'}} onClick={() => handleTogglePayment('GCash')}>Gcash</Button>
+                    <Button variant='contained' color='success' sx={{ width: '100%' }} onClick={() => handleTogglePayment('Cash')}>Cash</Button>
+                    <Button variant='contained' sx={{ width: '100%' }} onClick={() => handleTogglePayment('GCash')}>Gcash</Button>
                 </Stack>
                 {paymentType ? (
-                    <CashForm/>
+                    <CashForm />
                 ) : (
-                    <GcashForm setDataForm={setDataForm} dataForm={dataForm} handleSubmit={handleSubmit} selected={selected}/>
+                    <GcashForm setDataForm={setDataForm} dataForm={dataForm} handleSubmit={handleSubmit} selected={selected} />
                 )}
             </Stack>
         </LocalizationProvider>
     )
 }
 
-function GcashForm ({setDataForm, dataForm, handleSubmit, selected}) {
+function GcashForm({ setDataForm, dataForm, handleSubmit, selected }) {
     const [file, setFile] = useState(null);
     const [error, setError] = useState('');
 
@@ -102,35 +102,34 @@ function GcashForm ({setDataForm, dataForm, handleSubmit, selected}) {
         }
         handleSubmit();
     }
-
     return (
         <Stack spacing={2}>
             <Typography textAlign={'center'} fontWeight={'bold'}>Please upload the Gcash Transaction here</Typography>
             <Button
-              component="label"
-              role={undefined}
-              variant="contained"
-              tabIndex={-1}
-              startIcon={<CloudUpload />}
-              sx={{width: '100%'}}
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<CloudUpload />}
+                sx={{ width: '100%' }}
             >
-              Upload Gcash
-              <VisuallyHiddenInput
-                type="file"
-                onChange={handleFileChange}
-                multiple
-              />
+                Upload Gcash
+                <VisuallyHiddenInput
+                    type="file"
+                    onChange={handleFileChange}
+                    multiple
+                />
             </Button>
             {error && <Typography color='error' textAlign={'center'}>{error}</Typography>}
-            <Button variant='contained' onClick={handleFormSubmit} disabled={selected.transaction.length != 0}>Submit</Button>
+            <Button variant='contained' onClick={handleFormSubmit} disabled={selected.transaction.length != 0 && selected.transaction[0].status != 'decline'}>Submit</Button>
         </Stack>
     )
-} 
+}
 
-function CashForm () {
+function CashForm() {
     return (
         <Stack spacing={2}>
-            <Paper sx={{padding: 2}}>
+            <Paper sx={{ padding: 2 }}>
                 <Typography textAlign={'center'} fontWeight={'bold'}>Kindly remit your payment to the current Treasurer of the CICSSO organization at your earliest convenience.</Typography>
             </Paper>
         </Stack>

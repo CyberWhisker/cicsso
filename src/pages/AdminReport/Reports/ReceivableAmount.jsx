@@ -64,7 +64,8 @@ const computeData = async (setGraphData, selectedAY) => {
                     if (schedule.pmIn) countTotalAttendances++
                     if (schedule.pmOut) countTotalAttendances++
                 })
-                const total = (countTotalAttendances * userData.length) - countTotalUserAttendances
+                const filterUser = userData.filter((item) => item.role == 'user')
+                const total = (countTotalAttendances * filterUser.length) - countTotalUserAttendances
                 return {
                     label: item.collectionName,
                     value: total * item.fine

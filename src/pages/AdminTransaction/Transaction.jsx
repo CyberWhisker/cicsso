@@ -36,6 +36,7 @@ function Details() {
                 ...user,
                 transaction: TransData.find(trans => trans.userId == user._id)
             }))
+            console.log(combinedData)
             setData(combinedData)
         }
         setIsLoading(false)

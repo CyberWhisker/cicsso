@@ -12,6 +12,8 @@ import { fetchTransactionByUserId } from '../../api/TransactionApi';
 import { fetchCollectionWithEventAndAttendance } from '../../api/CollectionApi';
 import { Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { fetchActiveSchoolYear } from '../../api/SchoolYearApi';
 
 function Dashboard() {
     const { auth } = useAuthContext();
@@ -81,9 +83,21 @@ function InfoSection({ events, auth }) {
     const handlePenalties = async () => {
         let totalAttend = 0;
         let totalSched = 0;
+        let today = moment();
         events.map(event => {
             event.schedules.map(sched => {
-                totalSched++
+                if (today.isAfter(sched.amIn)) {
+                    totalSched++
+                }
+                if (today.isAfter(sched.amOut)) {
+                    totalSched++
+                }
+                if (today.isAfter(sched.pmIn)) {
+                    totalSched++
+                }
+                if (today.isAfter(sched.pmOut)) {
+                    totalSched++
+                }
                 sched.attendances.map(attend => {
                     if (attend.amIn) {
                         totalAttend++
@@ -100,7 +114,7 @@ function InfoSection({ events, auth }) {
                 })
             })
         })
-        setPenalties(totalSched * 4 - totalAttend)
+        setPenalties(totalSched - totalAttend)
         await handleTransaction(totalAttend)
     }
 
@@ -110,12 +124,13 @@ function InfoSection({ events, auth }) {
             toast.error(error)
         } else {
             setTransaction(data.length)
-            await handleCredit(data, totalAttend)
+            const schoolYear = await handleGetActiveSchoolYear()
+            await handleCredit(data, totalAttend, schoolYear)
         }
     }
 
-    const handleCredit = async (trans, totalAttend) => {
-        const { data, error } = await fetchCollectionWithEventAndAttendance();
+    const handleCredit = async (trans, totalAttend, schoolYear) => {
+        const { data, error } = await fetchCollectionWithEventAndAttendance(schoolYear._id);
         const dateToday = moment();
         if (error) {
             toast.error(error)
@@ -136,6 +151,13 @@ function InfoSection({ events, auth }) {
             }, 0);
 
             setCredit(totalFine - totalAmount);
+        }
+    }
+
+    const handleGetActiveSchoolYear = async () => {
+        const { data, error } = await fetchActiveSchoolYear()
+        if (!error) {
+            return data
         }
     }
 
@@ -222,11 +244,14 @@ function EventSection({ unfilteredEvent }) {
                     <Typography fontWeight="bold">Events List:</Typography>
                     <Divider />
                     {unfilteredEvent.map((item, index) => {
-                        const currentDate = moment();
+                        const currentDate = moment().startOf('day');
+                        let startDate = moment(item.startDate).startOf('day');  // Normalize start date to midnight
+                        let endDate = moment(item.endDate).startOf('day');  // Normalize end date to midnight
                         let status;
-                        if (currentDate.isSameOrAfter(moment(item.startDate)) && currentDate.isSameOrBefore(moment(item.endDate))) {
+                        console.log()
+                        if (currentDate.isBetween(startDate, endDate, null, '[]')) {
                             status = 'active';
-                        } else if (currentDate.isBefore(moment(item.startDate))) {
+                        } else if (currentDate.isBefore(moment(startDate))) {
                             status = 'pending';
                         } else {
                             status = 'expired';
