@@ -330,6 +330,7 @@ const handleGetCollection = async (selected) => {
             let countSchedule = 0;
             let countAttendance = 0;
             let remainingBalance = 0;
+            let transaction = 0;
             item.eventId.schedules.map((item) => {
                 countSchedule += 4
                 if (item.attendances.length > 0) {
@@ -350,16 +351,21 @@ const handleGetCollection = async (selected) => {
             remainingBalance = (countSchedule - countAttendance) * item.fine
             if (item.transaction.length > 0) {
                 remainingBalance = remainingBalance - item.transaction[0].amount
+                transaction = item.transaction[0].amount
             }
-            return {
-                id: item._id,
-                collection: item.collectionName,
-                status: remainingBalance,
-                indicator1: item.indicator1,
-                indicator2: item.indicator2,
-                fine: item.fine
+            if (countSchedule != countAttendance) {
+                return {
+                    id: item._id,
+                    collection: item.collectionName,
+                    status: remainingBalance,
+                    indicator1: item.indicator1,
+                    indicator2: item.indicator2,
+                    fine: transaction
+                }
             }
-        })
+            return null;
+        }).filter(item => item !== null);
+
         const combinedData = [
             ...collectionData,
             ...eventData

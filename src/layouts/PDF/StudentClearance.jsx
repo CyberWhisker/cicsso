@@ -269,6 +269,7 @@ function EventContent({ selected }) {
                 </thead>
                 <tbody>
                     {selected.eventData && selected?.eventData.map((item, index) => {
+
                         return (
                             <tr key={index}>
                                 <td style={{ border: '1px solid black', padding: '8px' }}>
