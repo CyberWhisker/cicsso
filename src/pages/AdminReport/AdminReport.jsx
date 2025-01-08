@@ -46,19 +46,19 @@ function AdminReport() {
         <Divider />
 
         <Grid container gap={2} alignItems="stretch">
+          <Grid item xs={12}>
+            <DisbursementReport selectedAY={selectedAY} />
+          </Grid>
+        </Grid>
+        <Grid container gap={2} alignItems="stretch">
           <Grid item xs={5}>
             <CollectionList selectedAY={selectedAY} />
           </Grid>
           <Grid item xs={6.8}>
-            <Stack spacing={2}>
+            <Stack spacing={2} sx={{ height: '100%' }}>
               <ReceivableAmount selectedAY={selectedAY} />
               <ReceivableAmountOptional selectedAY={selectedAY} />
             </Stack>
-          </Grid>
-        </Grid>
-        <Grid container gap={2} alignItems="stretch">
-          <Grid item xs={12}>
-            <DisbursementReport selectedAY={selectedAY} />
           </Grid>
         </Grid>
         {/* <Divider />
@@ -95,7 +95,7 @@ function AdminReport() {
 
           {/* <CollectionReport reportType={reportType} selectedYear={selectedYear} />
           <ExpensesReport reportType={reportType} selectedYear={selectedYear} /> */}
-          <DispursementReport />
+          {/* <DispursementReport /> */}
         </Stack>
       </Stack>
     </Master>
