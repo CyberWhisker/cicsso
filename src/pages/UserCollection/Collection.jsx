@@ -103,7 +103,7 @@ function CollectionCard({ data, setSelected, setPaymentModal, auth }) {
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{data.collectionName}</Typography>
-            {data.transaction[0]?.status == 'confirm' && <Chip label='Confirmed' color='success' />}
+            {data.transaction[0]?.status == 'confirm' && <Chip label='Paid' color='success' />}
             {data.transaction[0]?.status == 'pending' && <Chip label='Pending' color='warning' />}
             {data.transaction[0]?.status == 'decline' && <Chip label='Decline' color='error' />}
             {/* {!data.transaction[0]?.status && <Chip label='Unpaid' color='error' />} */}
