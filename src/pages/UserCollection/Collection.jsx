@@ -210,7 +210,13 @@ function EventCard({ data, setSelected, setPaymentModal, auth }) {
                 {moment(data.endDate).isAfter(currentDay, 'day') ?
                   <Chip label="Upcoming" />
                   :
-                  <Chip label="Complete" color="success" />
+                  <>
+                    {moment(data.endDate).isSame(currentDay, 'day') ?
+                      <Chip label="Ongoing" color='warning' />
+                      :
+                      <Chip label="Complete" color="success" />
+                    }
+                  </>
                 }
               </>
             ) : (
