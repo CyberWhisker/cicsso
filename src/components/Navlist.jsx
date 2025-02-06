@@ -13,13 +13,13 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import { CalendarIcon } from '@mui/x-date-pickers';
 import { AuthContext } from '../context/AuthContext';
 
-function Navlist({ setopen }) {
+function Navlist() {
   let location = useLocation();
   const { auth } = useAuthContext()
   return (
     <React.Fragment>
       {location.pathname == '/' && (
-        <NavLanding setopen={setopen} />
+        <NavLanding />
       )}
       {(auth && auth.user.role != 'user' && location.pathname != '/') && (
         <NavAdmin />
@@ -31,7 +31,7 @@ function Navlist({ setopen }) {
   );
 }
 
-function NavLanding({ setopen }) {
+function NavLanding() {
   const scrollToSection = (sectionId) => {
     const sectionElement = document.getElementById(sectionId);
     const offset = 128;
@@ -43,7 +43,6 @@ function NavLanding({ setopen }) {
         behavior: 'smooth',
       });
     }
-    setopen(false);
   };
 
   return (
@@ -62,7 +61,7 @@ function NavLanding({ setopen }) {
 }
 
 function NavAdmin() {
-  const {auth} = useContext(AuthContext)
+  const { auth } = useContext(AuthContext)
   const location = useLocation();
   return (
     <React.Fragment>

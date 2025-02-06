@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Avatar, Box, Button, Card, Divider, Drawer, Grid, LinearProgress, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import Master from '../../layouts/Master';
 import { AlertModal, CustomCard } from '../../components';
-import { Add, Person } from '@mui/icons-material';
+import { Add, Folder, Person, Upload } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { fetchUserById, fetchUsers, updateUser } from '../../api/userApi';
 import Delete from './Form/Delete';
 import * as XLSX from 'xlsx';
 import Store from './Form/Store';
+import UploadForm from './Form/Upload';
 
 
 function Users() {
@@ -38,6 +39,7 @@ function Users() {
                 <Stack direction={'row'} spacing={2}>
                     <Typography variant="h5" fontWeight="bold">User Management</Typography>
                     <AddUser getUsers={getUsers} />
+                    <UploadUser />
                 </Stack>
                 <Box>
                     <Divider />
@@ -360,6 +362,20 @@ function AddUser({ getUsers }) {
             </Drawer>
         </>
     );
+}
+
+
+function UploadUser() {
+    return (
+        <>
+            <form>
+                <Button variant='contained' color='warning' endIcon={<Upload />} type='submit'>Upload User</Button>
+            </form>
+            <Drawer anchor='right' open={true}>
+                <UploadForm />
+            </Drawer>
+        </>
+    )
 }
 
 export default Users
