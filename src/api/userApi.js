@@ -169,3 +169,23 @@ export const fetchUsersWithAttendance = async () => {
         return { data: [], error };
     }
 };
+
+export const storeMultipleUsers = async (formData) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/user/storeMultipleUsers`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            return { data: [], error: data.error };
+        } else {
+            return { data: data, error: null };
+        }
+    } catch (error) {
+        return { data: [], error };
+    }
+};

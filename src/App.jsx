@@ -32,11 +32,13 @@ import DisbursementReport from './pages/AdminReport/Reports/DisbursementReport';
 import NotVerified from './pages/NotVerified/NotVerified';
 import Verify from './pages/Verify/Verify';
 import { fetchUserById } from './api/userApi';
+import NotEnrolled from './pages/NotEnrolled/NotEnrolled';
 
 // Wrapper for authenticated and verified user routes
 function VerifiedUserRoute({ children }) {
   const { auth } = useAuthContext();
   const [isVerified, setIsVerified] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,6 +47,7 @@ function VerifiedUserRoute({ children }) {
         try {
           const { data } = await fetchUserById(auth.user._id);
           setIsVerified(data.verified);
+          setIsEnrolled(data.status)
         } catch (error) {
           console.error('Verification check failed:', error);
         }
@@ -57,6 +60,7 @@ function VerifiedUserRoute({ children }) {
   if (!auth) return <Navigate to="/login" replace />;
   if (loading) return <div>Loading...</div>;
   if (!isVerified) return <Navigate to="/notVerified" replace />;
+  if (!isEnrolled) return <Navigate to="/notEnrolled" replace />;
 
   return children;
 }
@@ -70,6 +74,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/notVerified" element={<NotVerified />} />
+        <Route path="/notEnrolled" element={<NotEnrolled />} />
         <Route path="/verify-email" element={<Verify />} />
 
         <Route path="/dashboard" element={

@@ -82,7 +82,7 @@ function UsersList({ usersData, setIsLoading, setUserData, setUsersData, backupU
         setUsersData(filtered)
     }
     return (
-        <Card sx={{ p: 2, minHeight: '75vh', overflow: 'auto' }} elevation={5}>
+        <Card sx={{ p: 2, height: '75vh', overflow: 'auto' }} elevation={5}>
             <Stack direction={'column'} spacing={2}>
                 <Box sx={{ display: 'flex' }}>
                     {/* <Typography fontWeight={'bold'}>User List:</Typography> */}
@@ -92,13 +92,15 @@ function UsersList({ usersData, setIsLoading, setUserData, setUsersData, backupU
                 {usersData.map((item, index) => (
                     <CustomCard key={index} >
                         <Box sx={{ minHeight: 50 }} onClick={() => handleUserData(item._id)}>
-                            <Stack direction={'row'} spacing={2}>
+                            <Stack direction={'row'} spacing={2} >
                                 <Avatar alt='img' src={item.picture} sx={{
                                     height: 50,
                                     width: 50
                                 }} />
-                                <Box>
-                                    <Typography noWrap fontWeight={'bold'}>{item.lastName.toUpperCase()}, {item.firstName.toUpperCase()} {item?.middleName[0]?.toUpperCase()}.</Typography>
+                                <Box sx={{ width: '30vh' }}>
+                                    <Typography noWrap fontWeight={'bold'} >
+                                        {item.lastName.toUpperCase()}, {item.firstName.toUpperCase()} {item?.middleName ? item.middleName[0] : ""}
+                                    </Typography>
                                     <Typography noWrap>{item.email}</Typography>
                                 </Box>
                             </Stack>
@@ -248,7 +250,7 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                     onChange={handleChange}
                                 />
                                 <Typography>Type</Typography>
-                                <TextField
+                                {/* <TextField
                                     name='type'
                                     sx={{ width: '100%' }}
                                     value={userData.type}
@@ -258,9 +260,23 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                 >
                                     <MenuItem value='Regular'>Regular</MenuItem>
                                     <MenuItem value='Irregular'>Irregular</MenuItem>
-                                </TextField>
+                                </TextField> */}
+                                <TextField
+                                    name='type'
+                                    sx={{ width: '100%' }}
+                                    value={userData.type}
+                                    disabled={toggleUpdate}
+                                    onChange={handleChange}
+                                />
                                 <Typography>Program:</Typography>
                                 <TextField
+                                    name='program'
+                                    sx={{ width: '100%' }}
+                                    value={userData.program}
+                                    disabled={toggleUpdate}
+                                    onChange={handleChange}
+                                />
+                                {/* <TextField
                                     select
                                     name='program'
                                     sx={{ width: '100%' }}
@@ -270,11 +286,11 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                 >
                                     <MenuItem value='BS Information Technology'>BS Information Technology</MenuItem>
                                     <MenuItem value='BS Information System'>BS Information Systems</MenuItem>
-                                </TextField>
+                                </TextField> */}
                                 <Stack direction={'row'} spacing={2}>
                                     <Box sx={{ width: '100%' }}>
                                         <Typography>Year</Typography>
-                                        <TextField
+                                        {/* <TextField
                                             name='year'
                                             sx={{ width: '100%' }}
                                             value={userData.year}
@@ -286,11 +302,18 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                             <MenuItem value='2nd'>2nd</MenuItem>
                                             <MenuItem value='3rd'>3rd</MenuItem>
                                             <MenuItem value='4th'>4th</MenuItem>
-                                        </TextField>
+                                        </TextField> */}
+                                        <TextField
+                                            name='year'
+                                            sx={{ width: '100%' }}
+                                            value={userData.year}
+                                            disabled={toggleUpdate}
+                                            onChange={handleChange}
+                                        />
                                     </Box>
                                     <Box sx={{ width: '100%' }}>
                                         <Typography>Section</Typography>
-                                        <TextField
+                                        {/* <TextField
                                             name='section'
                                             sx={{ width: '100%' }}
                                             value={userData.section}
@@ -302,7 +325,14 @@ function UserDetails({ userData, setUserData, getUsers }) {
                                             <MenuItem value='B'>B</MenuItem>
                                             <MenuItem value='C'>C</MenuItem>
                                             <MenuItem value='D'>Dr</MenuItem>
-                                        </TextField>
+                                        </TextField> */}
+                                        <TextField
+                                            name='section'
+                                            sx={{ width: '100%' }}
+                                            value={userData.section}
+                                            disabled={toggleUpdate}
+                                            onChange={handleChange}
+                                        />
                                     </Box>
                                 </Stack>
                                 <Typography fontWeight={'bold'}>Account Information</Typography>
@@ -366,13 +396,13 @@ function AddUser({ getUsers }) {
 
 
 function UploadUser() {
+    const [openForm, setOpenForm] = useState(false)
+
     return (
         <>
-            <form>
-                <Button variant='contained' color='warning' endIcon={<Upload />} type='submit'>Upload User</Button>
-            </form>
-            <Drawer anchor='right' open={true}>
-                <UploadForm />
+            <Button variant='contained' color='warning' endIcon={<Upload />} onClick={() => setOpenForm(true)}>Upload User</Button>
+            <Drawer anchor='right' open={openForm} onClose={() => setOpenForm(false)}>
+                <UploadForm onClose={() => setOpenForm(false)} />
             </Drawer>
         </>
     )
