@@ -33,6 +33,9 @@ import NotVerified from './pages/NotVerified/NotVerified';
 import Verify from './pages/Verify/Verify';
 import { fetchUserById } from './api/userApi';
 import NotEnrolled from './pages/NotEnrolled/NotEnrolled';
+import CollectionReport from './pages/AdminReport/Reports/CollectionReport';
+import FinancialReport from './pages/AdminReport/Reports/FinancialReport';
+import ReceivableReport from './pages/AdminReport/Reports/ReceivableReport';
 
 // Wrapper for authenticated and verified user routes
 function VerifiedUserRoute({ children }) {
@@ -272,6 +275,22 @@ function App() {
         <Route path="/disbursementLayout" element={
           <VerifiedUserRoute>
             <DisbursementReport />
+          </VerifiedUserRoute>
+        } />
+
+        <Route path="/collectionLayout" element={
+          <VerifiedUserRoute>
+            <CollectionReport />
+          </VerifiedUserRoute>
+        } />
+        <Route path="/financialLayout" element={
+          <VerifiedUserRoute>
+            <FinancialReport />
+          </VerifiedUserRoute>
+        } />
+        <Route path="/receivableLayout" element={
+          <VerifiedUserRoute>
+            <ReceivableReport />
           </VerifiedUserRoute>
         } />
       </Routes>

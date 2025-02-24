@@ -1,0 +1,12 @@
+@media print {
+  /* Ensure header is positioned at the top and does not overlap content */
+  .print-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    z-index: 1000;
+    text-align: center;
+  }
+}

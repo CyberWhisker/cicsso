@@ -217,7 +217,7 @@ function DataGridList({ data, handleGetData }) {
         data.map((item) => ({
             ...item,
             id: item._id,
-            name: `${item.lastName}, ${item.firstName} ${item?.middleName[0] || ''}.`,
+            name: `${item.lastName}, ${item.firstName} ${item.middleName ? item.middleName[0] : ''}.`,
             date: item.transaction?.date ? moment(item.transaction.date).format("MMMM DD YYYY") :
                 null,
             payment: item.transaction?.payment,

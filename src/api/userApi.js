@@ -189,3 +189,21 @@ export const storeMultipleUsers = async (formData) => {
         return { data: [], error };
     }
 };
+
+export const fetchUsersWithTransactionByAY = async (id) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/user/getUsersWithTransactionByAY/${id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            return { data: [], error: data.error };
+        } else {
+            return { data: data, error: null };
+        }
+    } catch (error) {
+        return { data: [], error };
+    }
+};

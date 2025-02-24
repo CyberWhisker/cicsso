@@ -39,7 +39,7 @@ function Users() {
                 <Stack direction={'row'} spacing={2}>
                     <Typography variant="h5" fontWeight="bold">User Management</Typography>
                     <AddUser getUsers={getUsers} />
-                    <UploadUser />
+                    <UploadUser getUsers={getUsers} />
                 </Stack>
                 <Box>
                     <Divider />
@@ -395,14 +395,14 @@ function AddUser({ getUsers }) {
 }
 
 
-function UploadUser() {
+function UploadUser({ getUsers }) {
     const [openForm, setOpenForm] = useState(false)
 
     return (
         <>
             <Button variant='contained' color='warning' endIcon={<Upload />} onClick={() => setOpenForm(true)}>Upload User</Button>
             <Drawer anchor='right' open={openForm} onClose={() => setOpenForm(false)}>
-                <UploadForm onClose={() => setOpenForm(false)} />
+                <UploadForm onClose={() => setOpenForm(false)} getUsers={getUsers} />
             </Drawer>
         </>
     )

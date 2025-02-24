@@ -19,8 +19,8 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-function Store({handleGetData, handleCloseModal, data}) {
-    const {id} = useParams()
+function Store({ handleGetData, handleCloseModal, data }) {
+    const { id } = useParams()
     const [formData, setFormData] = useState({
         userId: '',
         collectionId: id,
@@ -32,20 +32,20 @@ function Store({handleGetData, handleCloseModal, data}) {
     });
     const [submitted, setSubmitted] = useState(false);
 
-    const handleChange = (e) => 
+    const handleChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const handleDateChange = (name, value) => 
+    const handleDateChange = (name, value) =>
         setFormData({ ...formData, [name]: value });
 
-    const handleFileChange = (event) => 
-        setFormData({ ...formData, file: event.target.files[0]});
+    const handleFileChange = (event) =>
+        setFormData({ ...formData, file: event.target.files[0] });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
         const { userId, payment, amount, date } = formData;
-        if (!userId || !payment || !amount|| !date) {
+        if (!userId || !payment || !amount || !date) {
             toast.error("All fields are required");
             return;
         }
@@ -53,13 +53,13 @@ function Store({handleGetData, handleCloseModal, data}) {
             ...formData,
             notification: 1
         }
-        const {data, error} = await storeTransaction(newForm)
+        const { data, error } = await storeTransaction(newForm)
         if (error) {
             toast.error(error)
         } else {
             handleGetData();
             toast.success("Transaction added successfully");
-            setFormData({ userId: '', payment: '', amount: '', date: null});
+            setFormData({ userId: '', payment: '', amount: '', date: null });
             handleCloseModal();
         }
         setSubmitted(false);
@@ -76,7 +76,7 @@ function Store({handleGetData, handleCloseModal, data}) {
                                 label='Select Student'
                                 name='userId'
                                 variant="outlined"
-                                sx={{ width: '100%'}}
+                                sx={{ width: '100%' }}
                                 value={formData.userId}
                                 onChange={handleChange}
                                 error={submitted && !formData.userId}
@@ -86,7 +86,7 @@ function Store({handleGetData, handleCloseModal, data}) {
                                 {data.map((user, index) => {
                                     if (!user.transaction) {
                                         return (
-                                            <MenuItem value={user._id} key={index}>{user.lastName}, {user.firstName} {user.middleName[0]}.</MenuItem>
+                                            <MenuItem value={user._id} key={index}>{user.lastName}, {user.firstName} {user.middleName}.</MenuItem>
                                         )
                                     }
                                 })}
@@ -95,7 +95,7 @@ function Store({handleGetData, handleCloseModal, data}) {
                                 label='Payment Type'
                                 name='payment'
                                 variant="outlined"
-                                sx={{ width: '100%'}}
+                                sx={{ width: '100%' }}
                                 value={formData.payment}
                                 onChange={handleChange}
                                 error={submitted && !formData.payment}
@@ -107,39 +107,39 @@ function Store({handleGetData, handleCloseModal, data}) {
                             </TextField>
                             {formData.payment == 'GCash' && (
                                 <Button
-                                component="label"
-                                role={undefined}
-                                variant="contained"
-                                tabIndex={-1}
-                                startIcon={<CloudUpload />}
-                                sx={{width: '100%'}}
+                                    component="label"
+                                    role={undefined}
+                                    variant="contained"
+                                    tabIndex={-1}
+                                    startIcon={<CloudUpload />}
+                                    sx={{ width: '100%' }}
                                 >
-                                Upload Gcash
-                                <VisuallyHiddenInput
-                                    type="file"
-                                    name='file'
-                                    onChange={handleFileChange}
-                                    multiple
-                                />
+                                    Upload Gcash
+                                    <VisuallyHiddenInput
+                                        type="file"
+                                        name='file'
+                                        onChange={handleFileChange}
+                                        multiple
+                                    />
                                 </Button>
                             )}
-                            
+
                             <TextField
                                 label='Enter Amount'
                                 name='amount'
                                 variant="outlined"
-                                sx={{ width: '100%'}}
+                                sx={{ width: '100%' }}
                                 value={formData.amount}
                                 onChange={handleChange}
                                 error={submitted && !formData.amount}
                                 helperText={submitted && !formData.amount ? "Required" : ""}
                             />
-                            
+
                             <DatePicker
                                 label='Date'
                                 name='date'
                                 variant="outlined"
-                                sx={{ width: '100%'}}
+                                sx={{ width: '100%' }}
                                 value={formData.date}
                                 onChange={(value) => handleDateChange("date", value)}
                                 slotProps={{
@@ -153,7 +153,7 @@ function Store({handleGetData, handleCloseModal, data}) {
                                 label='Select Status'
                                 name='status'
                                 variant="outlined"
-                                sx={{ width: '100%'}}
+                                sx={{ width: '100%' }}
                                 value={formData.status}
                                 onChange={handleChange}
                                 error={submitted && !formData.status}
@@ -164,7 +164,7 @@ function Store({handleGetData, handleCloseModal, data}) {
                                 <MenuItem value='pending'>Pending</MenuItem>
                                 <MenuItem value='decline'>Decline</MenuItem>
                             </TextField>
-                            <Button type='submit' variant='contained' sx={{ mt: 2 ,width: '100%'}}>
+                            <Button type='submit' variant='contained' sx={{ mt: 2, width: '100%' }}>
                                 Submit
                             </Button>
                         </Stack>

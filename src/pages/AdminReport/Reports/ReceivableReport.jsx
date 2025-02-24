@@ -17,17 +17,18 @@ import { useReactToPrint } from 'react-to-print';
 import { fetchProjectBySchoolYear } from '../../../api/ProjectApi';
 import { Print } from '@mui/icons-material';
 import moment from 'moment';
+import { fetchUsersWithTransactionByAY } from '../../../api/userApi';
 
-function DisbursementReport({ selectedAY }) {
+function ReceivableReport({ selectedAY = '677c832857fbaf651efdc933' }) {
     const contentRef = useRef(null);
     const printFile = useReactToPrint({ contentRef })
     return (
         <>
             <MenuItem onClick={printFile}>
                 <ListItemIcon><Print /></ListItemIcon>
-                <ListItemText>Financial Report</ListItemText>
+                <ListItemText>Receivable Report</ListItemText>
             </MenuItem>
-            <Box sx={{ display: 'none' }}>
+            <Box sx={{ display: 'block' }}>
                 <Layout contentRef={contentRef} selectedAY={selectedAY} />
             </Box>
         </>
@@ -60,31 +61,27 @@ function Layout({ contentRef, selectedAY }) {
                                                 fontFamily: "'Times New Roman', Times, serif",
                                             }}
                                         >
-                                            Disbursement
+                                            Receivable/Collectible
                                         </Typography>
                                     </Stack>
                                 </Stack>
                             </TableCell>
                         </TableRow>
                     </TableBody>
-                    <ProjectRow selectedAY={selectedAY} />
+                    <ReceivableRow selectedAY={selectedAY} />
                 </Table>
             </div>
         </Box>
     )
 }
 
-function ProjectRow({ selectedAY, }) {
+function ReceivableRow({ selectedAY, }) {
     const [rows, setRows] = useState([])
     const [total, setTotal] = useState(0)
     const handleGetData = async () => {
-        const { data, error } = await fetchProjectBySchoolYear(selectedAY)
+        const { data, error } = await fetchUsersWithTransactionByAY(selectedAY)
         if (!error) {
-            const getTotal = data.map((item) => {
-                return item.items.reduce((sum, item) => item.amount + sum, 0);
-            }).reduce((sum, amount) => sum + amount, 0);
-            setTotal(getTotal);
-            setRows(data)
+            console.log(data)
         }
     }
     useEffect(() => {
@@ -254,4 +251,4 @@ function HeaderContent() {
     );
 }
 
-export default DisbursementReport
+export default ReceivableReport

@@ -47,6 +47,7 @@ function UploadForm({ getUsers, onClose }) {
             toast.error("Something went wrong")
         } else {
             toast.success("Successfully Inserted")
+            getUsers()
             onClose()
         }
         setSubmitted(false)
