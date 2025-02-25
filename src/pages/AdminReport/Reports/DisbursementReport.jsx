@@ -11,6 +11,7 @@ import {
     TableRow,
     TableCell,
     TableBody,
+    Grid,
 } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { useReactToPrint } from 'react-to-print';
@@ -68,6 +69,7 @@ function Layout({ contentRef, selectedAY }) {
                         </TableRow>
                     </TableBody>
                     <ProjectRow selectedAY={selectedAY} />
+                    <Signatories />
                 </Table>
             </div>
         </Box>
@@ -252,6 +254,56 @@ function HeaderContent() {
             />
         </Box>
     );
+}
+
+function Signatories() {
+    return (
+        <TableBody>
+            <TableRow >
+                <TableCell colSpan={3} sx={{ paddingTop: 10, border: 'none' }} >
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <Stack spacing={6}>
+                                <Typography>Prepared by: </Typography>
+                                <Stack spacing={2}>
+                                    <Typography fontWeight={'bold'} >
+                                        JAMIE M. SOLINA
+                                    </Typography>
+                                    <Typography >
+                                        TREASURER, CICSSO
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Stack spacing={6}>
+                                <Typography>Approved by:</Typography>
+                                <Stack spacing={2}>
+                                    <Typography fontWeight={'bold'} >
+                                        DOREENA JOY. C. BORJA
+                                    </Typography>
+                                    <Typography >
+                                        Adviser, CICSSO
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                            <Stack spacing={6} sx={{ paddingTop: 10 }}>
+                                <Typography>Noted by: </Typography>
+                                <Stack spacing={2}>
+                                    <Typography fontWeight={'bold'} >
+                                        RONJIE MAR L. MALINAO, DIT
+                                    </Typography>
+                                    <Typography >
+                                        Dean, CICS
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                        </Grid>
+                    </Grid>
+                </TableCell>
+            </TableRow>
+        </TableBody>
+    )
 }
 
 export default DisbursementReport

@@ -11,15 +11,15 @@ import {
     TableRow,
     TableCell,
     TableBody,
+    Grid,
 } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { useReactToPrint } from 'react-to-print';
-import { fetchProjectBySchoolYear } from '../../../api/ProjectApi';
 import { Print } from '@mui/icons-material';
-import moment from 'moment';
-import { fetchUsersWithTransactionByAY } from '../../../api/userApi';
+import { fetchUsers } from '../../../api/userApi';
+import { fetchCollectionWithEventAndAttendance } from '../../../api/CollectionApi';
 
-function ReceivableReport({ selectedAY = '677c832857fbaf651efdc933' }) {
+function ReceivableReport({ selectedAY }) {
     const contentRef = useRef(null);
     const printFile = useReactToPrint({ contentRef })
     return (
@@ -28,7 +28,7 @@ function ReceivableReport({ selectedAY = '677c832857fbaf651efdc933' }) {
                 <ListItemIcon><Print /></ListItemIcon>
                 <ListItemText>Receivable Report</ListItemText>
             </MenuItem>
-            <Box sx={{ display: 'block' }}>
+            <Box sx={{ display: 'none' }}>
                 <Layout contentRef={contentRef} selectedAY={selectedAY} />
             </Box>
         </>
@@ -36,8 +36,16 @@ function ReceivableReport({ selectedAY = '677c832857fbaf651efdc933' }) {
 }
 
 function Layout({ contentRef, selectedAY }) {
-    const [totalRevenue, setTotalRevenue] = useState(0)
-    const [totalExpense, setTotalExpense] = useState(0)
+    const [receivable, setReceivable] = useState([])
+
+    const handleGetData = async () => {
+        const data = await computeData(selectedAY)
+        setReceivable(data)
+    }
+    useEffect(() => {
+        handleGetData()
+    }, [])
+
     return (
         <Box ref={contentRef} sx={{ p: 2 }}>
             <div style={{ pageBreakAfter: 'always' }}>
@@ -68,43 +76,60 @@ function Layout({ contentRef, selectedAY }) {
                             </TableCell>
                         </TableRow>
                     </TableBody>
-                    <ReceivableRow selectedAY={selectedAY} />
+                    <ReceivableRow receivable={receivable} />
+                    <Signatories receivable={receivable} />
                 </Table>
             </div>
         </Box>
     )
 }
 
-function ReceivableRow({ selectedAY, }) {
-    const [rows, setRows] = useState([])
-    const [total, setTotal] = useState(0)
-    const handleGetData = async () => {
-        const { data, error } = await fetchUsersWithTransactionByAY(selectedAY)
-        if (!error) {
-            console.log(data)
-        }
-    }
-    useEffect(() => {
-        handleGetData()
-    }, [])
+function ReceivableRow({ receivable, }) {
+
     return (
         <>
-            {rows.map((item, index) => (
+            <TableHead
+                sx={{
+                    border: "1px solid rgba(224, 224, 224, 1)"
+                }}
+            >
+                <TableRow sx={{ bgcolor: 'success.light' }}>
+                    <TableCell
+                        sx={{
+                            border: "1px solid rgba(224, 224, 224, 1)"
+                        }}
+                    >
+                        <Typography fontWeight={'bold'} textAlign={'center'}>
+                            NO
+                        </Typography>
+                    </TableCell>
+                    <TableCell
+                        sx={{
+                            border: "1px solid rgba(224, 224, 224, 1)"
+                        }}
+                    >
+                        <Typography fontWeight={'bold'} textAlign={'center'}>
+                            ACTIVITY
+                        </Typography>
+                    </TableCell>
+                    <TableCell
+                        sx={{
+                            border: "1px solid rgba(224, 224, 224, 1)"
+                        }}>
+                        <Typography fontWeight={'bold'} textAlign={'center'}>
+                            TOTAL RECEIVABLE
+                        </Typography>
+                    </TableCell>
+                </TableRow>
+            </TableHead>
+            {receivable.map((item, index) => (
                 <React.Fragment key={index}>
-
-                    <TableHead
+                    <TableBody
                         key={index}
                         sx={{
                             border: "1px solid rgba(224, 224, 224, 1)"
                         }}
                     >
-                        <TableRow sx={{ bgcolor: "#d3d3d3" }}>
-                            <TableCell colSpan={3}>
-                                <Typography fontWeight={'bold'} textAlign={'center'}>
-                                    {item.project}
-                                </Typography>
-                            </TableCell>
-                        </TableRow>
                         <TableRow>
                             <TableCell
                                 sx={{
@@ -112,7 +137,7 @@ function ReceivableRow({ selectedAY, }) {
                                 }}
                             >
                                 <Typography fontWeight={'bold'} textAlign={'center'}>
-                                    DATE
+                                    {item.no}
                                 </Typography>
                             </TableCell>
                             <TableCell
@@ -121,7 +146,7 @@ function ReceivableRow({ selectedAY, }) {
                                 }}
                             >
                                 <Typography fontWeight={'bold'} textAlign={'center'}>
-                                    ACTIVITY
+                                    {item.label}
                                 </Typography>
                             </TableCell>
                             <TableCell
@@ -129,78 +154,14 @@ function ReceivableRow({ selectedAY, }) {
                                     border: "1px solid rgba(224, 224, 224, 1)"
                                 }}>
                                 <Typography fontWeight={'bold'} textAlign={'center'}>
-                                    AMOUNT
+                                    ₱ {item.value.toFixed(2)}
                                 </Typography>
                             </TableCell>
                         </TableRow>
-                    </TableHead>
-                    {item.items.map((item, index) => (
-                        <TableBody
-                            key={index}
-                            sx={{
-                                border: "1px solid rgba(224, 224, 224, 1)"
-                            }}
-                        >
-                            <TableRow>
-                                <TableCell
-                                    sx={{
-                                        width: '10vh',
-                                        border: "1px solid rgba(224, 224, 224, 1)"  // Outer table border
-                                    }}>
-                                    <Typography>{moment(item.createdAt).format('MM/DD/YYYY')}</Typography>
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        border: "1px solid rgba(224, 224, 224, 1)"  // Outer table border
-                                    }}>
-                                    <Typography>{item.item}</Typography>
-                                </TableCell>
-                                <TableCell align="right"
-                                    sx={{
-                                        border: "1px solid rgba(224, 224, 224, 1)"  // Outer table border
-                                    }}>
-                                    <Typography>₱ {item.amount.toFixed(2)}</Typography>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    ))}
+                    </TableBody>
                 </React.Fragment>
             ))}
-            <TotalRow total={total} />
         </>
-    )
-}
-
-function TotalRow({ total }) {
-    return (
-
-        <TableBody
-            sx={{
-                border: "1px solid rgba(224, 224, 224, 1)"
-            }}
-        >
-            <TableRow >
-                <TableCell
-                    sx={{
-                        width: '10vh',
-                        border: "1px solid rgba(224, 224, 224, 1)"  // Outer table border
-                    }}>
-                    <Typography fontWeight={'bold'}>TOTAL:</Typography>
-                </TableCell>
-                <TableCell
-                    sx={{
-                        border: "1px solid rgba(224, 224, 224, 1)"  // Outer table border
-                    }}>
-                </TableCell>
-                <TableCell align="right"
-                    sx={{
-                        border: "1px solid rgba(224, 224, 224, 1)",  // Outer table border
-                        bgcolor: 'error.light'
-                    }}>
-                    <Typography fontWeight={'bold'}>₱ {total.toFixed(2)}</Typography>
-                </TableCell>
-            </TableRow>
-        </TableBody>
     )
 }
 
@@ -249,6 +210,112 @@ function HeaderContent() {
             />
         </Box>
     );
+}
+
+function Signatories() {
+    return (
+        <TableBody>
+            <TableRow >
+                <TableCell colSpan={3} sx={{ paddingTop: 10, border: 'none' }} >
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <Stack spacing={6}>
+                                <Typography>Prepared by: </Typography>
+                                <Stack spacing={2}>
+                                    <Typography fontWeight={'bold'} >
+                                        JAMIE M. SOLINA
+                                    </Typography>
+                                    <Typography >
+                                        TREASURER, CICSSO
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Stack spacing={6}>
+                                <Typography>Approved by:</Typography>
+                                <Stack spacing={2}>
+                                    <Typography fontWeight={'bold'} >
+                                        DOREENA JOY. C. BORJA
+                                    </Typography>
+                                    <Typography >
+                                        Adviser, CICSSO
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                            <Stack spacing={6} sx={{ paddingTop: 10 }}>
+                                <Typography>Noted by: </Typography>
+                                <Stack spacing={2}>
+                                    <Typography fontWeight={'bold'} >
+                                        RONJIE MAR L. MALINAO, DIT
+                                    </Typography>
+                                    <Typography >
+                                        Dean, CICS
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                        </Grid>
+                    </Grid>
+                </TableCell>
+            </TableRow>
+        </TableBody>
+    )
+}
+
+const computeData = async (selectedAY) => {
+    const [
+        { data: eventData, error: eventError },
+        { data: userData, error: userError }
+    ] = await Promise.all([
+        fetchCollectionWithEventAndAttendance(selectedAY),
+        fetchUsers()
+    ])
+
+    if (!eventError && !userError) {
+        // Process Attendance data
+        let number = 0;
+        const attendanceData = eventData
+            .filter((item) => item.eventId && item.label != "Optional")
+            .map((item) => {
+                let countTotalAttendances = 0
+                let countTotalUserAttendances = 0
+                item.eventId.schedules.map((schedule) => {
+                    schedule.attendances.map((attendance) => {
+                        if (attendance.amIn) countTotalUserAttendances++
+                        if (attendance.amOut) countTotalUserAttendances++
+                        if (attendance.pmIn) countTotalUserAttendances++
+                        if (attendance.pmOut) countTotalUserAttendances++
+                    })
+                    if (schedule.amIn) countTotalAttendances++
+                    if (schedule.amOut) countTotalAttendances++
+                    if (schedule.pmIn) countTotalAttendances++
+                    if (schedule.pmOut) countTotalAttendances++
+                })
+                number++;
+                const filterUser = userData.filter((item) => item.role == 'user')
+                const total = (countTotalAttendances * filterUser.length) - countTotalUserAttendances
+                return {
+                    no: number,
+                    label: item.collectionName,
+                    value: total * item.fine
+                }
+            })
+
+        // Process Collection data
+        const collectionDataProcessed = eventData
+            .filter((item) => !item.eventId && item.label != "Optional")
+            .map((item) => {
+                const totalPayment = item.fine * userData.length
+                const userPayment = item.transaction.reduce((sum, transaction) => sum + transaction.amount, 0)
+                number++;
+                return {
+                    no: number,
+                    label: item.collectionName,
+                    value: totalPayment - userPayment
+                }
+            })
+        return ([...attendanceData, ...collectionDataProcessed])
+    }
 }
 
 export default ReceivableReport

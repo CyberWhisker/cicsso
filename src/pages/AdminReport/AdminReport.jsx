@@ -16,6 +16,7 @@ import ReceivableAmountOptional from './Reports/ReceivableAmountOptional';
 import { ArrowDropDown, Print } from '@mui/icons-material';
 import CollectionReport from './Reports/CollectionReport';
 import FinancialReport from './Reports/FinancialReport';
+import ReceivableReport from './Reports/ReceivableReport';
 
 function AdminReport() {
   const [reportType, setReportType] = useState('annually');
@@ -457,6 +458,7 @@ function Printool({ selectedAY }) {
         onClose={handleClose}
       >
         <CollectionReport selectedAY={selectedAY} />
+        <ReceivableReport selectedAY={selectedAY} />
         <FinancialReport selectedAY={selectedAY} />
         <DisbursementReport selectedAY={selectedAY} />
       </Menu>
