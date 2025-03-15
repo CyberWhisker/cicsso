@@ -44,7 +44,7 @@ const Master = ({ children }) => {
     <ThemeProvider theme={themeMode === "dark" ? darkTheme : lightTheme}>
       <CssBaseline />
       <Box
-      sx={(theme) => ({
+        sx={(theme) => ({
           width: '100%',
           backgroundImage:
             theme.palette.mode === 'light'
@@ -55,13 +55,13 @@ const Master = ({ children }) => {
         })}
       >
         <NavSideBar themeMode={themeMode} toggleColorMode={toggleColorMode} >
-          <NavTopBar toggleColorMode={toggleColorMode} themeMode={themeMode}/>
+          <NavTopBar toggleColorMode={toggleColorMode} themeMode={themeMode} />
           <Container sx={{ mt: 2 }}>
-              {children}
+            {children}
           </Container>
         </NavSideBar>
       </Box>
-      <CustomToast/>
+      <CustomToast />
     </ThemeProvider>
   );
 };

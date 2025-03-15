@@ -36,7 +36,7 @@ function Details() {
 
     return (
         <Master>
-            <Stack spacing={2}>
+            <Stack spacing={1}>
                 <Stack direction={'row'} spacing={2} alignItems={'center'}>
                     <Typography variant="h5" fontWeight="bold">Item List :</Typography>
                     <Button variant="contained" onClick={() => navigate(-1)} startIcon={<KeyboardReturn />}>Projects</Button>
@@ -154,8 +154,9 @@ function DataGridList({ data, handleGetData }) {
     );
     return (
         <>
-            <Card sx={{ width: '100%', height: 550 }} elevation={5}>
+            <Card sx={{ width: '100%' }} elevation={5}>
                 <DataGrid
+                    sx={{ height: '80vh' }}
                     columns={columns}
                     rows={rows}
                     initialState={{

@@ -95,7 +95,7 @@ function Layout({ contentRef, selectedAY }) {
                                                 <TableCell align="center" sx={{ borderRight: '1px solid #ddd' }}>{row.no}</TableCell>
                                                 <TableCell align="center" sx={{ borderRight: '1px solid #ddd' }}>{row.collectionName}</TableCell>
                                                 <TableCell align="center" sx={{ borderRight: '1px solid #ddd' }}>
-                                                    {moment(row.startDate).format('MM/DD/YYYY')} - {moment(row.endDate).format('MM/DD/YYYY')}
+                                                    {moment(row.startDate).format('MM/DD/YYYY')} - {moment(row.endDate).format('MM/DD/YYYY')} ({row.schoolYearId.semester})
                                                 </TableCell>
                                                 <TableCell align="center" sx={{ borderRight: '1px solid #ddd' }}>{row.fine.toFixed(2)}</TableCell>
                                                 <TableCell align="center">{row.totalAmount.toFixed(2)}</TableCell>

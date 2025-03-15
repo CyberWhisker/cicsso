@@ -26,7 +26,7 @@ function DisbursementReport({ selectedAY }) {
         <>
             <MenuItem onClick={printFile}>
                 <ListItemIcon><Print /></ListItemIcon>
-                <ListItemText>Financial Report</ListItemText>
+                <ListItemText>Disbursement Report</ListItemText>
             </MenuItem>
             <Box sx={{ display: 'none' }}>
                 <Layout contentRef={contentRef} selectedAY={selectedAY} />
@@ -44,7 +44,7 @@ function Layout({ contentRef, selectedAY }) {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell colSpan={3} sx={{ border: 'none' }}>
+                            <TableCell colSpan={5} sx={{ border: 'none' }}>
                                 <HeaderContent />
                             </TableCell>
                         </TableRow>
@@ -83,7 +83,7 @@ function ProjectRow({ selectedAY, }) {
         const { data, error } = await fetchProjectBySchoolYear(selectedAY)
         if (!error) {
             const getTotal = data.map((item) => {
-                return item.items.reduce((sum, item) => item.amount + sum, 0);
+                return item.items.reduce((sum, item) => (item.amount * item.quantity) + sum, 0);
             }).reduce((sum, amount) => sum + amount, 0);
             setTotal(getTotal);
             setRows(data)
@@ -104,7 +104,7 @@ function ProjectRow({ selectedAY, }) {
                         }}
                     >
                         <TableRow sx={{ bgcolor: "#d3d3d3" }}>
-                            <TableCell colSpan={3}>
+                            <TableCell colSpan={5}>
                                 <Typography fontWeight={'bold'} textAlign={'center'}>
                                     {item.project}
                                 </Typography>
@@ -126,7 +126,16 @@ function ProjectRow({ selectedAY, }) {
                                 }}
                             >
                                 <Typography fontWeight={'bold'} textAlign={'center'}>
-                                    ACTIVITY
+                                    ITEM
+                                </Typography>
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    border: "1px solid rgba(224, 224, 224, 1)"
+                                }}
+                            >
+                                <Typography fontWeight={'bold'} textAlign={'center'}>
+                                    QUANTITY
                                 </Typography>
                             </TableCell>
                             <TableCell
@@ -135,6 +144,14 @@ function ProjectRow({ selectedAY, }) {
                                 }}>
                                 <Typography fontWeight={'bold'} textAlign={'center'}>
                                     AMOUNT
+                                </Typography>
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    border: "1px solid rgba(224, 224, 224, 1)"
+                                }}>
+                                <Typography fontWeight={'bold'} textAlign={'center'}>
+                                    TOTAL
                                 </Typography>
                             </TableCell>
                         </TableRow>
@@ -149,7 +166,6 @@ function ProjectRow({ selectedAY, }) {
                             <TableRow>
                                 <TableCell
                                     sx={{
-                                        width: '10vh',
                                         border: "1px solid rgba(224, 224, 224, 1)"  // Outer table border
                                     }}>
                                     <Typography>{moment(item.createdAt).format('MM/DD/YYYY')}</Typography>
@@ -164,7 +180,19 @@ function ProjectRow({ selectedAY, }) {
                                     sx={{
                                         border: "1px solid rgba(224, 224, 224, 1)"  // Outer table border
                                     }}>
+                                    <Typography>{item.quantity}</Typography>
+                                </TableCell>
+                                <TableCell align="right"
+                                    sx={{
+                                        border: "1px solid rgba(224, 224, 224, 1)"  // Outer table border
+                                    }}>
                                     <Typography>₱ {item.amount.toFixed(2)}</Typography>
+                                </TableCell>
+                                <TableCell align="right"
+                                    sx={{
+                                        border: "1px solid rgba(224, 224, 224, 1)"  // Outer table border
+                                    }}>
+                                    <Typography>₱ {(item.quantity * item.amount).toFixed(2)}</Typography>
                                 </TableCell>
                             </TableRow>
                         </TableBody>
@@ -187,7 +215,6 @@ function TotalRow({ total }) {
             <TableRow >
                 <TableCell
                     sx={{
-                        width: '10vh',
                         border: "1px solid rgba(224, 224, 224, 1)"  // Outer table border
                     }}>
                     <Typography fontWeight={'bold'}>TOTAL:</Typography>
@@ -198,6 +225,7 @@ function TotalRow({ total }) {
                     }}>
                 </TableCell>
                 <TableCell align="right"
+                    colSpan={3}
                     sx={{
                         border: "1px solid rgba(224, 224, 224, 1)",  // Outer table border
                         bgcolor: 'error.light'
@@ -240,7 +268,6 @@ function HeaderContent() {
                 </Typography>
                 <Divider
                     sx={{
-                        width: '100%',
                         borderBottom: '4px double rgba(0, 0, 0, 1)',
                     }}
                 />
@@ -260,7 +287,7 @@ function Signatories() {
     return (
         <TableBody>
             <TableRow >
-                <TableCell colSpan={3} sx={{ paddingTop: 10, border: 'none' }} >
+                <TableCell colSpan={5} sx={{ paddingTop: 10, border: 'none' }} >
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <Stack spacing={6}>

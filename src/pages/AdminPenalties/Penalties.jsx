@@ -118,7 +118,7 @@ function UsersList({ usersData, setEventWithAttend, setIsLoading, setUsersData, 
         setUsersData(filtered)
     }
     return (
-        <Card sx={{ p: 2, minHeight: '75vh', overflow: 'auto' }} elevation={5}>
+        <Card sx={{ p: 2, height: '75vh', overflow: 'auto' }} elevation={5}>
             <Stack direction={'column'} spacing={2}>
                 {/* <Typography fontWeight={'bold'}>User List:</Typography> */}
                 <TextField fullWidth label="Search" onChange={onChangeSearch} />
@@ -133,7 +133,7 @@ function UsersList({ usersData, setEventWithAttend, setIsLoading, setUsersData, 
                                         width: 50
                                     }} />
                                     <Box>
-                                        <Typography noWrap maxWidth={'25vh'} fontWeight={'bold'}>{item.lastName}, {item.firstName} {item.middleName[0]}.</Typography>
+                                        <Typography noWrap maxWidth={'25vh'} fontWeight={'bold'}>{item.lastName}, {item.firstName} {item.middleName ? item.middleName[0] : ''}.</Typography>
                                         <Typography>{item.email}</Typography>
                                     </Box>
                                 </Stack>

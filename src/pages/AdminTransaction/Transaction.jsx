@@ -13,6 +13,7 @@ import moment from 'moment';
 import { Add, DisabledByDefault, KeyboardReturn } from '@mui/icons-material';
 import { fetchUsers } from '../../api/userApi';
 import { fetchTransactionByCollectionId } from '../../api/TransactionApi';
+import { fetchCollectionById } from '../../api/CollectionApi';
 
 
 function Details() {
@@ -36,7 +37,6 @@ function Details() {
                 ...user,
                 transaction: TransData.find(trans => trans.userId == user._id)
             }))
-            console.log(combinedData)
             setData(combinedData)
         }
         setIsLoading(false)
@@ -48,7 +48,7 @@ function Details() {
 
     return (
         <Master>
-            <Stack spacing={2}>
+            <Stack spacing={1}>
                 <Stack direction={'row'} spacing={2} alignItems={'center'}>
                     <Typography variant="h5" fontWeight="bold">Transaction List :</Typography>
                     <Button variant="contained" onClick={() => navigate(-1)} startIcon={<KeyboardReturn />}>Collection</Button>
@@ -70,15 +70,29 @@ function Details() {
 }
 
 function QuickSearchToolbar() {
+    const { id } = useParams();
+    const [data, setData] = useState({})
+
+    const handleGetData = async () => {
+        const { data, error } = await fetchCollectionById(id)
+        if (!error) {
+            setData(data[0])
+        }
+    }
+
+    useEffect(() => {
+        handleGetData()
+    }, [])
     return (
         <Box
             sx={{
                 p: 0.5,
                 pb: 0,
                 display: 'flex',
-                justifyContent: 'end'
+                justifyContent: 'space-between'
             }}
         >
+            <Typography variant='h5' fontWeight={'bold'} color={'primary'}>{data?.collectionName || "Loading..."}</Typography>
             <GridToolbarQuickFilter
                 quickFilterParser={(searchInput) =>
                     searchInput
@@ -228,8 +242,9 @@ function DataGridList({ data, handleGetData }) {
     );
     return (
         <>
-            <Card sx={{ width: '100%', height: 550 }} elevation={5}>
+            <Card sx={{ width: '100%' }} elevation={5}>
                 <DataGrid
+                    sx={{ height: '80vh' }}
                     columns={columns}
                     rows={rows}
                     slots={{ toolbar: QuickSearchToolbar }}

@@ -73,7 +73,7 @@ function Clearance() {
 
     return (
         <Master>
-            <Stack spacing={2}>
+            <Stack spacing={1}>
                 <Stack direction={'row'} spacing={2} alignItems={'center'}>
                     <Typography variant="h5" fontWeight="bold">Clearance Master List :</Typography>
                     <Button variant='contained' endIcon={<Add />} onClick={handleStoreModal}>Add Clearance</Button>
@@ -196,7 +196,7 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
             clearanceData.map((item) => ({
                 ...item,
                 id: item._id, // Ensure this matches the `selectionModel` IDs
-                name: `${item.user.lastName}, ${item.user.firstName}${item?.user?.middleName ? ` ${item.user.middleName[0]}.` : ''}`,
+                name: `${item?.user?.lastName}, ${item?.user?.firstName} ${item?.user?.middleName ? ` ${item.user.middleName[0]}.` : ''}`,
                 semester: item.schoolYear.semester,
             })),
         [clearanceData]
@@ -208,8 +208,9 @@ function DataGridList({ clearanceData, isLoading, contentRef, setSelected, selec
     return (
         <>
             <PrintCheckedPdfButton selectedData={selectedData} handleGetData={handleGetData} />
-            <Card sx={{ width: '100%', height: 550 }} elevation={5}>
+            <Card sx={{ width: '100%' }} elevation={5}>
                 <DataGrid
+                    sx={{ height: '80vh' }}
                     loading={isLoading}
                     columns={columns}
                     rows={rows}

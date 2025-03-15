@@ -276,7 +276,7 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
       combinedData.map((item) => ({
         ...item,
         id: item._id,
-        name: `${item.lastName}, ${item.firstName} ${item.middleName[0]}.`,
+        name: `${item.lastName}, ${item.firstName} ${item.middleName ? item.middleName[0] : ''}`,
         amInFormat: item?.attendances[0]?.amIn || null,
         amOutFormat: item?.attendances[0]?.amOut || null,
         pmInFormat: item?.attendances[0]?.pmIn || null,
@@ -310,6 +310,7 @@ function AttendanceTable({ combinedData, handleGetData, id }) {
   return (
     <Box>
       <DataGrid
+        sx={{ height: '80vh' }}
         columns={columns}
         rows={rows}
         slots={{

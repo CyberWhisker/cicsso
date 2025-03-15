@@ -18,6 +18,7 @@ import { useReactToPrint } from 'react-to-print';
 import { Print } from '@mui/icons-material';
 import { fetchUsers } from '../../../api/userApi';
 import { fetchCollectionWithEventAndAttendance } from '../../../api/CollectionApi';
+import moment from 'moment';
 
 function ReceivableReport({ selectedAY }) {
     const contentRef = useRef(null);
@@ -28,7 +29,7 @@ function ReceivableReport({ selectedAY }) {
                 <ListItemIcon><Print /></ListItemIcon>
                 <ListItemText>Receivable Report</ListItemText>
             </MenuItem>
-            <Box sx={{ display: 'none' }}>
+            <Box sx={{ display: 'block' }}>
                 <Layout contentRef={contentRef} selectedAY={selectedAY} />
             </Box>
         </>
@@ -52,14 +53,14 @@ function Layout({ contentRef, selectedAY }) {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell colSpan={3} sx={{ border: 'none' }}>
+                            <TableCell colSpan={4} sx={{ border: 'none' }}>
                                 <HeaderContent />
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         <TableRow>
-                            <TableCell colSpan={3}>
+                            <TableCell colSpan={4}>
                                 <Stack spacing={2}>
                                     <Stack spacing={2}>
                                         <Typography
@@ -85,7 +86,6 @@ function Layout({ contentRef, selectedAY }) {
 }
 
 function ReceivableRow({ receivable, }) {
-
     return (
         <>
             <TableHead
@@ -110,6 +110,15 @@ function ReceivableRow({ receivable, }) {
                     >
                         <Typography fontWeight={'bold'} textAlign={'center'}>
                             ACTIVITY
+                        </Typography>
+                    </TableCell>
+                    <TableCell
+                        sx={{
+                            border: "1px solid rgba(224, 224, 224, 1)"
+                        }}
+                    >
+                        <Typography fontWeight={'bold'} textAlign={'center'}>
+                            DATE
                         </Typography>
                     </TableCell>
                     <TableCell
@@ -147,6 +156,15 @@ function ReceivableRow({ receivable, }) {
                             >
                                 <Typography fontWeight={'bold'} textAlign={'center'}>
                                     {item.label}
+                                </Typography>
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    border: "1px solid rgba(224, 224, 224, 1)"
+                                }}
+                            >
+                                <Typography fontWeight={'bold'} textAlign={'center'}>
+                                    {item.date}
                                 </Typography>
                             </TableCell>
                             <TableCell
@@ -216,7 +234,7 @@ function Signatories() {
     return (
         <TableBody>
             <TableRow >
-                <TableCell colSpan={3} sx={{ paddingTop: 10, border: 'none' }} >
+                <TableCell colSpan={4} sx={{ paddingTop: 10, border: 'none' }} >
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <Stack spacing={6}>
@@ -297,7 +315,8 @@ const computeData = async (selectedAY) => {
                 return {
                     no: number,
                     label: item.collectionName,
-                    value: total * item.fine
+                    value: total * item.fine,
+                    date: `${moment(item.schoolYearId.startDate).format('MM/DD/YYYY')} - ${moment(item.schoolYearId.endDate).format('MM/DD/YYYY')} (${item.schoolYearId.semester})`
                 }
             })
 
@@ -311,7 +330,8 @@ const computeData = async (selectedAY) => {
                 return {
                     no: number,
                     label: item.collectionName,
-                    value: totalPayment - userPayment
+                    value: totalPayment - userPayment,
+                    date: `${moment(item.schoolYearId.startDate).format('MM/DD/YYYY')} - ${moment(item.schoolYearId.endDate).format('MM/DD/YYYY')} (${item.schoolYearId.semester})`
                 }
             })
         return ([...attendanceData, ...collectionDataProcessed])
