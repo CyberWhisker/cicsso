@@ -76,7 +76,7 @@ function Update({ selected, onClose, handleGetData, data }) {
                                 disabled
                             >
                                 {data.map((user, index) =>
-                                    <MenuItem value={user._id} key={index}>{user.lastName}, {user.firstName} {user.middleName[0]}</MenuItem>
+                                    <MenuItem value={user._id} key={index}>{user.lastName}, {user.firstName} {user.middleName ? user.middleName[0] : ''}</MenuItem>
                                 )}
                             </TextField>
                             <TextField

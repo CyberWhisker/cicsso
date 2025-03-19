@@ -69,7 +69,7 @@ function Store({ onClose, handleGetData }) {
                             onChange={handleChange}
                         >
                             {userData.map((item, index) => (
-                                <MenuItem key={index} value={item._id}>{item.lastName},{item.firstName} {item.middleName[0]}.</MenuItem>
+                                <MenuItem key={index} value={item._id}>{item.lastName},{item.firstName} {item.middleName ? item.middleName[0] : ''}.</MenuItem>
                             ))}
                         </TextField>
                         <TextField

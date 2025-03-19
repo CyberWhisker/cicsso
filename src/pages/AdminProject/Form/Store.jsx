@@ -10,7 +10,6 @@ function Store({ getProjects, handleCloseModal }) {
     const [formData, setFormData] = useState({
         schoolYearId: "",
         project: "",
-        description: "",
         collectionId: "",
     });
     const [submitted, setSubmitted] = useState(false);
@@ -37,8 +36,8 @@ function Store({ getProjects, handleCloseModal }) {
         e.preventDefault();
         setSubmitted(true);
 
-        const { project, description, schoolYearId, collectionId } = formData;
-        if (!project || !description || !collectionId) {
+        const { project, schoolYearId, collectionId } = formData;
+        if (!project || !collectionId) {
             toast.error("All fields are required");
             return;
         }
@@ -52,7 +51,6 @@ function Store({ getProjects, handleCloseModal }) {
             setFormData({
                 schoolYearId,
                 project: "",
-                description: "",
                 collectionId: "",
             });
             setSubmitted(false);
@@ -79,7 +77,7 @@ function Store({ getProjects, handleCloseModal }) {
                             helperText={submitted && !formData.project ? "Required" : ""}
                         />
                         <SelectCollection handleChange={handleChange} selectedValue={formData.collectionId} />
-                        <TextField
+                        {/* <TextField
                             label="Project Details"
                             name="description"
                             variant="outlined"
@@ -90,7 +88,7 @@ function Store({ getProjects, handleCloseModal }) {
                             helperText={submitted && !formData.description ? "Required" : ""}
                             multiline
                             rows={4}
-                        />
+                        /> */}
                         <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
                             Submit
                         </Button>

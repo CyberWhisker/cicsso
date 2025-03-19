@@ -29,7 +29,7 @@ function ReceivableReport({ selectedAY }) {
                 <ListItemIcon><Print /></ListItemIcon>
                 <ListItemText>Receivable Report</ListItemText>
             </MenuItem>
-            <Box sx={{ display: 'block' }}>
+            <Box sx={{ display: 'none' }}>
                 <Layout contentRef={contentRef} selectedAY={selectedAY} />
             </Box>
         </>
