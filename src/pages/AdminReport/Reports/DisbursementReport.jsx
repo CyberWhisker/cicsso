@@ -143,7 +143,7 @@ function ProjectRow({ selectedAY, }) {
                                     border: "1px solid rgba(224, 224, 224, 1)"
                                 }}>
                                 <Typography fontWeight={'bold'} textAlign={'center'}>
-                                    AMOUNT
+                                    UNIT COST
                                 </Typography>
                             </TableCell>
                             <TableCell
