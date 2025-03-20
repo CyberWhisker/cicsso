@@ -270,7 +270,7 @@ function ExpenseRow({ selectedAY, setTotalExpense }) {
                 const formattedData = data.map((item) => {
                     let amount = 0;
                     if (item.items.length > 0) {
-                        amount = item.items.reduce((sum, item) => sum + item.amount, 0)
+                        amount = item.items.reduce((sum, item) => sum + item.amount * item.quantity, 0)
                         overAll += amount
                     }
                     return ({ ...item, no: no++, totalAmount: amount })

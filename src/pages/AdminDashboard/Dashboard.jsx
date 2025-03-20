@@ -16,10 +16,11 @@ import Update from './Form/Update';
 import Delete from './Form/Delete';
 import { AlertModal } from '../../components';
 import { fetchItem } from '../../api/ItemApi';
-import { fetchCollections, fetchCollectionWithTransaction } from '../../api/CollectionApi';
+import { fetchCollectionBySchoolYearWithRemainingBalance, fetchCollections, fetchCollectionWithTransaction } from '../../api/CollectionApi';
 import { fetchProjects } from '../../api/ProjectApi';
 import { PieChart } from '@mui/x-charts';
 import { Link } from 'react-router-dom';
+import { fetchActiveSchoolYear } from '../../api/SchoolYearApi';
 
 function Dashboard() {
     const [isLoading, setIsLoading] = useState(true)
@@ -118,7 +119,7 @@ function Dashboard() {
                         <PendingTable pendingData={pendingData} handleGetData={handleGetData} userData={userData} />
                     </Grid>
                     <Grid item xs={6} md={3}>
-                        <EventList allData={allData} />
+                        <EventList />
                     </Grid>
                 </Grid>
                 <Grid container spacing={3} pb={2}>
@@ -321,13 +322,16 @@ function PendingTable({ pendingData, handleGetData, userData }) {
     )
 }
 
-function EventList({ allData }) {
+function EventList() {
     const [collectionData, setCollectionData] = useState([])
 
     const handleGetCollection = async () => {
-        const { data, error } = await fetchCollectionWithTransaction()
+        const { data: schoolData, error } = await fetchActiveSchoolYear()
         if (!error) {
-            setCollectionData(data)
+            const { data, error } = await fetchCollectionBySchoolYearWithRemainingBalance(schoolData._id)
+            if (!error) {
+                setCollectionData(data)
+            }
         }
     }
 
@@ -347,28 +351,17 @@ function EventList({ allData }) {
         >
             <Typography fontWeight="bold">Remaining Collection Funds:</Typography>
             <Divider />
-            {collectionData.map((item, index) => {
-                const totalCollectionFunds = item.transaction
-                    .filter((item) => item.status == "confirm")
-                    .reduce((sum, item) => sum + item.amount, 0)
-                let total = 0
-                const totalProjectFunds = item.project
-                    .map((item) => {
-                        total += item.items.reduce((sum, item) => sum + item.amount * item.quantity, 0)
-                    })
-                const remainingFund = totalCollectionFunds - total
-                return (
-                    <MenuItem sx={{ display: 'flex', justifyContent: 'space-between' }} key={index}>
-                        <Typography
-                            sx={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                            noWrap
-                        >
-                            {item.collectionName}
-                        </Typography>
-                        <Chip label={`₱ ${remainingFund.toFixed(2)}`} color='success' />
-                    </MenuItem>
-                );
-            })}
+            {collectionData.map((item, index) =>
+                <MenuItem sx={{ display: 'flex', justifyContent: 'space-between' }} key={index}>
+                    <Typography
+                        sx={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                        noWrap
+                    >
+                        {item.collectionName}
+                    </Typography>
+                    <Chip label={`₱ ${item.remainingBalance.toFixed(2)}`} color='success' />
+                </MenuItem>
+            )}
         </Paper>
     );
 }

@@ -5,7 +5,7 @@ import { updateProject } from '../../../api/ProjectApi';
 import { fetchCollections } from '../../../api/CollectionApi';
 
 function Update({ selected, handleCloseModal, getProjects }) {
-    const [formData, setFormData] = useState({ ...selected, collectionId: selected.collectionId._id });
+    const [formData, setFormData] = useState({ ...selected, collectionId: selected.collectionId });
     const [submitted, setSubmitted] = useState(false);
 
     const handleChange = (e) =>

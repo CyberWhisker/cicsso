@@ -200,3 +200,21 @@ export const fetchCollectionBySchoolYearIdandUserId = async (schoolYearId, userI
         return { data: [], error: error.message }
     }
 }
+
+export const fetchCollectionBySchoolYearWithRemainingBalance = async (schoolYearId) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/collection/getCollectionBySchoolYearWithRemainingBalance/${schoolYearId}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        if (response.ok) {
+            return { data: data, error: null }
+        } else {
+            return { data: [], error: data.error }
+        }
+    } catch (error) {
+        return { data: [], error: error.message }
+    }
+}

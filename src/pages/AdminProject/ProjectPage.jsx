@@ -7,9 +7,10 @@ import { Link } from 'react-router-dom'
 import Store from './Form/Store'
 import Update from './Form/Update'
 import Delete from './Form/Delete'
-import { fetchProjects } from '../../api/ProjectApi'
+import { fetchProjectBySchoolYearWithRemainder, fetchProjects } from '../../api/ProjectApi'
 import { toast } from 'react-toastify'
 import moment from 'moment'
+import { fetchActiveSchoolYear } from '../../api/SchoolYearApi'
 
 function ProjectPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -40,11 +41,14 @@ function EventList({ setIsLoading }) {
 
   const getProjects = async () => {
     setIsLoading(true)
-    const { data, error } = await fetchProjects();
-    if (error) {
-      toast.error("Server Error")
-    } else {
-      setProjects(data)
+    const { data: schoolData, error: schoolError } = await fetchActiveSchoolYear();
+    if (!schoolError) {
+      const { data, error } = await fetchProjectBySchoolYearWithRemainder(schoolData._id);
+      if (error) {
+        toast.error("Server Error")
+      } else {
+        setProjects(data)
+      }
     }
     setIsLoading(false)
   }
@@ -71,64 +75,50 @@ function EventList({ setIsLoading }) {
 
   return (
     <Grid container spacing={2}>
-      {projects.map((item, index) => {
-        const totalCost = item.items
-          .reduce((sum, item) => sum + item.amount * item.quantity, 0);
-        const totalTransaction = item.collectionId.transaction
-          .filter((transaction) => transaction.status === "confirm")
-          .reduce((sum, item) => sum + item.amount, 0)
-        const remainingFund = totalTransaction - totalCost
-        return (
-          <Grid
-            item
-            xs={6}
-            md={4}
-            key={index}
-          >
-            <CustomCard>
-              <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{item.project}</Typography>
-                  <Stack direction={'row'}>
-                    {item.status == "Ongoing" && <Chip label={item.status} color='warning' />}
-                    {item.status == "Complete" && <Chip label={item.status} color='success' />}
-                    <DropDown >
-                      <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
-                      <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
-                    </DropDown>
-                  </Stack>
-                </Box>
-                <Grid
-                  container
-                  direction={'row'}
-                  component={Link}
-                  to={`/item/${item._id}`}
-                  sx={{
-                    textDecoration: 'none',
-                  }}
-                >
+      {projects.map((item, index) => <Grid
+        item
+        xs={6}
+        md={4}
+        key={index}
+      >
+        <CustomCard>
+          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography textAlign='center' fontWeight='bold' variant='h5' color="primary" noWrap>{item.project}</Typography>
+              <Stack direction={'row'}>
+                {item.status == "Ongoing" && <Chip label={item.status} color='warning' />}
+                {item.status == "Complete" && <Chip label={item.status} color='success' />}
+                <DropDown >
+                  <MenuItem onClick={() => handleUpdateModal(item)}>Edit</MenuItem>
+                  <MenuItem onClick={() => handleDeleteModal(item)}>Delete</MenuItem>
+                </DropDown>
+              </Stack>
+            </Box>
+            <Grid
+              container
+              direction={'row'}
+              component={Link}
+              to={`/item/${item._id}`}
+              sx={{
+                textDecoration: 'none',
+              }}
+            >
 
-                  <Grid xs={12} item sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', minHeight: '15vh' }}
+              <Grid xs={12} item sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', minHeight: '15vh' }}
 
-                  >
-                    <Typography textAlign='center' fontWeight='bold' variant='h4' color='primary'>₱{totalCost.toFixed(2)}</Typography>
-                    <Typography textAlign='center' fontWeight='bold' color='primary'>Total</Typography>
-                  </Grid>
-                  {/* <Grid xs={6} item sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', textDecoration: 'none', minHeight: '15vh' }}
-                  >
-                    <Typography textAlign='center' fontWeight='bold' variant='h4' color='primary'>₱{remainingFund.toFixed(2)}</Typography>
-                    <Typography textAlign='center' fontWeight='bold' color='primary'>Total Amount</Typography>
-                  </Grid> */}
-                </Grid>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Chip label={`Funds: ${item.collectionId.collectionName}`} color='success' />
-                  <Chip label={`₱ ${remainingFund.toFixed(2)}`} color='success' />
-                </Box>
-              </Box>
-            </CustomCard>
-          </Grid>
-        )
-      })}
+              >
+                <Typography textAlign='center' fontWeight='bold' variant='h4' color='primary'>₱{item.totalProject.toFixed(2)}</Typography>
+                <Typography textAlign='center' fontWeight='bold' color='primary'>Total</Typography>
+              </Grid>
+            </Grid>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Chip label={`Funds: ${item.collectionName}`} color='success' />
+              <Chip label={`₱ ${item.remaining.toFixed(2)}`} color='success' />
+            </Box>
+          </Box>
+        </CustomCard>
+      </Grid>
+      )}
       <Grid
         item
         xs={6}

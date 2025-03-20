@@ -7,12 +7,12 @@ export const fetchProjects = async () => {
         })
         if (response.ok) {
             const data = await response.json()
-            return { data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return { data: [], error: 'Failed to fetch Project'}
+            return { data: [], error: 'Failed to fetch Project' }
         }
     } catch (error) {
-        return { data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -25,12 +25,12 @@ export const fetchProjectByID = async (id) => {
         })
         if (response.ok) {
             const data = await response.json()
-            return { data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return { data: [], error: 'Failed to fetch Project'}
+            return { data: [], error: 'Failed to fetch Project' }
         }
     } catch (error) {
-        return { data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -43,12 +43,30 @@ export const fetchProjectBySchoolYear = async (id) => {
         })
         if (response.ok) {
             const data = await response.json()
-            return { data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return { data: [], error: 'Failed to fetch Project'}
+            return { data: [], error: 'Failed to fetch Project' }
         }
     } catch (error) {
-        return { data: [], error: error.message}
+        return { data: [], error: error.message }
+    }
+}
+
+export const fetchProjectBySchoolYearWithRemainder = async (id) => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/project/getProjectBySchoolYearIdWithRemainder/${id}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (response.ok) {
+            const data = await response.json()
+            return { data: data, error: null }
+        } else {
+            return { data: [], error: 'Failed to fetch Project' }
+        }
+    } catch (error) {
+        return { data: [], error: error.message }
     }
 }
 
@@ -63,12 +81,12 @@ export const storeProject = async (dataForm) => {
         })
         if (response.ok) {
             const data = await response.json()
-            return { data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return { data: [], error: 'Failed to store Project'}
+            return { data: [], error: 'Failed to store Project' }
         }
     } catch (error) {
-        return { data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -82,12 +100,12 @@ export const deleteProject = async (id) => {
         })
         if (response.ok) {
             const data = await response.json()
-            return { data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return { data: [], error: 'Failed to delete Project'}
+            return { data: [], error: 'Failed to delete Project' }
         }
     } catch (error) {
-        return { data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -102,12 +120,12 @@ export const updateProject = async (dataForm) => {
         })
         if (response.ok) {
             const data = await response.json()
-            return { data: data, error: null}
+            return { data: data, error: null }
         } else {
             const data = await response.json()
-            return { data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return { data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
