@@ -21,7 +21,7 @@ import { fetchCollectionBySchoolYear } from '../../../api/CollectionApi';
 import { fetchProjectBySchoolYear } from '../../../api/ProjectApi';
 import { Print } from '@mui/icons-material';
 
-function FinancialReport({ selectedAY = '677c832857fbaf651efdc933' }) {
+function FinancialReport({ selectedAY }) {
     const contentRef = useRef(null);
     const printFile = useReactToPrint({ contentRef })
     return (
@@ -30,7 +30,7 @@ function FinancialReport({ selectedAY = '677c832857fbaf651efdc933' }) {
                 <ListItemIcon><Print /></ListItemIcon>
                 <ListItemText>Financial Report</ListItemText>
             </MenuItem>
-            <Box sx={{ display: 'block' }}>
+            <Box sx={{ display: 'none' }}>
                 <NewLayout contentRef={contentRef} selectedAY={selectedAY} />
             </Box>
         </>
