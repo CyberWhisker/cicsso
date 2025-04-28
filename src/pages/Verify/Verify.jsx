@@ -13,7 +13,7 @@ const Verify = () => {
     useEffect(() => {
         const verifyEmail = async () => {
             try {
-                const response = await fetch(`http://localhost:4000/api/user/verify?token=${token}&userId=${userId}`);
+                const response = await fetch(`https://cicsso-backend.onrender.com/api/user/verify?token=${token}&userId=${userId}`);
                 const data = await response.json();
 
                 if (!response.ok) {
