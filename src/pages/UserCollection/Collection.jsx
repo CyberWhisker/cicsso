@@ -11,7 +11,7 @@ import { fetchSchoolYear } from '../../api/SchoolYearApi'
 
 function Collection() {
   const { auth } = useAuthContext();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [collections, setCollection] = useState([]);
   const [selectedValue, setSelectedValue] = useState('')
 
@@ -255,14 +255,15 @@ function EventCard({ data, setSelected, setPaymentModal, auth }) {
 
 function AcademicYearList({ handleGetCollection, selectedValue, setSelectedValue }) {
   const [academicData, setAcademicData] = useState([])
-
   const handleGetData = async () => {
     const { data, error } = await fetchSchoolYear()
     if (!error) {
       const active = data.find((item) => item.status)
-      setSelectedValue(active ? active._id : '')
+      setSelectedValue(active ? active?._id : '')
       setAcademicData(data)
-      handleGetCollection(active._id)
+      if (active) {
+        handleGetCollection(active?._id)
+      }
     }
   }
 
