@@ -44,7 +44,7 @@ function UploadForm({ getUsers, onClose }) {
         setSubmitted(true)
         const { data, error } = await storeMultipleUsers(formData)
         if (error) {
-            toast.error("Something went wrong")
+            toast.error(error)
         } else {
             toast.success("Successfully Inserted")
             getUsers()
