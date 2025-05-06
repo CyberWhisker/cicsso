@@ -80,15 +80,19 @@ export const storeTransaction = async (formData) => {
 
 export const updateTransaction = async (formData) => {
     try {
-        const formDataObject = new FormData();
-        for (const key in formData) {
-            if (formData.hasOwnProperty(key)) {
-                formDataObject.append(key, formData[key]);
-            }
-        }
+        // const formDataObject = new FormData();
+        // for (const key in formData) {
+        //     if (formData.hasOwnProperty(key)) {
+        //         formDataObject.append(key, formData[key]);
+        //     }
+        // }
+        console.log(formData)
         const response = await fetch(`${import.meta.env.VITE_API}/api/transaction/${formData._id}`, {
             method: 'PATCH',
-            body: formDataObject
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
         })
         const data = await response.json()
         if (response.ok) {
