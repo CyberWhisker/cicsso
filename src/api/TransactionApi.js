@@ -7,12 +7,12 @@ export const fetchTransactions = async () => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -25,12 +25,12 @@ export const fetchTransactionByCollectionId = async (id) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -43,35 +43,38 @@ export const fetchTransactionByStatus = async (status) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
 export const storeTransaction = async (formData) => {
     try {
-        const formDataObject = new FormData();
-        for (const key in formData) {
-            if (formData.hasOwnProperty(key)) {
-                formDataObject.append(key, formData[key]);
-            }
-        }
+        // const formDataObject = new FormData();
+        // for (const key in formData) {
+        //     if (formData.hasOwnProperty(key)) {
+        //         formDataObject.append(key, formData[key]);
+        //     }
+        // }
         const response = await fetch(`${import.meta.env.VITE_API}/api/transaction`, {
             method: 'POST',
-            body: formDataObject
-        })
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error}
+        return { data: [], error: error }
     }
 }
 
@@ -89,12 +92,12 @@ export const updateTransaction = async (formData) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -109,12 +112,12 @@ export const deleteTransaction = async (formData) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
 
@@ -127,11 +130,11 @@ export const fetchTransactionByUserId = async (id) => {
         })
         const data = await response.json()
         if (response.ok) {
-            return {data: data, error: null}
+            return { data: data, error: null }
         } else {
-            return {data: [], error: data.error}
+            return { data: [], error: data.error }
         }
     } catch (error) {
-        return {data: [], error: error.message}
+        return { data: [], error: error.message }
     }
 }
